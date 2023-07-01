@@ -1,0 +1,14 @@
+
+__pycache__
+
+wordpress/wp-content/debug.log
+wordpress/wp-admin
+wordpress/wp-content/themes
+wordpress/wp-content/uploads
+.vagrant/
+ubuntu-bionic-18.04-cloudimg-console.log
+certbot/
+.env
+db/backup/
+.DS_Store
+tmp/
