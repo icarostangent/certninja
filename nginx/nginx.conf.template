@@ -18,7 +18,7 @@ upstream websocket {
 }
 
 upstream django {
-server django:8888;
+    server django:8888;
 }
 
 server {
