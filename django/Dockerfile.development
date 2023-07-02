@@ -18,7 +18,7 @@ ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=myapp.settings
 
 # Expose the port on which the Django app will run
-EXPOSE 8000
+EXPOSE 8888
 
 # Run Django's development server when the container starts
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8888"]
