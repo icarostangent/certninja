@@ -13,3 +13,4 @@ db/backup/
 .DS_Store
 tmp/
 static/
+nginx/nginx.conf
