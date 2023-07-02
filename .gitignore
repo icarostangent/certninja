@@ -12,3 +12,4 @@ certbot/
 db/backup/
 .DS_Store
 tmp/
+static/
