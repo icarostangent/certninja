@@ -115,6 +115,7 @@ services:
     depends_on:
       - db
     environment:
+      TARGET_URL: ${TARGET_URL}
       DB_HOST: ${DB_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
       DJANGO_DATABASE: ${DJANGO_DATABASE}
