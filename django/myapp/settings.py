@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': os.environ.get('DJANGO_DATABASE', 'django'),
         'USER': os.environ.get('DJANGO_USER', 'django'),
         'PASSWORD': os.environ.get('DJANGO_PASSWORD', 'djangopassword'),
-        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
     },
 }
