@@ -52,6 +52,10 @@ server {
     
     add_header Content-Security-Policy-Report-Only: "default-src 'self' js.stripe.com; script-src 'self' js.stripe.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' js.stripe.com; img-src 'self' secure.gravatar.com data:;";
 
+    location /api {
+        proxy_pass http://django/api;
+    }
+
     location /admin {
         proxy_pass http://django/admin;
     }
