@@ -13,7 +13,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getSnippet").then(console.log(this.snippet));
+    this.$store.dispatch("getSnippet");
   },
 };
 </script>
