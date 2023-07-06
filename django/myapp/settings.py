@@ -138,7 +138,7 @@ STATIC_ROOT = '/app/static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://odinscall.icarostangent.lab',
+    os.environ.get('TARGET_URL', ''),
 ]
 
 REST_FRAMEWORK = {
