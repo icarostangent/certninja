@@ -50,6 +50,7 @@ export default createStore({
             currentPage: 1
         },
         theme: '',
+        snippet: [],
     },
     mutations: {
         SET_USER(state, user) {
@@ -105,6 +106,9 @@ export default createStore({
         },
         SET_THEME(state, data) {
             state.theme = data
+        },
+        SET_SNIPPET(state, data) {
+            state.snippet = data.results[ Math.floor( Math.random() * data.count ) ]
         },
     },
     actions: {
@@ -423,6 +427,24 @@ export default createStore({
                     }
                     )
                     commit('SET_THEME', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getSnippet({ commit, state }) {
+            console.log('get snippets')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/snippets`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_SNIPPET', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

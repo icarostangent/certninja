@@ -67,6 +67,11 @@ server {
         proxy_pass http://django/api;
     }
 
+    # django app
+    location /snippets {
+        proxy_pass http://django/snippets;
+    }
+    
     # django backend
     location /admin {
         proxy_pass http://django/admin;

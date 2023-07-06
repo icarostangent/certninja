@@ -1,5 +1,6 @@
 <template>
     <div class="col-md-8 mx-auto domains">
+        <RandomSnippet />
         <h1>Check Domains</h1>
 
         <BannerUpgrade v-if="!showDomainCreate" />
@@ -12,6 +13,7 @@
 import BannerUpgrade from '@/components/BannerUpgrade.vue'
 import DomainCreate from '@/components/DomainCreate.vue'
 import DomainList from '@/components/DomainList.vue'
+import RandomSnippet from '@/components/RandomSnippet.vue'
 
 export default {
     name: 'Domains',
@@ -19,6 +21,7 @@ export default {
         BannerUpgrade,
         DomainCreate,
         DomainList,
+        RandomSnippet
     },
     data() {
         return {}
