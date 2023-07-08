@@ -2,9 +2,6 @@ version: "3.9"
 
 services:
   scheduler-scan:
-    depends_on:
-      - redis
-      - db
     build:
       context: ./scheduler-scan
     environment:
@@ -17,9 +14,6 @@ services:
     restart: unless-stopped
 
   scheduler-cleaner:
-    depends_on:
-      - redis
-      - db
     build:
       context: ./scheduler-cleaner
     environment:
@@ -32,8 +26,6 @@ services:
     restart: unless-stopped
 
   mailer:
-    depends_on:
-      - redis
     build:
       context: ./mailer
     environment:
@@ -47,9 +39,6 @@ services:
     restart: unless-stopped
 
   scanner:
-    depends_on:
-      - redis
-      - db
     build:
       context: ./scanner
     environment:
@@ -62,9 +51,6 @@ services:
     restart: unless-stopped
 
   cleaner:
-    depends_on:
-      - redis
-      - db
     build:
       context: ./cleaner
     environment:
@@ -97,7 +83,6 @@ services:
     image: mysql:latest
     volumes:
       - db_data:/var/lib/mysql
-      - ./db/log:/var/run/mysql
       - ./db/backup:/docker-entrypoint-initdb.d
     restart: unless-stopped
     expose:
@@ -110,19 +95,31 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
+  pgsql:
+    image: postgres:latest
+    volumes:
+      - pgsql_data:/var/lib/postgresql/data
+      - ./pgsql/backup:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    expose:
+        - "5432"
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${DJANGO_USER}
+      POSTGRES_PASSWORD: ${DJANGO_PASSWORD}
+
   django:
     build:
       context: ./django
       dockerfile: Dockerfile.development
-    depends_on:
-      - db
     environment:
       TARGET_URL: ${TARGET_URL}
-      DB_HOST: ${DB_HOST}
-      MYSQL_PORT: ${MYSQL_PORT}
       DJANGO_DATABASE: ${DJANGO_DATABASE}
       DJANGO_USER: ${DJANGO_USER}
       DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+      PGSQL_HOST: ${PGSQL_HOST}
+      PGSQL_PORT: ${PGSQL_PORT}
     volumes:
       - ./django:/app
       - ./static:/app/static
@@ -133,9 +130,6 @@ services:
     restart: unless-stopped
 
   wordpress:
-    depends_on:
-      - db
-      - redis
     build:
       context: ./wordpress
     volumes:
@@ -158,8 +152,6 @@ services:
     restart: unless-stopped
 
   phpmyadmin:
-    depends_on:
-      - db
     image: phpmyadmin/phpmyadmin
     ports:
       - "127.0.0.1:3000:80"
@@ -209,4 +201,5 @@ services:
 
 volumes:
   db_data: {}
+  pgsql_data: {}
   redis_data: {}
