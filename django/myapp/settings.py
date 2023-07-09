@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'api',
     'snippets',
+    'subscriptions',
 ]
 
 MIDDLEWARE = [
