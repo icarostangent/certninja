@@ -71,6 +71,12 @@ server {
     location /snippets {
         proxy_pass http://django/snippets;
     }
+
+    # django app
+    location /subscriptions {
+        proxy_pass http://django/subscriptions;
+    }
+    
     
     # django backend
     location /admin {

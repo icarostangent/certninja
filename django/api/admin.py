@@ -6,11 +6,9 @@ from api.models import Account, Domain, Scan
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = []
 
-
 @admin.register(Domain)
 class DomainAdmin(admin.ModelAdmin):
     readonly_fields = []
-
 
 @admin.register(Scan)
 class ScanAdmin(admin.ModelAdmin):

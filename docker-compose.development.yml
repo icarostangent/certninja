@@ -95,31 +95,19 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
-  pgsql:
-    image: postgres:latest
-    volumes:
-      - pgsql_data:/var/lib/postgresql/data
-      - ./pgsql/backup:/docker-entrypoint-initdb.d
-    restart: unless-stopped
-    expose:
-        - "5432"
-    ports:
-      - "127.0.0.1:5432:5432"
-    environment:
-      POSTGRES_USER: ${DJANGO_USER}
-      POSTGRES_PASSWORD: ${DJANGO_PASSWORD}
-
   django:
     build:
       context: ./django
       dockerfile: Dockerfile.development
     environment:
       TARGET_URL: ${TARGET_URL}
+      DB_HOST: ${DB_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
       DJANGO_DATABASE: ${DJANGO_DATABASE}
       DJANGO_USER: ${DJANGO_USER}
       DJANGO_PASSWORD: ${DJANGO_PASSWORD}
-      PGSQL_HOST: ${PGSQL_HOST}
-      PGSQL_PORT: ${PGSQL_PORT}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
     volumes:
       - ./django:/app
       - ./static:/app/static
@@ -170,8 +158,9 @@ services:
       - "8080"
     environment:
       CHOKIDAR_USEPOLLING: 'true'
-      domain_name: ${DOMAIN_NAME}
+      DOMAIN_NAME: ${DOMAIN_NAME}
       TARGET_URL: ${TARGET_URL}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
     restart: unless-stopped
 
   nginx:

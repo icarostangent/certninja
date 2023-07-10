@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
         'NAME': os.environ.get('DJANGO_DATABASE', 'django'),
         'USER': os.environ.get('DJANGO_USER', 'django'),
         'PASSWORD': os.environ.get('DJANGO_PASSWORD', 'djangopassword'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('MYSQL_PORT', '3306'),
     },
 }
 
@@ -145,18 +145,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
 
-STRIPE_LIVE_SECRET_KEY = os.environ.get('STRIPE_LIVE_SECRET_KEY', '<your secret key>')
-STRIPE_TEST_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '<your secret key>')
-STRIPE_LIVE_MODE = False  # Change to True in production
-DJSTRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '<your secret key>')
-DJSTRIPE_USE_NATIVE_JSONFIELD = True  # We recommend setting to True for new installations
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')
 
-# APPEND_SLASH=False
+# https://dashboard.stripe.com/test/products?active=true
+STRIPE_PRODUCTS = {
+    'basic': 'price_1NRrXVHIL8ZiWr8PcGqnDpx7',
+    'premium': 'price_1NRrYzHIL8ZiWr8P9pWIp75M',
+}
