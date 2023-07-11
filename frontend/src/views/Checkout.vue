@@ -1,7 +1,5 @@
 <template>
     <div class="col-md-8 mx-auto checkout">
-
-
         <form v-show="this.showCardForm">
             <div ref="card"></div>
             <button @click.prevent="processPayment()" type="button" class="btn btn-primary btn-sm">Submit</button>
@@ -24,14 +22,9 @@ export default {
             card: null,
             stripe: null,
             elements: null,
-
-
             showCardForm: true,
             showSpinner: true,
-
-            customer: this.$store.state.account.post_excerpt,
-
-
+            // customer: this.$store.state.account.post_excerpt,
         }
     },
     computed: {
@@ -45,7 +38,7 @@ export default {
             const { error } = await this.stripe.confirmPayment({
                 //`Elements` instance that was used to create the Payment Element
                 elements: this.elements,
-                customer: this.customer,
+                // customer: this.customer,
                 redirect: "if_required"
             });
 
@@ -62,7 +55,7 @@ export default {
             // site first to authorize the payment, then redirected to the `return_url`.
 
             // this.showCardForm = false
-            const { paymentIntent } = await this.stripe.retrievePaymentIntent(this.$store.state.stripe.clientSecret)
+            const { paymentIntent } = await this.stripe.retrievePaymentIntent(this.$store.state.stripe.client_secret)
             // Inspect the PaymentIntent `status` to indicate the status of the payment
             // to your customer.
             //

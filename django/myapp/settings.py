@@ -151,6 +151,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'go get a publishable key')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')
 

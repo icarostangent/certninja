@@ -106,6 +106,7 @@ services:
       DJANGO_DATABASE: ${DJANGO_DATABASE}
       DJANGO_USER: ${DJANGO_USER}
       DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
     volumes:
@@ -115,6 +116,8 @@ services:
       - "127.0.0.1:8888:8888"
     expose:
       - "8888"
+    depends_on:
+      - db
     restart: unless-stopped
 
   wordpress:
@@ -137,6 +140,9 @@ services:
       TARGET_URL: ${TARGET_URL}
     extra_hosts:
       - ${DOMAIN_NAME}:${PUBLIC_IP}
+    depends_on:
+      - db
+      - redis
     restart: unless-stopped
 
   phpmyadmin:
