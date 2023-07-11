@@ -106,9 +106,14 @@ services:
       DJANGO_DATABASE: ${DJANGO_DATABASE}
       DJANGO_USER: ${DJANGO_USER}
       DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+<<<<<<< HEAD
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+=======
+      DB_HOST: ${DB_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+>>>>>>> 2956e35 (something)
     volumes:
       - ./django:/app
       - ./static:/app/static

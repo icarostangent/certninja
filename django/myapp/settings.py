@@ -37,11 +37,21 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
     'django_extensions',
     'rest_framework',
+<<<<<<< HEAD
+=======
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+>>>>>>> 2956e35 (something)
 
     'api',
     'snippets',
