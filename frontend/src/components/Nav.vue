@@ -41,6 +41,11 @@
               >
             </li>
             <li class="nav-item">
+              <router-link v-show="loggedin" to="/subscribe" class="nav-link"
+                >Subscribe</router-link
+              >
+            </li>
+            <li class="nav-item">
               <router-link v-show="!loggedin" to="/login" class="nav-link"
                 >Log in</router-link
               >

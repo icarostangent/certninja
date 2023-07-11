@@ -76,7 +76,26 @@ const routes = [
         name: 'post',
         component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue')
     },
-
+    {
+        path: '/subscribe',
+        name: 'subscribe',
+        component: () => import(/* webpackChunkName: "subscribe" */ '../views/Subscribe.vue')
+    },
+    {
+        path: '/checkout',
+        name: 'checkout',
+        component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue')
+    },
+    {
+        path: '/success',
+        name: 'success',
+        component: () => import(/* webpackChunkName: "success" */ '../views/Success.vue')
+    },
+    {
+        path: '/cancel',
+        name: 'cancel',
+        component: () => import(/* webpackChunkName: "cancel" */ '../views/Cancel.vue')
+    },
 ]
 
 const router = createRouter({

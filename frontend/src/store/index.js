@@ -51,6 +51,10 @@ export default createStore({
         },
         theme: '',
         snippet: [],
+        stripe: {
+            'client_secret': '',
+            'publishable_key': '',
+        },
     },
     mutations: {
         SET_USER(state, user) {
@@ -109,6 +113,9 @@ export default createStore({
         },
         SET_SNIPPET(state, data) {
             state.snippet = data.results[ Math.floor( Math.random() * data.count ) ]
+        },
+        SET_STRIPE(state, data) {
+            state.stripe = data
         },
     },
     actions: {
@@ -445,6 +452,24 @@ export default createStore({
                     }
                     )
                     commit('SET_SNIPPET', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getPaymentIntent({ commit, state }) {
+            console.log('get payment intent')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/subscriptions/payment`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_STRIPE', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
