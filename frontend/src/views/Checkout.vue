@@ -1,5 +1,6 @@
 <template>
     <div class="col-md-8 mx-auto checkout">
+        <h1 class="display-4 fw-normal">Checkout</h1>
         <form v-show="this.showCardForm">
             <div ref="card"></div>
             <button @click.prevent="processPayment()" type="button" class="btn btn-primary btn-sm">Submit</button>

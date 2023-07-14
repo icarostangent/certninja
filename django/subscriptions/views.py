@@ -4,11 +4,14 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from subscriptions.models import StripeCustomer
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from subscriptions.models import StripeCustomer, StripeProduct
+from subscriptions.serializers import StripeProductSerializer
 
 
-def get_products(request):
-    return(JsonResponse(settings.STRIPE_PRODUCTS))
+class StripeProductViewSet(ReadOnlyModelViewSet):
+    queryset = StripeProduct.objects.all()
+    serializer_class = StripeProductSerializer
 
 
 def create_payment_intent(request):

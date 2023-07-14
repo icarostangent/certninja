@@ -54,6 +54,7 @@ export default {
       }
       try {
         const result = await this.$store.dispatch('login', this.form)
+        console.log(result)
 
         const { redirect = false } = this.$route.query
         const path = redirect ? decodeURI(redirect) : '/'

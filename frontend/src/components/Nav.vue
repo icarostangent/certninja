@@ -92,7 +92,7 @@ export default {
   },
   computed: {
     loggedin() {
-      return this.$store.state.user.token !== "";
+      return this.$store.state.user.access !== "";
     },
     menu() {
       return this.$store.state.menu;

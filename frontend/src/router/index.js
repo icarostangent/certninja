@@ -82,7 +82,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "subscribe" */ '../views/Subscribe.vue')
     },
     {
-        path: '/checkout',
+        path: '/checkout/:plan',
         name: 'checkout',
         component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue')
     },
@@ -107,16 +107,15 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // this route requires auth, check if user is logged in
         // if not, redirect to login page.
-        if (!store.state.user) {
+        if (!store.state.user.access) {
             next({
                 path: '/login',
-                query: { redirect: to.fullPath }
             })
         } else {
             // we have a state.user object but
             // we need to check if the token is still valid
             try {
-                const { status } = await store.dispatch('validate')
+                await store.dispatch('validate', {'token': store.state.user.access})
                 // user is logged in with a valid token
                 next()
             } catch (e) {
@@ -125,7 +124,6 @@ router.beforeEach(async (to, from, next) => {
                 store.commit('DELETE_USER')
                 next({
                     path: '/login',
-                    query: { redirect: to.fullPath }
                 })
             }
         }

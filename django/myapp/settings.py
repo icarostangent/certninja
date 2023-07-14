@@ -43,15 +43,12 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'rest_framework',
-<<<<<<< HEAD
-=======
     'rest_framework.authtoken',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth',
     'dj_rest_auth.registration',
->>>>>>> 2956e35 (something)
 
     'api',
     'snippets',
@@ -157,7 +154,8 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
     ),
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'myapp.pagination.CustomPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
 

@@ -2,93 +2,16 @@
   <div class="col-md-8 mx-auto subscribe">
     <header>
       <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 fw-normal">Subscribe to CertNinja</h1>
-        <p class="fs-5 text-muted">Expand your CertNinja capabilities to keep your websites secured, online and available
-          for your customers. <br>Never get a call from a disgruntled user having SSL connection problems again!</p>
+        <h1 class="display-4 fw-normal">Subscribe</h1>
+        <p class="fs-5 text-muted">Subscribe now to be a total badass</p>
       </div>
     </header>
 
     <main>
       <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
         <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
-            <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">Basic</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$3<small class="text-muted fw-light">/mo</small>
-              </h1>
-              <ul class="featureList list-unstyled mt-3 mb-4">
-                <li>5 domains</li>
-                <li>1 week scan history</li>
-                <li>Frequency weekly</li>
-                <li>Up to 60 day Expiration Notice</li>
-                <li>Notifcation types including:</li>
-                <ul class="sublist">
-                  <li>Expired</li>
-                  <li>Expiring</li>
-                  <li>Invalid</li>
-                  <li class="hiddenLi"></li>
-                </ul>
-              </ul>
-              <button @click.prevent="submitBasic()" type="button" class="w-100 btn btn-lg btn-outline-primary">Subscribe
-                now on Stripe</button>
-            </div>
-          </div>
+          <ProductList />
         </div>
-        <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
-            <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">Growth</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$12<small class="text-muted fw-light">/mo</small>
-              </h1>
-              <ul class="featureList list-unstyled mt-3 mb-4">
-                <li>25 domains</li>
-                <li>3 months scan history</li>
-                <li>Frequency up to daily</li>
-                <li>Up to 120 day Expiration Notice</li>
-                <li>Notifcation types including:</li>
-                <ul class="sublist">
-                  <li>Expired</li>
-                  <li>Expiring</li>
-                  <li>Invalid</li>
-                  <li>Weak Cipher</li>
-                </ul>
-              </ul>
-              <button @click.prevent="submitGrowth()" type="button" class="w-100 btn btn-lg btn-outline-primary">Subscribe
-                now on Stripe</button>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card mb-4 rounded-3 shadow-sm">
-            <div class="card-header py-3">
-              <h4 class="my-0 fw-normal">Ultimate</h4>
-            </div>
-            <div class="card-body">
-              <h1 class="card-title pricing-card-title">$30<small class="text-muted fw-light">/mo</small>
-              </h1>
-              <ul class="featureList list-unstyled mt-3 mb-4">
-                <li>100 domains</li>
-                <li>6 months scan history</li>
-                <li>Frequency up to hourly</li>
-                <li>Up to 365 day Expiration Notice</li>
-                <li>Notifcation types including:</li>
-                <ul class="sublist">
-                  <li>Expired</li>
-                  <li>Expiring</li>
-                  <li>Invalid</li>
-                  <li>Weak Cipher</li>
-                </ul>
-              </ul>
-              <button @click.prevent="submitUltimate()" type="button"
-                class="w-100 btn btn-lg btn-outline-primary">Subscribe now on Stripe</button>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <h2 class="display-6 text-center mb-4">Compare plans</h2>
@@ -204,8 +127,13 @@
 </template>
 
 <script>
+import ProductList from "@/components/ProductList";
+
 export default {
   name: 'Subscribe',
+  components: {
+    ProductList,
+  },
   methods: {
     submitBasic() {
       //   this.$store.dispatch('subscribe', { price_id: 'price_1L60qbH5nGHVgNhzf762dtbt' }).then((res) => window.location.href = res.url)

@@ -5,8 +5,10 @@ import axios from 'axios'
 export default createStore({
     state: {
         user: {
-            'id': localStorage.getItem('id'),
-            'token': localStorage.getItem('token'),
+            'access': localStorage.getItem('access'),
+            'user': {
+                'pk': localStorage.getItem('pk'),
+            },
         },
         account: {
             title: localStorage.getItem('activated'), // activated
@@ -55,17 +57,23 @@ export default createStore({
             'client_secret': '',
             'publishable_key': '',
         },
+        stripeCustomer: {
+            'user': '',
+            'customer_id': '',
+            'subscription_id': '',
+        },
+        products: {},
     },
     mutations: {
         SET_USER(state, user) {
             state.user = user
-            localStorage.setItem('id', user.id)
-            localStorage.setItem('token', user.token)
+            localStorage.setItem('pk', user.user.pk)
+            localStorage.setItem('access', user.access)
         },
         DELETE_USER(state) {
-            state.user = { token: '' }
-            localStorage.setItem('id', '')
-            localStorage.setItem('token', '')
+            state.user = { access: '' }
+            localStorage.setItem('pk', '')
+            localStorage.setItem('access', '')
         },
         SET_ACCOUNT(state, account) {
             state.account = account
@@ -112,26 +120,24 @@ export default createStore({
             state.theme = data
         },
         SET_SNIPPET(state, data) {
-            state.snippet = data.results[ Math.floor( Math.random() * data.count ) ]
+            state.snippet = data.results[Math.floor(Math.random() * data.count)]
         },
         SET_STRIPE(state, data) {
             state.stripe = data
         },
+        SET_STRIPE_CUSTOMER(state, data) {
+            state.stripeCustomer = data
+        },
+        SET_PRODUCTS(state, data) {
+            state.products = data
+        },
     },
     actions: {
-        validate({ state, commit }) {
+        validate({ state, commit }, payload) {
             console.log('validate')
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios({
-                        url: `/wp-json/jwt-auth/v1/token/validate`,
-                        method: 'post',
-                        headers: {
-                            'Authorization': `Bearer ${state.user.token}`
-                        }
-                    })
-                    commit('SET_USER', data)
-                    this.dispatch('getAccount')
+                    const { data } = await axios.post(`/dj-rest-auth/token/verify/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -192,13 +198,14 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/wp-json/jwt-auth/v1/token`, payload)
+                    const { data } = await axios.post(`/dj-rest-auth/login/`, payload)
                     commit('SET_USER', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
                 }
-                dispatch('getAccount')
+                // dispatch('getAccount')
+                // dispatch('getStripeCustomer')
             })
         },
         logout({ commit }) {
@@ -213,7 +220,7 @@ export default createStore({
                     const { data, status } = await axios.get(
                         `/wp-json/backend/v1/author/${state.user.id}/account`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
@@ -233,7 +240,7 @@ export default createStore({
                     const { data, status } = await axios.get(
                         `/wp-json/backend/v1/author/${state.user.id}/domain?page=${payload.page}`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
@@ -253,7 +260,7 @@ export default createStore({
                     const { data } = await axios.get(
                         `/wp-json/backend/v1/author/${state.user.id}/domain/${payload.domainId}`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
@@ -273,7 +280,7 @@ export default createStore({
                     const { data } = await axios.get(
                         `/wp-json/backend/v1/author/${state.user.id}/domain/${payload.domainId}`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
@@ -292,7 +299,7 @@ export default createStore({
                     const { data } = await axios.post(
                         `/wp-json/backend/v1/author/${state.user.id}/domain`, payload, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json',
                         }
                     }
@@ -312,7 +319,7 @@ export default createStore({
                     const { data } = await axios.delete(
                         `/wp-json/backend/v1/author/${state.user.id}/domain/${payload}`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json',
                         }
                     }
@@ -332,7 +339,7 @@ export default createStore({
                     const { data } = await axios.get(
                         `/wp-json/backend/v1/author/${state.user.id}/domain/${payload.domainId}/scan?page=${payload.page}`, {
                         headers: {
-                            'Authorization': `Bearer ${state.user.token}`,
+                            'Authorization': `Bearer ${state.user.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
@@ -445,7 +452,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/snippets`, {
+                        `/snippets/`, {
                         headers: {
                             'Content-Type': 'application/json'
                         }
@@ -458,18 +465,57 @@ export default createStore({
                 }
             })
         },
-        getPaymentIntent({ commit, state }) {
+        getPaymentIntent({ commit, state }, payload) {
             console.log('get payment intent')
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.get(
-                        `/subscriptions/payment`, {
+                    const { data } = await axios.post(
+                        `/subscriptions/payment/`, payload, {
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.user.access}`,
                         }
                     }
                     )
                     commit('SET_STRIPE', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getStripeCustomer({ commit, state }) {
+            console.log('get stripe customer')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/subscriptions/stripe/${this.state.user.id}/`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.user.access}`,
+                        }
+                    }
+                    )
+                    commit('SET_STRIPE_CUSTOMER', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getProducts({ commit, state }) {
+            console.log('get products')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/subscriptions/products/`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.user.access}`,
+                        }
+                    }
+                    )
+                    commit('SET_PRODUCTS', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

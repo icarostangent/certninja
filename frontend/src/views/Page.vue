@@ -5,21 +5,16 @@
       <h1>{{ this.page.title.rendered }}</h1>
     </div>
     <div v-html="page.content.rendered"></div>
-    <div class="disqus">
-      <Disqus shortname='icaroslabs-com' />
-    </div>
   </div>
 </template>
 
 <script>
-import { Disqus } from 'vue-disqus'
 import RandomSnippet from '@/components/RandomSnippet.vue'
 
 export default {
   name: "Page",
   components: {
-    Disqus,
-      RandomSnippet,
+    RandomSnippet,
   },
   computed: {
     page() {
