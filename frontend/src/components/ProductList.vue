@@ -1,20 +1,23 @@
 <template>
   <div class="products">
 
-    <div class="row">
-      <div v-for="product in products.results" class="">
-        <div class="card mb-4 rounded-3 shadow-sm">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">{{  product.name  }}</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">${{  product.amount }}<small class="text-muted fw-light">/mo</small></h1>
-            <div v-html="product.description"></div>
-            <button @click.prevent="submit(product.name)" type="button" class="w-100 btn btn-lg btn-outline-primary">Subscribe
-              now on Stripe</button>
+    <div class="card-group">
+        <div v-for="product in products.items">
+          <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card-header py-3">
+              <h4 class="my-0 fw-normal">{{ product.name }}</h4>
+            </div>
+            <div class="card-body">
+              <h1 class="card-title pricing-card-title">${{ product.amount }}<small
+                  class="text-muted fw-light">/mo</small></h1>
+              <div v-html="product.description"></div>
+              <button @click.prevent="submit(product.name)" type="button"
+                class="w-100 btn btn-lg btn-outline-primary">Subscribe
+                now on Stripe</button>
+            </div>
+
           </div>
         </div>
-      </div>
     </div>
 
     <Pagination @page-changed="pageChanged" :totalPages="products.totalPages" :currentPage="currentPage" />
@@ -42,7 +45,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getProducts");
+    this.$store.dispatch("getProducts", { page: this.currentPage });
   },
   beforeUnmount() {
   },

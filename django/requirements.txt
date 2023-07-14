@@ -11,6 +11,7 @@ defusedxml==0.7.1
 dj-rest-auth==4.0.1
 dj-stripe==2.7.3
 Django==3.2.20
+django-allauth==0.54.0
 django-extensions==3.2.3
 django-extra-views==0.14.0
 django-haystack==3.2.1
@@ -21,6 +22,7 @@ django-tables2==2.3.4
 django-treebeard==4.7
 django-widget-tweaks==1.4.12
 djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
 executing==1.2.0
 factory-boy==3.2.1
 Faker==18.13.0

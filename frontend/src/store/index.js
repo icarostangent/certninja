@@ -503,12 +503,12 @@ export default createStore({
                 }
             })
         },
-        getProducts({ commit, state }) {
+        getProducts({ commit, state }, payload) {
             console.log('get products')
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/subscriptions/products/`, {
+                        `/subscriptions/products/`, payload, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.user.access}`,

@@ -19,10 +19,10 @@ def create_payment_intent(request):
     stripe_customer = StripeCustomer.objects.get(user_id=request.user_id)
     try:
         payment_intent = stripe.PaymentIntent.create(
-          api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),
-          amount=2000,
-          currency="usd",
-          payment_method_types=["card"],
+            api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),
+            amount=2000,
+            currency="usd",
+            payment_method_types=["card"],
         )
     except Exception as ex:
         print('exception:')
@@ -30,9 +30,9 @@ def create_payment_intent(request):
         return HttpResponse(status=400)
 
     return JsonResponse({
-            'client_secret': payment_intent.client_secret,
-            'publishable_key': settings.STRIPE_PUBLISHABLE_KEY
-        })
+        'client_secret': payment_intent.client_secret,
+        'publishable_key': settings.STRIPE_PUBLISHABLE_KEY
+    })
 
 
 @csrf_exempt
