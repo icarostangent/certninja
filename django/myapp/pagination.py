@@ -16,9 +16,9 @@ class CustomPagination(PageNumberPagination):
             current = int(prev.split('=')[1]) + 1
         else:
             try:
-                # prev link missing query string
                 current = int( ( int(prev.split('=')[1]) + int(next.split('=')[1]) ) / 2 )
             except IndexError:
+                # prev link missing query string
                 current = int(next.split('=')[1]) - 1
         return Response({
             'currentPage': current,

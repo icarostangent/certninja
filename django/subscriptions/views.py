@@ -4,22 +4,33 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import permissions
+from rest_framework.decorators import api_view
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from subscriptions.models import StripeCustomer, StripeProduct
-from subscriptions.serializers import StripeProductSerializer
+from subscriptions.serializers import StripeCustomerSerializer, StripeProductSerializer
+
+
+
+class StripeCustomerViewSet(ReadOnlyModelViewSet):
+    queryset = StripeCustomer.objects.all()
+    serializer_class = StripeCustomerSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class StripeProductViewSet(ReadOnlyModelViewSet):
     queryset = StripeProduct.objects.all()
     serializer_class = StripeProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
+@api_view(['POST'])
 def create_payment_intent(request):
-    # user = User.objects.get(id=request.user_id)
-    stripe_customer = StripeCustomer.objects.get(user_id=request.user_id)
+    stripe_customer = StripeCustomer.objects.get(user_id=request.POST.get('pk'))
     try:
         payment_intent = stripe.PaymentIntent.create(
             api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),
+            customer=stripe_customer.customer_id,
             amount=2000,
             currency="usd",
             payment_method_types=["card"],

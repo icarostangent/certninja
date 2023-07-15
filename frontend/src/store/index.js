@@ -489,7 +489,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/subscriptions/stripe/${this.state.user.id}/`, {
+                        `/subscriptions/customer/${this.state.user.id}/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.user.access}`,
