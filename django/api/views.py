@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, renderers, viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, authentication_classes
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -80,8 +80,9 @@ class StripeProductViewSet(ReadOnlyModelViewSet):
 
 
 @api_view(['POST'])
+# @authentication_classes([permissions.IsAuthenticated])
 def create_payment_intent(request):
-    customer = StripeCustomer.objects.get(user_id=request.POST.get('pk'))
+    customer = StripeCustomer.objects.get(user_id=request.data.get('pk'))
     try:
         payment_intent = stripe.PaymentIntent.create(
             api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),
