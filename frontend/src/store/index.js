@@ -67,8 +67,8 @@ export default createStore({
     mutations: {
         SET_AUTH(state, data) {
             state.auth = data
-            localStorage.setItem('pk', auth.user.pk)
-            localStorage.setItem('access', user.access)
+            localStorage.setItem('pk', data.user.pk)
+            localStorage.setItem('access', data.access)
         },
         SET_USER(state, data) {
             state.auth.user = data
@@ -140,7 +140,7 @@ export default createStore({
             console.log('validate')
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/dj-rest-auth/token/verify/`, payload)
+                    const { data } = await axios.post(`/api/dj-rest-auth/token/verify/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -201,7 +201,9 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/dj-rest-auth/login/`, payload)
+                    const { data } = await axios.post(`/api/dj-rest-auth/login/`, payload)
+                    console.log('login response:')
+                    console.log(data)
                     commit('SET_AUTH', data)
                     resolve(data)
                 } catch (e) {
@@ -214,8 +216,8 @@ export default createStore({
         logout({ commit }) {
             console.log('logout')
             commit('DELETE_AUTH')
-            commit('DELETE_ACCOUNT')
-            commit('DELETE_STRIPE_CUSTOMER')
+            // commit('DELETE_ACCOUNT')
+            // commit('DELETE_STRIPE_CUSTOMER')
         },
         getAccount({ commit, state }) {
             console.log('get account')
@@ -456,7 +458,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/snippets/`, {
+                        `/api/snippets/`, {
                         headers: {
                             'Content-Type': 'application/json'
                         }
@@ -474,7 +476,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(
-                        `/subscriptions/payment/`, payload, {
+                        `/api/payment/`, payload, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.auth.access}`,
@@ -493,7 +495,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/subscriptions/customer/${this.state.auth.id}/`, {
+                        `/api/customer/${this.state.auth.id}/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.auth.access}`,
@@ -507,12 +509,12 @@ export default createStore({
                 }
             })
         },
-        getProducts({ commit, state }, payload) {
+        getProducts({ commit, state }) {
             console.log('get products')
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/subscriptions/products/`, payload, {
+                        `/api/products/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.auth.access}`,
@@ -531,7 +533,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/dj-rest-auth/user/`, {
+                        `/api/dj-rest-auth/user/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.auth.access}`,
