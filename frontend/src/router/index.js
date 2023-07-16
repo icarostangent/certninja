@@ -1,22 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store'
-import Home from '../views/Home.vue'
 
 const routes = [
     {
         path: '/',
         name: 'home',
-        component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue')
+        component: () => import(/* webpackChunkName: "Home" */ '../views/Home.vue'),
     },
     {
         path: '/blog',
         name: 'blog',
-        component: () => import(/* webpackChunkName: "Blog" */ '../views/Blog.vue')
+        component: () => import(/* webpackChunkName: "Blog" */ '../views/Blog.vue'),
     },
     {
         path: '/about',
         name: 'about',
-        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
     },
     {
         path: '/domain/:id',
@@ -69,22 +68,22 @@ const routes = [
     {
         path: '/page/:slug',
         name: 'page',
-        component: () => import(/* webpackChunkName: "page" */ '../views/Page.vue')
+        component: () => import(/* webpackChunkName: "page" */ '../views/Page.vue'),
     },
     {
         path: '/post/:id',
         name: 'post',
-        component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue')
+        component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue'),
     },
     {
         path: '/subscribe',
         name: 'subscribe',
-        component: () => import(/* webpackChunkName: "subscribe" */ '../views/Subscribe.vue')
+        component: () => import(/* webpackChunkName: "subscribe" */ '../views/Subscribe.vue'),
     },
     {
         path: '/checkout/:plan',
         name: 'checkout',
-        component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue')
+        component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue'),
     },
     {
         path: '/success',
@@ -107,21 +106,22 @@ router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // this route requires auth, check if user is logged in
         // if not, redirect to login page.
-        if (!store.state.user.access) {
+        if (!store.state.auth.access) {
             next({
                 path: '/login',
             })
         } else {
-            // we have a state.user object but
+            // we have a state.auth object but
             // we need to check if the token is still valid
             try {
-                await store.dispatch('validate', {'token': store.state.user.access})
+                await store.dispatch('validate', {'token': store.state.auth.access})
                 // user is logged in with a valid token
                 next()
             } catch (e) {
                 // the token is invalid so we will have the user login again
                 // clear the token and user info
-                store.commit('DELETE_USER')
+                store.dispatch('logout')
+                // store.commit('DELETE_AUTH')
                 next({
                     path: '/login',
                 })
@@ -137,14 +137,10 @@ router.beforeEach(async (to, from, next) => {
 router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresActivated)) {
         if (store.state.account.post_title === 'false') {
-            next({
-                path: '/account',
-            })
+            next({path: '/account'})
         }
-        next()
-    } else {
-        next()
     }
+    next()
 })
 
 export default router

@@ -52,47 +52,16 @@ server {
     
     add_header Content-Security-Policy-Report-Only: "default-src 'self' js.stripe.com; script-src 'self' js.stripe.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' js.stripe.com; img-src 'self' secure.gravatar.com data:;";
 
-    # drf
-    location /dj-rest-auth/ {
-        proxy_pass http://django/dj-rest-auth/;
-    }
-
-    # drf
-    location /api-auth {
-        proxy_pass http://django/api-auth;
-    }
-
-    # drf
-    location /accounts {
-        proxy_pass http://django/accounts;
-    }
-
     # django app
     location /api {
         proxy_pass http://django/api;
     }
 
-    # django app
-    location /snippets {
-        proxy_pass http://django/snippets;
-    }
-
-    # django app
-    location /subscriptions {
-        proxy_pass http://django/subscriptions;
-    }
-    
-    
     # django backend
     location /admin {
         proxy_pass http://django/admin;
     }
-
-    # django stripe api
-    location /stripe {
-        proxy_pass http://django/stripe;
-    }
-
+    
     # django static files
     location /static/ {
         alias /static/;

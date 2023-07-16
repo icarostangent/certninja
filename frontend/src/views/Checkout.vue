@@ -103,7 +103,7 @@ export default {
         document.head.appendChild(externalScript)
 
         externalScript.onload = () => {
-            this.$store.dispatch('getPaymentIntent', { plan: this.$route.params.plan, 'pk': this.$store.state.user.user.pk }).then(() => {
+            this.$store.dispatch('getPaymentIntent', { plan: this.$route.params.plan, 'pk': this.$store.state.auth.user.pk }).then(() => {
                 this.stripe = Stripe(this.$store.state.stripe.publishable_key)
                 this.elements = this.stripe.elements({
                     clientSecret: this.$store.state.stripe.client_secret,
