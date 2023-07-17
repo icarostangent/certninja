@@ -25,12 +25,12 @@ class Account(models.Model):
 class Domain(models.Model):
     user = models.ForeignKey(User, related_name='domains', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    ip_address = models.GenericIPAddressField()
-    port = models.IntegerField()
-    last_scan = models.TextField()
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    port = models.IntegerField(blank=True, null=True)
+    last_scan = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 class Scan(models.Model):
@@ -40,7 +40,7 @@ class Scan(models.Model):
     last_scan = models.TextField()
     
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 LEXERS = [item for item in get_all_lexers() if item[1]]

@@ -118,19 +118,20 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
 
+    print(event)
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
 
-        client_reference_id = session.get('client_reference_id')
-        stripe_customer_id = session.get('customer')
-        stripe_subscription_id = session.get('subscription')
+        # client_reference_id = session.get('client_reference_id')
+        # stripe_customer_id = session.get('customer')
+        # stripe_subscription_id = session.get('subscription')
 
-        user = User.objects.get(id=client_reference_id)
-        StripeCustomer.objects.create(
-            user=user,
-            stripeCustomerId=stripe_customer_id,
-            stripeSubscriptionId=stripe_subscription_id,
-        )
-        print(user.username + ' just subscribed.')
+        # user = User.objects.get(id=client_reference_id)
+        # StripeCustomer.objects.create(
+        #     user=user,
+        #     stripeCustomerId=stripe_customer_id,
+        #     stripeSubscriptionId=stripe_subscription_id,
+        # )
+        # print(user.username + ' just subscribed.')
 
     return HttpResponse(status=200)

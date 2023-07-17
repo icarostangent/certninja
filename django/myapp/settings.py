@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
 
     'api',
-    # 'snippets',
-    # 'subscriptions',
 ]
 
 MIDDLEWARE = [
