@@ -8,37 +8,37 @@
     <i class="fas fa-hashtag"></i>
     <i class="fas fa-trash"></i> -->
 
-    <ul v-for="domain in domains.items" :key="domain.ID" class="list-group">
-      <li class="list-group-item pointer" :class="certificateStatus(domain.post_content)"
-        @click.prevent="onClickShowDetail(domain.ID)">
+    <ul v-for="domain in domains.items" :key="domain.pk" class="list-group">
+      <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
+        @click.prevent="onClickShowDetail(domain.pk)">
         <div class="d-flex justify-content-between align-items-start">
           <div class="ms-2 me-auto">
             <div>
-              <div class="fw-bold">{{ domain.post_title }}</div>
-              {{ domain.post_excerpt }}
+              <div class="fw-bold">{{ domain.name }}</div>
+              <div v-if="domain.ip_address || domain.port">{{ domain.ip_address }}:{{ domain.port }}</div>
             </div>
-            <div v-if="!domain.post_content">no scan found</div>
+            <div v-if="!domain.last_scan">no scan found</div>
             <div v-else>
-              <div v-if="certificateStatus(domain.post_content) === 'error'">
-                Error: {{ JSON.parse(domain.post_content)["error"] }}
+              <div v-if="certificateStatus(domain.last_scan) === 'error'">
+                Error: {{ JSON.parse(domain.last_scan)["error"] }}
               </div>
               <div v-else>
                 Not After:
                 {{
                     new Date(
-                      JSON.parse(domain.post_content)['certificate']["notAfter"]
+                      JSON.parse(domain.last_scan)['certificate']['notAfter']
                     ).toUTCString()
                 }}<br />
               </div>
             </div>
           </div>
-          <div v-if="certificateStatus(domain.post_content) === 'success'">
+          <div v-if="certificateStatus(domain.last_scan) === 'success'">
             <i class="fa fa-check fa-2x fa-fw"></i>
           </div>
-          <div v-if="certificateStatus(domain.post_content) === 'pending'">
+          <div v-if="certificateStatus(domain.last_scan) === 'pending'">
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
           </div>
-          <div v-if="certificateStatus(domain.post_content) === 'error'">
+          <div v-if="certificateStatus(domain.last_scan) === 'error'">
             <i class="fa fa-exclamation fa-2x fa-fw"></i>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default {
     this.$store.dispatch("getDomains", { page: this.currentPage }).then(() => {
       this.interval = setInterval(() => {
         this.domains.items.forEach((item) => {
-          if (!item.post_content) {
+          if (item.last_scan) {
             this.$store
               .dispatch("pollDomain", { domainId: item.ID })
               .then((domain) => {

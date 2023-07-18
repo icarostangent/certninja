@@ -5,13 +5,13 @@ from django.contrib.auth.models import User
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, renderers, viewsets
-from rest_framework.decorators import action, api_view, authentication_classes
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from api import models
+from api import serializers
 from api.permissions import IsOwner, IsOwnerOrReadOnly
-from api.serializers import UserSerializer, RegisterSerializer, LoginSerializer, SnippetSerializer, UserSerializer, StripeCustomerSerializer, StripeProductSerializer
-from api.models import Snippet, StripeCustomer, StripeProduct
 
 
 class UserViewSet(
@@ -26,24 +26,8 @@ class UserViewSet(
     API endpoint that allows users to be viewed or edited.
     """
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = serializers.UserSerializer
     permission_classes = [IsOwner]
-
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list', request=request, format=format),
-        'snippets': reverse('snippet-list', request=request, format=format)
-    })
-
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    This viewset automatically provides `list` and `retrieve` actions.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
 
 class SnippetViewSet(viewsets.ModelViewSet):
@@ -53,10 +37,9 @@ class SnippetViewSet(viewsets.ModelViewSet):
 
     Additionally we also provide an extra `highlight` action.
     """
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    queryset = models.Snippet.objects.all()
+    serializer_class = serializers.SnippetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
@@ -68,21 +51,38 @@ class SnippetViewSet(viewsets.ModelViewSet):
 
 
 class StripeCustomerViewSet(ReadOnlyModelViewSet):
-    queryset = StripeCustomer.objects.all()
-    serializer_class = StripeCustomerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = models.StripeCustomer.objects.all()
+    serializer_class = serializers.StripeCustomerSerializer
+    permission_classes = [IsOwner]
+    lookup_field = 'user'
 
 
 class StripeProductViewSet(ReadOnlyModelViewSet):
-    queryset = StripeProduct.objects.all()
-    serializer_class = StripeProductSerializer
+    queryset = models.StripeProduct.objects.all()
+    serializer_class = serializers.StripeProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
+class DomainViewSet(ModelViewSet):
+    queryset = models.Domain.objects.all()
+    serializer_class = serializers.DomainSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return models.Domain.objects.filter(user=user)
+
+
+class ScanViewSet(ReadOnlyModelViewSet):
+    queryset = models.Scan.objects.all()
+    serializer_class = serializers.ScanSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'domain'
+
+
 @api_view(['POST'])
-# @authentication_classes([permissions.IsAuthenticated])
 def create_payment_intent(request):
-    customer = StripeCustomer.objects.get(user_id=request.data.get('pk'))
+    customer = models.StripeCustomer.objects.get(user_id=request.data.get('pk'))
     try:
         payment_intent = stripe.PaymentIntent.create(
             api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),

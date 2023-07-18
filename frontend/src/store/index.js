@@ -123,7 +123,7 @@ export default createStore({
             state.theme = data
         },
         SET_SNIPPET(state, data) {
-            state.snippet = data.results[Math.floor(Math.random() * data.count)]
+            state.snippet = data.items[Math.floor(Math.random() * data.count)]
         },
         SET_STRIPE(state, data) {
             state.stripe = data
@@ -244,7 +244,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data, status } = await axios.get(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain?page=${payload.page}`, {
+                        `/api/domains/?page=${payload.page}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'

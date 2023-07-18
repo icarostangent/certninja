@@ -28,6 +28,7 @@ class Domain(models.Model):
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     port = models.IntegerField(blank=True, null=True)
     last_scan = models.TextField(blank=True, null=True)
+    scan_status = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -35,7 +36,7 @@ class Domain(models.Model):
 
 class Scan(models.Model):
     user = models.ForeignKey(User, related_name='scans', on_delete=models.CASCADE)
-    domain = models.ForeignKey(Domain, related_name='domains', on_delete=models.CASCADE)
+    domain = models.ForeignKey(Domain, related_name='scans', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     last_scan = models.TextField()
     
@@ -71,7 +72,6 @@ class Snippet(models.Model):
         formatter = HtmlFormatter(style=self.style, linenos=linenos, full=True, **options)
         self.highlighted = highlight(self.code, lexer, formatter)
         super().save(*args, **kwargs)
-
 
 
 class StripeCustomer(models.Model):

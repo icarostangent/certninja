@@ -10,12 +10,12 @@ import db
 now = datetime.now()
 print(f'[*] scheduler executing {now}')
 for domain in db.get_domains():
-    if domain['post_content_filtered'] == 'pending':
+    if domain['scan_status'] == 'pending':
         print(f'[*] pending job... {domain["id"]}')
     else:
-        role = db.get_user_role(domain['post_author'])
+        role = db.get_user_role(domain['user'])
         if 'starter' in role:
-            if not domain['post_content'] or domain['post_modified'] <= now - relativedelta(months=1):
+            if not domain['last_scan'] or domain['post_modified'] <= now - relativedelta(months=1):
                 # print(f'modified: {domain["post_modified"]}')
                 job = {
                     'domain': domain['post_title'],
@@ -27,8 +27,7 @@ for domain in db.get_domains():
                 print(job)
 
                 try:
-                    r = redis.StrictRedis(host='redis', port=6379,
-                                        db=0, decode_responses=True)
+                    r = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
                 except Exception as ex:
                     print(ex)
                     exit(1)

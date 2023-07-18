@@ -8,17 +8,21 @@ class SnippetAdmin(admin.ModelAdmin):
         'highlighted',
     ]
 
+
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = []
+
 
 @admin.register(Domain)
 class DomainAdmin(admin.ModelAdmin):
     readonly_fields = []
 
+
 @admin.register(Scan)
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = []
+
 
 @admin.register(StripeCustomer)
 class StripeCustomerAdmin(admin.ModelAdmin):
