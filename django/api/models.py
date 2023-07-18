@@ -12,6 +12,8 @@ from pygments.formatters.html import HtmlFormatter
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     activated = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=100, blank=True)
 
@@ -25,6 +27,8 @@ class Account(models.Model):
 class Domain(models.Model):
     user = models.ForeignKey(User, related_name='domains', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     port = models.IntegerField(blank=True, null=True)
     last_scan = models.TextField(blank=True, null=True)
@@ -38,6 +42,8 @@ class Scan(models.Model):
     user = models.ForeignKey(User, related_name='scans', on_delete=models.CASCADE)
     domain = models.ForeignKey(Domain, related_name='scans', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     last_scan = models.TextField()
     
     def __str__(self):
@@ -52,6 +58,7 @@ class Snippet(models.Model):
     owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
     highlighted = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
     code = models.TextField()
     linenos = models.BooleanField(default=False)
@@ -76,6 +83,8 @@ class Snippet(models.Model):
 
 class StripeCustomer(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     customer_id = models.CharField(max_length=255)
     subscription_id = models.CharField(max_length=255)
 
@@ -93,10 +102,11 @@ def create_stripe_customer(sender, instance, created, **kwargs):
 
 class StripeProduct(models.Model):
     name = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)
     product_id = models.CharField(max_length=255)
     amount = models.IntegerField(default=0)
     description = models.TextField()
-    created = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
