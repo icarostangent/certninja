@@ -17,13 +17,9 @@ def get_domains():
         exit(1)
 
     cursor = cnx.cursor()
-
     stmt = "SELECT * FROM wp_posts WHERE post_type = 'domain'"
-
     cursor.execute(stmt)
-
     domains = [parse_cpt(domain) for domain in cursor.fetchall()]
-
     cursor.close()
     cnx.close()
 
@@ -38,15 +34,9 @@ def get_user_role(id):
         exit(1)
 
     cursor = cnx.cursor()
-
     stmt = "select * from wp_usermeta where meta_key = 'wp_capabilities'"
-
     cursor.execute(stmt)
-
     users = [user for user in cursor.fetchall()]
-    # print(users)
-
-    # usermeta = list(filter(lambda x : parse_usermeta(x)['user_id'] == id and len(x) != 0, users))
     usermeta = [user for user in users if user[1] == id].pop()
 
     cursor.close()
@@ -63,12 +53,9 @@ def set_scan_status(status, id):
         exit(1)
 
     cursor = cnx.cursor()
-
     stmt = f"UPDATE wp_posts SET post_content_filtered = '{status}' WHERE id = '{id}'"
-
     cursor.execute(stmt)
     cnx.commit()
-
     cursor.close()
     cnx.close()
 

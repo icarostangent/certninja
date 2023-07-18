@@ -1,5 +1,6 @@
 import os
 import stripe
+import uuid
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save, post_delete
@@ -41,7 +42,7 @@ class Domain(models.Model):
 class Scan(models.Model):
     user = models.ForeignKey(User, related_name='scans', on_delete=models.CASCADE)
     domain = models.ForeignKey(Domain, related_name='scans', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now_add=True)
     last_scan = models.TextField()

@@ -1,34 +1,34 @@
 from django.contrib import admin
-from api.models import Account, Domain, Scan, Snippet, StripeCustomer, StripeProduct
+from api import models
 
 
-@admin.register(Snippet)
+@admin.register(models.Snippet)
 class SnippetAdmin(admin.ModelAdmin):
     readonly_fields = [
         'highlighted',
     ]
 
 
-@admin.register(Account)
+@admin.register(models.Account)
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 
-@admin.register(Domain)
+@admin.register(models.Domain)
 class DomainAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 
-@admin.register(Scan)
+@admin.register(models.Scan)
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 
-@admin.register(StripeCustomer)
+@admin.register(models.StripeCustomer)
 class StripeCustomerAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 
-@admin.register(StripeProduct)
+@admin.register(models.StripeProduct)
 class StripeProductAdmin(admin.ModelAdmin):
     readonly_fields = []
