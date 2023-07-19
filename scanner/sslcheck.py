@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
 import json
-import re
-import redis
 import sys
 from urllib.request import ssl, socket
 
@@ -15,14 +13,14 @@ def connect(domain, port=443, ip=''):
     """
     print(f'[+] Initiating scan {domain} {ip}:{port}')
 
-    if ip == '':
+    if not ip:
         try:
             ip = socket.gethostbyname(domain)
         except socket.gaierror as ex:
             print({ 'error': 'dns lookup failed', 'ex': ex  })
             return json.dumps({ 'error': 'dns lookup failed', 'ex': str(ex)  })
 
-    try:    
+    try:
         with socket.create_connection((ip, port)) as sock:
             with ssl.create_default_context().wrap_socket(sock, server_hostname=domain) as ssock:
                 return json.dumps({

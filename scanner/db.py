@@ -10,7 +10,7 @@ host = os.environ.get('DB_HOST')
 database = os.environ.get('DB_DATABASE')
 
 
-def run(scan_object):
+def insert(scan_object):
     try:
         print(f'[*] scanner connecting to db {time.time()}')
         engine = create_engine(

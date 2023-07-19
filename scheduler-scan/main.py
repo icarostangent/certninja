@@ -19,7 +19,7 @@ for domain in db.get_domains():
             'ip': domain['ip_address'],
             'port': domain['port'],
             'domain_id': domain['id'],
-            'author_id': domain['user_id'],
+            'user_id': domain['user_id'],
         }
         if 'starter' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(months=1):
@@ -33,7 +33,7 @@ for domain in db.get_domains():
                     exit(1)
 
                 r.rpush('domains_register', json.dumps(job))
-                db.set_scan_status('pending', domain['id'])
+                # db.set_scan_status('pending', domain['id'])
 
         elif 'basic' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(weeks=1):
