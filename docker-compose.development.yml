@@ -5,10 +5,10 @@ services:
     build:
       context: ./scheduler-scan
     environment:
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_USER: ${DJANGO_USER}
+      DB_PASSWORD: ${DJANGO_PASSWORD}
       DB_HOST: ${DB_HOST}
-      DB_DATABASE: ${MYSQL_DATABASE}
+      DB_DATABASE: ${DJANGO_DATABASE}
     volumes:
       - ./scheduler-scan:/app
     restart: unless-stopped

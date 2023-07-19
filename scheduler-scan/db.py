@@ -17,9 +17,10 @@ def get_domains():
         exit(1)
 
     cursor = cnx.cursor()
-    stmt = "SELECT * FROM wp_posts WHERE post_type = 'domain'"
+    stmt = "SELECT * FROM api_domain"
     cursor.execute(stmt)
-    domains = [parse_cpt(domain) for domain in cursor.fetchall()]
+    domains = [parse_domain(domain) for domain in cursor.fetchall()]
+    # print(domains)
     cursor.close()
     cnx.close()
 
@@ -60,32 +61,17 @@ def set_scan_status(status, id):
     cnx.close()
 
 
-def parse_cpt(cpt_raw):
+def parse_domain(domain_raw):
     return {
-        'id': cpt_raw[0],
-        'post_author': cpt_raw[1],
-        'post_date': cpt_raw[2],
-        'post_date_gmt': cpt_raw[3],
-        'post_content': cpt_raw[4],
-        'post_title': cpt_raw[5],
-        'post_excerpt': cpt_raw[6],
-        'post_status': cpt_raw[7],
-        'comment_status': cpt_raw[8],
-        'ping_status': cpt_raw[9],
-        'post_password': cpt_raw[10],
-        'post_name': cpt_raw[11],
-        'to_ping': cpt_raw[12],
-        'pinged': cpt_raw[13],
-        'post_modified': cpt_raw[14],
-        'post_modified_gmt': cpt_raw[15],
-        'post_content_filtered': cpt_raw[16],
-        'post_parent': cpt_raw[17],
-        'guid': cpt_raw[18],
-        'menu_order': cpt_raw[19],
-        'post_type': cpt_raw[20],
-        'post_mime_type': cpt_raw[21],
-        'comment_count': cpt_raw[22],
-
+        'id': domain_raw[0],
+        'name': domain_raw[1],
+        'ip_address': domain_raw[2],
+        'port': domain_raw[3],
+        'last_scan': domain_raw[4],
+        'user_id': domain_raw[5],
+        'scan_status': domain_raw[6],
+        'created': domain_raw[7],
+        'modified': domain_raw[8],
     }
 
 def parse_usermeta(raw):

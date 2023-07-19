@@ -13,7 +13,7 @@ for domain in db.get_domains():
     if domain['scan_status'] == 'pending':
         print(f'[*] pending job... {domain["id"]}')
     else:
-        role = db.get_user_role(domain['user'])
+        role = db.get_user_role(domain['user_id'])
         job = {
             'domain': domain['domain'],
             'ip': domain['ip_address'],

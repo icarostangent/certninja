@@ -88,6 +88,7 @@ class StripeCustomer(models.Model):
     modified = models.DateTimeField(auto_now_add=True)
     customer_id = models.CharField(max_length=255)
     subscription_id = models.CharField(max_length=255)
+    subscription_type = models.CharField(max_length=255, default='starter', choices=[('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate')])
 
     def __str__(self):
         return f"{self.user.pk}-{self.user.username}"
