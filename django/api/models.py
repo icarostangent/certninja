@@ -42,13 +42,12 @@ class Domain(models.Model):
 class Scan(models.Model):
     user = models.ForeignKey(User, related_name='scans', on_delete=models.CASCADE)
     domain = models.ForeignKey(Domain, related_name='scans', on_delete=models.CASCADE)
-    name = models.UUIDField(default=uuid.uuid4, editable=False)
+    uuid = models.CharField(max_length=255, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now_add=True)
     last_scan = models.TextField()
     
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 LEXERS = [item for item in get_all_lexers() if item[1]]

@@ -32,10 +32,11 @@ if job:
     print(f'[*] Completed job {output}')
 
     db.insert({
-        'author_id': json_obj['author_id'],
+        'user_id': json_obj['user_id'],
         'domain_id': json_obj['domain_id'],
         'domain': json_obj['domain'],
         'ip': json_obj['ip'],
+        'port': json_obj['port'],
         'output': output,
     })
     # print(f'[*] Resetting scan status on domain id {json_obj["domain_id"]}')

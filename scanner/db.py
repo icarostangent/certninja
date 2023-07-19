@@ -1,8 +1,9 @@
 import mysql.connector
 import os
-import time
-from datetime import date, datetime
+import uuid
+from datetime import datetime
 from sqlalchemy import create_engine, text
+from sqlalchemy import insert
 
 user = os.environ.get('DB_USER')
 password = os.environ.get('DB_PASSWORD')
@@ -12,102 +13,67 @@ database = os.environ.get('DB_DATABASE')
 
 def insert(scan_object):
     try:
-        print(f'[*] scanner connecting to db {time.time()}')
+        print(f'[*] connecting to db {datetime.now()}')
         engine = create_engine(
             f"mysql://{user}:{password}@{host}/{database}", echo=True)
     except Exception as ex:
         print(f'[!] {ex}')
         exit(1)
 
-    now = datetime.now()
-    now_utc = now.utcnow()
-    insert_scan_cpt = (
-        """INSERT INTO wp_posts (
-            post_author,
-            post_date,
-            post_date_gmt,
-            post_content,
-            post_title,
-            post_excerpt,
-            post_status,
-            comment_status,
-            ping_status,
-            post_password,
-            post_name,
-            to_ping,
-            pinged,
-            post_modified,
-            post_modified_gmt,
-            post_content_filtered,
-            post_parent,
-            guid,
-            menu_order,
-            post_type,
-            post_mime_type,
-            comment_count
-        )
-        VALUES (
-            :post_author,
-            :post_date,
-            :post_date_gmt,
-            :post_content,
-            :post_title,
-            :post_excerpt,
-            :post_status,
-            :comment_status,
-            :ping_status,
-            :post_password,
-            :post_name,
-            :to_ping,
-            :pinged,
-            :post_modified,
-            :post_modified_gmt,
-            :post_content_filtered,
-            :post_parent,
-            :guid,
-            :menu_order,
-            :post_type,
-            :post_mime_type,
-            :comment_count
-        )"""
-    )
+    # insert_scan = (
+    #     """INSERT INTO api_scan (
+    #         user,
+    #         domain,
+    #         name,
+    #         created,
+    #         last_scan
+    #     )
+    #     VALUES (
+    #         :user,
+    #         :domain,
+    #         :name,
+    #         :created,
+    #         :last_scan
+    #     )"""
+    # )
 
-    data = {
-        'post_author': scan_object['author_id'],  # author
-        'post_date': now,
-        'post_date_gmt': now_utc,
-        'post_content': scan_object['output'],  # content
-        'post_title': scan_object['domain_id'],  # title
-        'post_excerpt': '',  # excerpt
-        'post_status': 'publish',
-        'comment_status': 'closed',
-        'ping_status': 'closed',
-        'post_password': '',
-        # name
-        'post_name': f"{scan_object['domain']}_{scan_object['ip']}_{now}",
-        'to_ping': '',
-        'pinged': '',
-        'post_modified': now,
-        'post_modified_gmt': now_utc,
-        'post_content_filtered': '',  # content filtered
-        'post_parent': 0,
-        'guid': '',
-        'menu_order': 0,
-        'post_type': 'scan',
-        'post_mime_type': '',
-        'comment_count': 0
-    }
+    # data = {
+    #     'user': scan_object['user_id'],
+    #     'domain': scan_object['domain'],
+    #     'name': uuid.uuid4(),
+    #     'created': datetime.now(),
+    #     'last_scan': scan_object['output']
+    # }
 
+    # print(f'[*] creating insert statement {datetime.now()}')
+    # stmt = (
+    #     insert('api_scan').
+    #     values(user_id=scan_object['user_id'], domain_id=scan_object['domain'], last_scan=scan_object['output'])
+    # )
+
+    print(f'[*] executing insert statement {datetime.now()}')
     with engine.connect() as conn:
         conn.execute(
-            text(insert_scan_cpt),
-            data
+            text(f"insert into api_scan SET user_id=:user_id, domain_id=:domain_id, uuid=:uuid, last_scan=:last_scan, created=:created"),
+            {
+                "user_id": scan_object['user_id'], 
+                "domain_id": scan_object['domain_id'], 
+                "uuid": str(uuid.uuid4()), 
+                "last_scan": scan_object['output'], 
+                "created": datetime.now()
+            }
         )
 
+    print(f'[*] executing update statement {datetime.now()}')
     with engine.connect() as conn:
         conn.execute(
-            text(f"UPDATE wp_posts SET post_content=:output, post_content_filtered=:status, post_modified=:now, post_modified_gmt=:now_utc WHERE id=:id"),
-            {"output": scan_object['output'], "status": "complete", "now": now, "now_utc": now_utc, "id": scan_object['domain_id']}
+            text(f"UPDATE api_domain SET last_scan=:last_scan, scan_status=:status, modified=:now WHERE id=:id"),
+            {
+                "last_scan": scan_object['output'], 
+                "status": "complete", 
+                "now": datetime.now(), 
+                "id": scan_object['domain_id']
+            }
         )
 
 def set_scan_status(status, id):
