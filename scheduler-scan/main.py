@@ -13,15 +13,15 @@ for domain in db.get_domains():
     if domain['scan_status'] == 'pending':
         print(f'[*] pending job... {domain["id"]}')
     else:
-        role = db.get_user_role(domain['user_id'])
+        subscription = db.get_user_subscription(domain['user_id'])
         job = {
-            'domain': domain['domain'],
+            'domain': domain['name'],
             'ip': domain['ip_address'],
             'port': domain['port'],
-            'domain_id': domain['pk'],
-            'author_id': domain['user'],
+            'domain_id': domain['id'],
+            'author_id': domain['user_id'],
         }
-        if 'starter' in role:
+        if 'starter' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(months=1):
                 print('[+] found starter job')
                 print(job)
@@ -33,9 +33,9 @@ for domain in db.get_domains():
                     exit(1)
 
                 r.rpush('domains_register', json.dumps(job))
-                db.set_scan_status('pending', domain['pk'])
+                db.set_scan_status('pending', domain['id'])
 
-        elif 'basic' in role:
+        elif 'basic' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(weeks=1):
                 print('[+] found basic job')
                 print(job)
@@ -49,7 +49,7 @@ for domain in db.get_domains():
                 r.rpush('domains_register', json.dumps(job))
                 db.set_scan_status('pending', domain['pk'])
 
-        elif 'growth' in role:
+        elif 'growth' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(days=1):
                 print('[+] found growth job')
                 print(job)
@@ -61,9 +61,9 @@ for domain in db.get_domains():
                     exit(1)
 
                 r.rpush('domains_register', json.dumps(job))
-                db.set_scan_status('pending', domain['pk'])
+                db.set_scan_status('pending', domain['id'])
 
-        elif 'ultimate' in role:
+        elif 'ultimate' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(hours=1):
                 print('[+] found ultimate job')
                 print(job)
@@ -75,7 +75,7 @@ for domain in db.get_domains():
                     exit(1)
 
                 r.rpush('domains_register', json.dumps(job))
-                db.set_scan_status('pending', domain['pk'])
+                db.set_scan_status('pending', domain['id'])
 
         else:
-            print('[!] No valid user role detected')
+            print('[!] No valid user subscription detected')

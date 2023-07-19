@@ -26,7 +26,7 @@ def get_domains():
 
     return domains
 
-def get_user_role(id):
+def get_user_subscription(id):
     try:
         # print('[*] connecting to db')
         cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
@@ -35,17 +35,15 @@ def get_user_role(id):
         exit(1)
 
     cursor = cnx.cursor()
-    stmt = "select * from wp_usermeta where meta_key = 'wp_capabilities'"
+    stmt = f"select * from api_stripecustomer where user_id = {id}"
     cursor.execute(stmt)
-    users = [user for user in cursor.fetchall()]
-    usermeta = [user for user in users if user[1] == id].pop()
-
+    subscription = parse_account([user for user in cursor.fetchall()].pop())['subscription_type']
     cursor.close()
     cnx.close()
 
-    return parse_usermeta(usermeta)['meta_value']
+    return subscription
 
-def set_scan_status(status, id):
+def set_scan_status(status, domain_id):
     try:
         # print('[*] connecting to db')
         cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
@@ -54,7 +52,7 @@ def set_scan_status(status, id):
         exit(1)
 
     cursor = cnx.cursor()
-    stmt = f"UPDATE wp_posts SET post_content_filtered = '{status}' WHERE id = '{id}'"
+    stmt = f"UPDATE api_domain SET scan_status = '{status}' WHERE id = '{domain_id}'"
     cursor.execute(stmt)
     cnx.commit()
     cursor.close()
@@ -74,10 +72,13 @@ def parse_domain(domain_raw):
         'modified': domain_raw[8],
     }
 
-def parse_usermeta(raw):
+def parse_account(raw):
     return {
-        'umeta_id': raw[0],
-        'user_id': raw[1],
-        'meta_key': raw[2],
-        'meta_value': raw[3],
+        'id': raw[0],
+        'customer_id': raw[1],
+        'subscription_id': raw[2],
+        'user_id': raw[3],
+        'created': raw[4],
+        'modified': raw[5],
+        'subscription_type': raw[6],
     }
