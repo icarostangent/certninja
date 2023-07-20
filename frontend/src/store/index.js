@@ -52,7 +52,6 @@ export default createStore({
             currentPage: 1
         },
         theme: '',
-        snippet: [],
         stripe: {
             'client_secret': '',
             'publishable_key': '',
@@ -121,9 +120,6 @@ export default createStore({
         },
         SET_THEME(state, data) {
             state.theme = data
-        },
-        SET_SNIPPET(state, data) {
-            state.snippet = data.items[Math.floor(Math.random() * data.count)]
         },
         SET_STRIPE(state, data) {
             state.stripe = data
@@ -284,7 +280,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain/${payload.domainId}`, {
+                        `/api/domains/${payload.domainId}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
@@ -447,24 +443,6 @@ export default createStore({
                     }
                     )
                     commit('SET_THEME', data)
-                    resolve(data)
-                } catch (e) {
-                    reject(e)
-                }
-            })
-        },
-        getSnippet({ commit, state }) {
-            console.log('get snippets')
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const { data } = await axios.get(
-                        `/api/snippets/`, {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                    )
-                    commit('SET_SNIPPET', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

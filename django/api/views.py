@@ -30,26 +30,6 @@ class UserViewSet(
     permission_classes = [IsOwner]
 
 
-class SnippetViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-
-    Additionally we also provide an extra `highlight` action.
-    """
-    queryset = models.Snippet.objects.all()
-    serializer_class = serializers.SnippetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    def highlight(self, request, *args, **kwargs):
-        snippet = self.get_object()
-        return Response(snippet.highlighted)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-
 class StripeCustomerViewSet(ReadOnlyModelViewSet):
     queryset = models.StripeCustomer.objects.all()
     serializer_class = serializers.StripeCustomerSerializer

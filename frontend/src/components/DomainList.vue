@@ -74,8 +74,10 @@ export default {
       this.interval = setInterval(() => {
         this.domains.items.forEach((item) => {
           if (item.last_scan) {
+            console.log('item id')
+            console.log(item.id)
             this.$store
-              .dispatch("pollDomain", { domainId: item.ID })
+              .dispatch("pollDomain", { domainId: item.id })
               .then((domain) => {
                 if (domain.post_content !== "") {
                   this.domains.items = this.domains.items.map((item) => {

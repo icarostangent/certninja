@@ -2,13 +2,6 @@ from django.contrib import admin
 from api import models
 
 
-@admin.register(models.Snippet)
-class SnippetAdmin(admin.ModelAdmin):
-    readonly_fields = [
-        'highlighted',
-    ]
-
-
 @admin.register(models.Account)
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = []

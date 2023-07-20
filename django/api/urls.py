@@ -22,9 +22,6 @@ scan_list = views.ScanViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
-snippet_list = views.SnippetViewSet.as_view({
-    'get': 'list',
-})
 user_detail = views.UserViewSet.as_view({
     'get': 'retrieve',
 })
@@ -37,7 +34,6 @@ urlpatterns = [
     path('domains/<int:pk>/scans/', scan_list, name='scan-list'), 
     path('payment/', views.create_payment_intent, name='create-payment-intent'), 
     path('products/', product_list, name='product-list'), 
-    path('snippets/', snippet_list, name='snippet-list'),
     path('users/<int:pk>/', user_detail, name='user-detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 
 ]
