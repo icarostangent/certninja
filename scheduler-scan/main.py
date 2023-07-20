@@ -8,7 +8,7 @@ import db
 
 
 now = datetime.now()
-print(f'[*] scheduler executing {now}')
+print(f'[*] executing {now}')
 for domain in db.get_domains():
     if domain['scan_status'] == 'pending':
         print(f'[*] pending job... {domain["id"]}')
@@ -23,7 +23,7 @@ for domain in db.get_domains():
         }
         if 'starter' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(months=1):
-                print('[+] found starter job')
+                print(f'[+] found starter job modified {domain["modified"]}')
                 print(job)
 
                 try:
@@ -47,7 +47,7 @@ for domain in db.get_domains():
                     exit(1)
 
                 r.rpush('domains_register', json.dumps(job))
-                db.set_scan_status('pending', domain['pk'])
+                db.set_scan_status('pending', domain['id'])
 
         elif 'growth' in subscription:
             if not domain['last_scan'] or domain['modified'] <= now - relativedelta(days=1):
