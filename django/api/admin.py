@@ -1,6 +1,9 @@
 from django.contrib import admin
+from rest_framework.authtoken.models import TokenProxy
 from api import models
 
+
+admin.site.unregister(TokenProxy)
 
 @admin.register(models.Account)
 class AccountAdmin(admin.ModelAdmin):
