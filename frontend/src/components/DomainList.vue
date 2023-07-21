@@ -8,9 +8,9 @@
     <i class="fas fa-hashtag"></i>
     <i class="fas fa-trash"></i> -->
 
-    <ul v-for="domain in domains.items" :key="domain.pk" class="list-group">
+    <ul v-for="domain in domains.items" :key="domain.id" class="list-group">
       <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
-        @click.prevent="onClickShowDetail(domain.pk)">
+        @click.prevent="onClickShowDetail(domain.id)">
         <div class="d-flex justify-content-between align-items-start">
           <div class="ms-2 me-auto">
             <div>
@@ -25,9 +25,9 @@
               <div v-else>
                 Not After:
                 {{
-                    new Date(
-                      JSON.parse(domain.last_scan)['certificate']['notAfter']
-                    ).toUTCString()
+                  new Date(
+                    JSON.parse(domain.last_scan)['certificate']['notAfter']
+                  ).toUTCString()
                 }}<br />
               </div>
             </div>
@@ -70,28 +70,26 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getDomains", { page: this.currentPage }).then(() => {
-      this.interval = setInterval(() => {
-        this.domains.items.forEach((item) => {
-          if (item.last_scan) {
-            console.log('item id')
-            console.log(item.id)
-            this.$store
-              .dispatch("pollDomain", { domainId: item.id })
-              .then((domain) => {
-                if (domain.post_content !== "") {
-                  this.domains.items = this.domains.items.map((item) => {
-                    if (item.ID === domain.ID) {
-                      return domain;
-                    }
-                    return item;
-                  });
-                }
-              });
-          }
-        });
-      }, 2000);
-    });
+    this.$store.dispatch("getDomains", { page: this.currentPage })
+      .then(() => {
+        this.interval = setInterval(() => {
+          this.domains.items.forEach((item) => {
+            if (!item.last_scan) {
+              this.$store.dispatch("pollDomain", { domainId: item.id })
+                .then((domain) => {
+                  if (domain.last_scan !== "") {
+                    this.domains.items = this.domains.items.map((item) => {
+                      if (item.id === domain.id) {
+                        return domain;
+                      }
+                      return item;
+                    });
+                  }
+                });
+            }
+          });
+        }, 2000);
+      });
   },
   beforeUnmount() {
     this.interval = null;
@@ -99,7 +97,7 @@ export default {
   methods: {
     // TODO: parse properly
     certificateStatus(scan) {
-      if (scan === "") return "pending";
+      if (!scan) return "pending";
       if (JSON.parse(scan)["error"]) return "error";
       return "success";
     },

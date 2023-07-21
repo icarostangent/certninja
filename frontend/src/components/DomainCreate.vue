@@ -22,8 +22,8 @@ export default {
     data() {
         return {
             domain: '',
-            ip: '',
-            port: '',
+            ip: null,
+            port: null,
         }
     },
     methods: {
@@ -47,38 +47,18 @@ export default {
                 useToast().warning('Invalid port')
                 return
             }
-            if (!this.ip && !this.port) {
-                this.$store.dispatch('createDomain', { 'domain': this.domain })
-                this.$store.state.domains.totalItems += 1
-                this.domain = ''
-                useToast().success('Success')
-                return
-            }
-            if (this.ip && !this.port) {
-                this.$store.dispatch('createDomain', { 'domain': this.domain, 'ip': this.ip })
-                this.$store.state.domains.totalItems += 1
-                this.domain = ''
-                this.ip = ''
-                useToast().success('Success')
-                return
-            }
-            if (!this.ip && this.port) {
-                this.$store.dispatch('createDomain', { 'domain': this.domain, 'ip': `:${this.port}` })
-                this.$store.state.domains.totalItems += 1
-                this.domain = ''
-                this.port = ''
-                useToast().success('Success')
-                return
-            }
-            if (this.ip && this.port) {
-                this.$store.dispatch('createDomain', { 'domain': this.domain, 'ip': `${this.ip}:${this.port}` })
-                this.$store.state.domains.totalItems += 1
-                this.domain = ''
-                this.ip = ''
-                this.port = ''
-                useToast().success('Success')
-                return
-            }
+            this.$store.dispatch('createDomain', { 'name': this.domain, 'ip_address': this.ip, 'port': this.port })
+                .then(() => {
+                    this.$store.state.domains.totalItems += 1
+                    this.domain = ''
+                    this.ip = null
+                    this.port = null
+                    useToast().success('Success')
+                })
+                .catch(() => {
+                    useToast().error('Error creating domain')
+                })
+
         }
     },
 }

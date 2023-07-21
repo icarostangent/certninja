@@ -20,7 +20,6 @@ product_list = views.StripeProductViewSet.as_view({
 })
 scan_list = views.ScanViewSet.as_view({
     'get': 'list',
-    'post': 'create'
 })
 user_detail = views.UserViewSet.as_view({
     'get': 'retrieve',

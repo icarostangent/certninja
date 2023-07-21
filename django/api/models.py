@@ -31,6 +31,9 @@ class Domain(models.Model):
     last_scan = models.TextField(blank=True, null=True)
     scan_status = models.CharField(max_length=100, blank=True, null=True)
 
+    class Meta:
+        ordering = ['-created']
+
     def __str__(self):
         return self.name
 
@@ -41,7 +44,10 @@ class Scan(models.Model):
     uuid = models.CharField(max_length=255, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     last_scan = models.TextField()
-    
+
+    class Meta:
+        ordering = ['-created']
+
     def __str__(self):
         return str(self.uuid)
 

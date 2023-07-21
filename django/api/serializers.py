@@ -27,7 +27,8 @@ class StripeProductSerializer(serializers.ModelSerializer):
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
-        fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan']
+        fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'created', 'modified']
+        read_only_fields = ['user']
 
 
 class ScanSerializer(serializers.ModelSerializer):

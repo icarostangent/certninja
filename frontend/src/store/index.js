@@ -92,7 +92,7 @@ export default createStore({
             }
         },
         REMOVE_DOMAIN(state, id) {
-            const index = state.domains.items.findIndex(item => item.ID === id)
+            const index = state.domains.items.findIndex(item => item.id === id)
             state.domains.items.splice(index, 1)
         },
         SET_DOMAINS(state, data) {
@@ -260,7 +260,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain/${payload.domainId}`, {
+                        `/api/domains/${payload.domainId}/`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
@@ -280,7 +280,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/api/domains/${payload.domainId}`, {
+                        `/api/domains/${payload.domainId}/`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
@@ -299,7 +299,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain`, payload, {
+                        `/api/domains/`, payload, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json',
@@ -319,7 +319,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.delete(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain/${payload}`, {
+                        `/api/domains/${payload}/`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json',
@@ -339,7 +339,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/wp-json/backend/v1/author/${state.auth.id}/domain/${payload.domainId}/scan?page=${payload.page}`, {
+                        `/api/domains/${payload.domainId}/scans/?page=${payload.page}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'

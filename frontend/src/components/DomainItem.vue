@@ -35,10 +35,10 @@
     </div>
     <div class="col-md-4 flex-fill">
       <div class="domain">
-        <h3>{{ domain.post_title }}</h3>
-        <p>{{ domain.post_excerpt }}</p>
-        <p>Created: {{ domain.post_date }}</p>
-        <p>Activity: {{ domain.post_modified }}</p>
+        <h3>{{ domain.name }}</h3>
+        <p>{{ domain.ip_address }} {{  domain.port }}</p>
+        <p>Created: {{ domain.created }}</p>
+        <p>Activity: {{ domain.modified }}</p>
       </div>
     </div>
   </div>
@@ -55,15 +55,15 @@ export default {
   components: {},
   methods: {
     certificateStatus() {
-      console.log(typeof this.domain.post_content, this.domain.post_content);
-      if (!this.domain.post_content) return "pending";
-      if (JSON.parse(this.domain.post_content)["error"]) return "error";
+      console.log(typeof this.domain.last_scan, this.domain.last_scan);
+      if (!this.domain.last_scan) return "pending";
+      if (JSON.parse(this.domain.last_scan)["error"]) return "error";
       return "success";
     },
     deleteItem() {
       if (confirm("are you sure?")) {
         try {
-          this.$store.dispatch("deleteDomain", this.domain.ID);
+          this.$store.dispatch("deleteDomain", this.domain.id);
           useToast().success("domain successfully deleted");
           this.$router.push({ name: "domains" });
         } catch (error) {

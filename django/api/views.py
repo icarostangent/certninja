@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, permissions, mixins, renderers, viewsets
+from rest_framework import generics, permissions, mixins, renderers, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -49,8 +49,10 @@ class DomainViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return models.Domain.objects.filter(user=user)
+        return models.Domain.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ScanViewSet(ReadOnlyModelViewSet):
@@ -58,6 +60,9 @@ class ScanViewSet(ReadOnlyModelViewSet):
     serializer_class = serializers.ScanSerializer
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'domain'
+
+    def get_queryset(self):
+        return models.Scan.objects.filter(domain=self.kwargs['pk'], user=self.request.user)
 
 
 @api_view(['POST'])
