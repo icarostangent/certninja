@@ -50,10 +50,15 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
 
+    'django_rq',
+    'django_prometheus',
+
     'api',
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,6 +66,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'myapp.urls'
@@ -235,3 +242,17 @@ SIMPLE_JWT = {
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'go get a publishable key')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': os.environ.get('REDIS_HOST', 'REDIS_HOST not configured'),
+        'PORT': os.environ.get('REDIS_PORT', 'REDIS_PORT not configured'),
+        'DB': os.environ.get('REDIS_DB', 'REDIS_DB not configured'),
+        'USERNAME': os.environ.get('REDIS_USER', 'REDIS_USER not configured'),
+        'PASSWORD': os.environ.get('REDIS_PASS', 'REDIS_PASS not configured'),
+        'DEFAULT_TIMEOUT': 360,
+        'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
+            # 'ssl_cert_reqs': None,
+        },
+    },
+}

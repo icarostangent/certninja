@@ -4,14 +4,18 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, permissions, mixins, renderers, status, viewsets
-from rest_framework.decorators import action, api_view
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
+from rest_framework import generics, permissions, mixins, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api import models
 from api import serializers
-from api.permissions import IsOwner, IsOwnerOrReadOnly
+from api.permissions import IsOwner
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = serializers.RegisterSerializer
 
 
 class UserViewSet(

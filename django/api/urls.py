@@ -33,6 +33,7 @@ urlpatterns = [
     path('domains/<int:pk>/scans/', scan_list, name='scan-list'), 
     path('payment/', views.create_payment_intent, name='create-payment-intent'), 
     path('products/', product_list, name='product-list'), 
+    path('register/', views.RegisterView.as_view(), name='auth-register'),
     path('users/<int:pk>/', user_detail, name='user-detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 
 ]

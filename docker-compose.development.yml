@@ -67,16 +67,16 @@ services:
     volumes:
       - redis_data:/data
     expose:
-        - "6379"
+      - "6379"
     restart: unless-stopped
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     hostname: redis-commander
     environment:
-    - REDIS_HOSTS=local:redis:6379
+      - REDIS_HOSTS=local:redis:6379
     ports:
-    - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8081:8081"
     restart: unless-stopped
 
   db:
@@ -86,7 +86,7 @@ services:
       - ./db/backup:/docker-entrypoint-initdb.d
     restart: unless-stopped
     expose:
-        - "3306"
+      - "3306"
     ports:
       - "127.0.0.1:3306:3306"
     environment:
@@ -184,7 +184,12 @@ services:
       DOMAIN_NAME: ${DOMAIN_NAME}
       DOLLAR: ${DOLLAR}
     restart: unless-stopped
-    command: ["/bin/sh" , "-c" , "echo hello world && envsubst < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf && exec nginx -g 'daemon off;'"]
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "echo hello world && envsubst < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf && exec nginx -g 'daemon off;'"
+      ]
 
   certbot:
     image: certbot/certbot:latest
@@ -194,7 +199,27 @@ services:
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus/:/etc/prometheus/
+    ports:
+      - 127.0.0.1:9090:9090
+
+  grafana:
+    image: grafana/grafana:6.5.2
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - 127.0.0.1:3060:3000
+    environment:
+      GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
+
 volumes:
   db_data: {}
-  pgsql_data: {}
   redis_data: {}
+  prometheus_data: {}
+  grafana_data: {}

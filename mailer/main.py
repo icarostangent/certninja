@@ -31,7 +31,7 @@ if obj:
 
     msg = EmailMessage()
     msg.set_content(f"""
-    Activate your account with SSL Checker
+
     {TARGET_URL}/activate?id={json_obj['id']}&key={json_obj['user_activation_key']}
 
     {json_obj['registered']}
