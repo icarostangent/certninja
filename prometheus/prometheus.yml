@@ -10,3 +10,6 @@ scrape_configs:
     static_configs:
       - targets:
         - django:8888
+
+remote_write:
+  - url: "http://influxdb:8086/api/v1/prom/write?db=app"

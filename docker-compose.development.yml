@@ -208,6 +208,17 @@ services:
     ports:
       - 127.0.0.1:9090:9090
 
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - 127.0.0.1:8086:8086
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    environment:
+      INFLUXDB_DB: ${INFLUXDB_NAME}
+      INFLUXDB_ADMIN_USER: ${INFLUXDB_USER}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUXDB_PASS}
+
   grafana:
     image: grafana/grafana:6.5.2
     restart: unless-stopped
@@ -223,3 +234,4 @@ volumes:
   redis_data: {}
   prometheus_data: {}
   grafana_data: {}
+  influxdb-data: {}
