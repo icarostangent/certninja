@@ -1,12 +1,13 @@
 from django.contrib import admin
 from rest_framework.authtoken.models import TokenProxy
+from allauth.account.models import EmailConfirmation
 from api import models
 
 
 admin.site.unregister(TokenProxy)
 
-@admin.register(models.Account)
-class AccountAdmin(admin.ModelAdmin):
+@admin.register(EmailConfirmation)
+class EmailConfirmationAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 
@@ -17,11 +18,6 @@ class DomainAdmin(admin.ModelAdmin):
 
 @admin.register(models.Scan)
 class ScanAdmin(admin.ModelAdmin):
-    readonly_fields = []
-
-
-@admin.register(models.StripeCustomer)
-class StripeCustomerAdmin(admin.ModelAdmin):
     readonly_fields = []
 
 

@@ -15,12 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+# from django.views.generic.base import TemplateView
+# from dj_rest_auth.registration.views import VerifyEmailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), 
-    path('api/dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('api/auth/', include('dj_rest_auth.urls')),
+    path('api/auth/register/', include('dj_rest_auth.registration.urls')),
+    # re_path(r'^api/auth/verify-email/(?P<key>[-:\w]+)/$', TemplateView.as_view(), name='account_confirm_email'),
     path('django-rq/', include('django_rq.urls')),
     path('monitor/', include('django_prometheus.urls')),
+    # path('api/auth/verify-email/', VerifyEmailView.as_view(), name='account_email_verification_sent')
 ]

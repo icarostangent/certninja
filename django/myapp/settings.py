@@ -48,12 +48,13 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth',
-    'dj_rest_auth.registration',
+    # 'dj_rest_auth.registration',
 
     'django_rq',
     'django_prometheus',
 
     'api',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -96,12 +97,15 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django_prometheus.db.backends.mysql',
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
         'NAME': os.environ.get('DJANGO_DATABASE', 'django'),
         'USER': os.environ.get('DJANGO_USER', 'django'),
         'PASSWORD': os.environ.get('DJANGO_PASSWORD', 'djangopassword'),
+        'TEST': {
+            'NAME': 'django_test',
+        },
     },
 }
 
@@ -152,6 +156,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = [
     os.environ.get('TARGET_URL', ''),
 ]
+
+ACCOUNT_ADAPTER = 'api.adapter.AccountAdapter'
+EMAIL_SUBJECT_PREFIX = 'lol lmao'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'the great cornholio')
+# SIGNUP_REDIRECT_URL
+# LOGIN_REDIRECT_URL
+EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'heyooooo'
+EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'holla'
+PASSWORD_MIN_LENGTH = 8
+
 
 REST_AUTH = {
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
@@ -256,3 +270,10 @@ RQ_QUEUES = {
         },
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SMTP_HOST = os.environ.get('SMTP_HOST')
+SMTP_PORT = os.environ.get('SMTP_PORT')
+SMTP_USER = os.environ.get('SMTP_USER')
+SMTP_PASS = os.environ.get('SMTP_PASS')
+TARGET_URL = os.environ.get('TARGET_URL')

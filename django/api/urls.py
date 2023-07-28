@@ -2,9 +2,9 @@ from django.urls import include, path
 from api import views
 
 
-customer_detail = views.StripeCustomerViewSet.as_view({
-    'get': 'retrieve',
-})
+# customer_detail = views.StripeCustomerViewSet.as_view({
+#     'get': 'retrieve',
+# })
 domain_list = views.DomainViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -27,7 +27,7 @@ user_detail = views.UserViewSet.as_view({
 
 urlpatterns = [
     # path('', include(router.urls)),
-    path('customers/user/<int:user>/', customer_detail, name='customer-detail'), 
+    # path('customers/user/<int:user>/', customer_detail, name='customer-detail'), 
     path('domains/', domain_list, name='domain-list'), 
     path('domains/<int:pk>/', domain_detail, name='domain-detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan-list'), 

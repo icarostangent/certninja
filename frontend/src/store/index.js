@@ -136,7 +136,7 @@ export default createStore({
             console.log('validate')
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/api/dj-rest-auth/token/verify/`, payload)
+                    const { data } = await axios.post(`/api/auth/token/verify/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -197,7 +197,7 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/api/dj-rest-auth/login/`, payload)
+                    const { data } = await axios.post(`/api/auth/login/`, payload)
                     console.log('login response:')
                     console.log(data)
                     commit('SET_AUTH', data)
@@ -511,7 +511,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
-                        `/api/dj-rest-auth/user/`, {
+                        `/api/auth/user/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${state.auth.access}`,

@@ -2,7 +2,12 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from api.models import StripeCustomer, StripeProduct, Domain, Scan
+from api.models import (
+    # StripeCustomer, 
+    StripeProduct, 
+    Domain, 
+    Scan
+)
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -12,18 +17,17 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    groups = GroupSerializer(many=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'groups']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
-class StripeCustomerSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
+# class StripeCustomerSerializer(serializers.ModelSerializer):
+#     user = serializers.ReadOnlyField(source='user.username')
 
-    class Meta:
-        model = StripeCustomer
-        fields = ['id', 'user', 'customer_id', 'subscription_id']
+#     class Meta:
+#         model = StripeCustomer
+#         fields = ['id', 'user', 'customer_id', 'subscription_id']
 
 
 class StripeProductSerializer(serializers.ModelSerializer):

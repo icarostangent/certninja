@@ -79,6 +79,5 @@ def parse_account(raw):
         'subscription_id': raw[2],
         'user_id': raw[3],
         'created': raw[4],
-        'modified': raw[5],
-        'subscription_type': raw[6],
+        'subscription_type': raw[5],
     }
