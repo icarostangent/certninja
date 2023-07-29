@@ -34,6 +34,8 @@ DOMAIN_NAME = os.environ.get('DOMAIN_NAME')
 
 EMAIL_ACTIVATION_LINK = f'https://{DOMAIN_NAME}/activate'
 
+DEFAULT_FROM_EMAIL = f'admin@{DOMAIN_NAME}'
+
 ALLOWED_HOSTS = [DOMAIN_NAME, 'django']
 
 INSTALLED_APPS = [
