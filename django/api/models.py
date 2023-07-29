@@ -26,7 +26,7 @@ class Scan(ExportModelOperationsMixin('scan'), models.Model):
     domain = models.ForeignKey(Domain, related_name='scans', on_delete=models.CASCADE)
     uuid = models.CharField(max_length=255, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    last_scan = models.TextField()
+    output = models.TextField()
 
     class Meta:
         ordering = ['-created']
@@ -37,11 +37,9 @@ class Scan(ExportModelOperationsMixin('scan'), models.Model):
 
 class StripeProduct(ExportModelOperationsMixin('stripe_product'), models.Model):
     name = models.CharField(max_length=255)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now_add=True)
     product_id = models.CharField(max_length=255)
     amount = models.IntegerField(default=0)
-    description = models.TextField()
+    html = models.TextField()
 
     def __str__(self):
         return self.name

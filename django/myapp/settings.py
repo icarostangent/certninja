@@ -28,30 +28,28 @@ SECRET_KEY = 'django-insecure-n*yc7k&%z0a!gs#afcaw6+25n!876p-u2%^0ym^lxhs=xv_$u1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*',]
+TIME_ZONE = 'America/Los_Angeles'
 
-SITE_ID = 1
+DOMAIN_NAME = os.environ.get('DOMAIN_NAME')
+
+EMAIL_ACTIVATION_LINK = f'https://{DOMAIN_NAME}/activate'
+
+ALLOWED_HOSTS = [DOMAIN_NAME, 'django']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
     'django_extensions',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth',
-    # 'dj_rest_auth.registration',
-
     'django_rq',
     'django_prometheus',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
 
     'api',
     'accounts',

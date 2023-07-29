@@ -96,10 +96,12 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
   django:
+    command: python manage.py runserver 0.0.0.0:8888
     build:
       context: ./django
       dockerfile: Dockerfile.development
     environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
       TARGET_URL: ${TARGET_URL}
       DB_HOST: ${DB_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
@@ -131,6 +133,7 @@ services:
       context: ./django
       dockerfile: Dockerfile.development
     environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
       TARGET_URL: ${TARGET_URL}
       DB_HOST: ${DB_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
