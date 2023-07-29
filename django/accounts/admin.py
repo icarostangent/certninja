@@ -5,26 +5,23 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from accounts import models
 from accounts.signals import password_reset, verify_email
 
 
 admin.site.unregister(User)
 
-
 class EmailRequiredMixin(object):
     def __init__(self, *args, **kwargs):
         super(EmailRequiredMixin, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
 
-
 class MyUserCreationForm(EmailRequiredMixin, UserCreationForm):
     pass
 
-
 class MyUserChangeForm(EmailRequiredMixin, UserChangeForm):
     pass
-
 
 @admin.register(User)
 class EmailRequiredUserAdmin(UserAdmin):
@@ -62,7 +59,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
     @admin.action(description='Send verification email')
     def send_verification_email(self, request, queryset):
         for email_address in queryset:
-            email_address.key = str(uuid.uuid4())
+            email_address.verify_key = get_random_string(length=32)
             verify_email.send(sender='admin', email=email_address.email, key=email_address.verify_key)
             email_address.verification_sent = timezone.now()
             email_address.save()
@@ -70,5 +67,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
     @admin.action(description='Send password reset email')
     def send_password_reset(self, request, queryset):
         for email_address in queryset:
+            email_address.reset_key = get_random_string(length=32)
             password_reset.send(sender='admin', email=email_address.email, key=email_address.reset_key)
+            email_address.reset_sent = timezone.now()
             email_address.save()
