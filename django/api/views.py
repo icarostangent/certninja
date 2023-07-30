@@ -209,13 +209,8 @@ class VerifyEmailView(generics.UpdateAPIView):
     permission_classes = [permissions.AllowAny,]
     lookup_field = 'verify_key'
 
-    # def get_object(self, queryset=None):
-    #     print(self.request.POST)
-    #     return account_models.EmailAddress.objects.filter(verify_key=self.request.POST.get('key'))[0]
-
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
-        # serializer = self.get_serializer(data=request.data)
         self.object.verified = True
         self.object.verify_key = None
         self.object.save()
