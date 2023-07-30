@@ -2,12 +2,8 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from api.models import (
-    # StripeCustomer, 
-    StripeProduct, 
-    Domain, 
-    Scan
-)
+from api import models
+from accounts import models as account_models
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,20 +27,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StripeProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StripeProduct
+        model = models.StripeProduct
         fields = ['id', 'name', 'product_id', 'amount', 'description']
 
 
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Domain
+        model = models.Domain
         fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'created', 'modified']
         read_only_fields = ['user']
 
 
 class ScanSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Scan
+        model = models.Scan
         fields = ['id', 'user', 'domain', 'uuid', 'last_scan']
 
 
@@ -95,3 +91,10 @@ class ResetPasswordSerializer(serializers.Serializer):
 
     class Meta:
         model = User
+
+
+class VerifyEmailSerializer(serializers.Serializer):
+    key = serializers.CharField(required=True)
+
+    class Meta:
+        model = account_models.EmailAddress

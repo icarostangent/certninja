@@ -26,6 +26,7 @@ urlpatterns = [
     path('auth/password/change/', views.ChangePasswordView.as_view(), name='change_password'), 
     path('auth/password/reset/', views.ResetPasswordView.as_view(), name='password_reset'), 
     path('auth/register/', views.RegisterViewSet.as_view(), name='auth_register'),
+    path('auth/email/verify/<str:verify_key>/', views.VerifyEmailView.as_view(), name='verify_email'),
     path('domains/', domain_list, name='domain_list'), 
     path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 

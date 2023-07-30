@@ -25,7 +25,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
-    verify_key = models.CharField(default=get_random_string(length=32), max_length=255)
+    verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True)
     verified = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     verification_sent = models.DateTimeField(null=True)

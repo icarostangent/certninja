@@ -103,8 +103,7 @@ def stripe_webhook(request):
     event = None
 
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, webhook_secret)
+        event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
     except ValueError as e:
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
@@ -192,6 +191,7 @@ class ResetPasswordView(generics.UpdateAPIView):
             return Response({'invalid_password': [ex]}, status=status.HTTP_400_BAD_REQUEST)
 
         self.object.set_password(serializer.data.get('new_password'))
+        self.object.reset_key = None
         self.object.save()
 
         return Response({
@@ -200,3 +200,30 @@ class ResetPasswordView(generics.UpdateAPIView):
             'message': 'Password updated successfully',
             'data': []
         })
+
+
+class VerifyEmailView(generics.UpdateAPIView):
+    queryset = account_models.EmailAddress.objects.all()
+    serializer_class = serializers.VerifyEmailSerializer
+    model = account_models.EmailAddress
+    permission_classes = [permissions.AllowAny,]
+    lookup_field = 'verify_key'
+
+    # def get_object(self, queryset=None):
+    #     print(self.request.POST)
+    #     return account_models.EmailAddress.objects.filter(verify_key=self.request.POST.get('key'))[0]
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # serializer = self.get_serializer(data=request.data)
+        self.object.verified = True
+        self.object.verify_key = None
+        self.object.save()
+
+        return Response({
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Email address verified successfully',
+            'data': []
+        })
+
