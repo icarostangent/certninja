@@ -28,7 +28,10 @@ SECRET_KEY = 'django-insecure-n*yc7k&%z0a!gs#afcaw6+25n!876p-u2%^0ym^lxhs=xv_$u1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TIME_ZONE = 'America/Los_Angeles'
+APPEND_SLASH = False
+
+TIME_ZONE = 'UTC'
+# TIME_ZONE = 'America/Los_Angeles'
 
 DOMAIN_NAME = os.environ.get('DOMAIN_NAME')
 

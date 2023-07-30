@@ -2,17 +2,20 @@ import os
 import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password 
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, permissions, mixins, viewsets
+from rest_framework import generics, permissions, mixins, viewsets, status
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api import models
 from api import serializers
 from api.permissions import IsOwner
+from accounts import models as account_models
 
 
-class RegisterView(generics.CreateAPIView):
+class RegisterViewSet(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.RegisterSerializer
@@ -124,3 +127,76 @@ def stripe_webhook(request):
         # print(user.username + ' just subscribed.')
 
     return HttpResponse(status=200)
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = serializers.ChangePasswordSerializer
+    model = User
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({'validation_error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not self.object.check_password(serializer.data.get("old_password")):
+            return Response({'old_password': ['Wrong password.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not serializer.data.get('new_password') == serializer.data.get('new_password2'):
+            return Response({'new_password': ['Passwords must match.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(serializer.data.get('new_password'))
+        except Exception as ex :
+            return Response({'invalid_password': [ex]}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.object.set_password(serializer.data.get('new_password'))
+        self.object.save()
+
+        return Response({
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password updated successfully',
+            'data': []
+        })
+
+
+class ResetPasswordView(generics.UpdateAPIView):
+    serializer_class = serializers.ResetPasswordSerializer
+    model = User
+    permission_classes = [permissions.AllowAny,]
+
+    def get_object(self, queryset=None):
+        email_address = account_models.EmailAddress.objects.filter(reset_key=self.request.POST.get('key')).values()[0]
+        return User.objects.filter(id=email_address['user_id'])
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({'validation_error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not serializer.data.get('new_password') == serializer.data.get('new_password2'):
+            return Response({'new_password': ['Passwords must match.']}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(serializer.data.get('new_password'))
+        except Exception as ex :
+            return Response({'invalid_password': [ex]}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.object.set_password(serializer.data.get('new_password'))
+        self.object.save()
+
+        return Response({
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password updated successfully',
+            'data': []
+        })

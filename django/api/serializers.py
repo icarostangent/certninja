@@ -9,7 +9,6 @@ from api.models import (
     Scan
 )
 
-
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
@@ -79,3 +78,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    new_password2 = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True)
+    new_password2 = serializers.CharField(required=True)
+
+    class Meta:
+        model = User

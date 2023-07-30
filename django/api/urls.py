@@ -1,10 +1,7 @@
-from django.urls import include, path
+from django.urls import path
 from api import views
 
 
-# customer_detail = views.StripeCustomerViewSet.as_view({
-#     'get': 'retrieve',
-# })
 domain_list = views.DomainViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -26,14 +23,14 @@ user_detail = views.UserViewSet.as_view({
 })
 
 urlpatterns = [
-    # path('', include(router.urls)),
-    # path('customers/user/<int:user>/', customer_detail, name='customer-detail'), 
-    path('domains/', domain_list, name='domain-list'), 
-    path('domains/<int:pk>/', domain_detail, name='domain-detail'), 
-    path('domains/<int:pk>/scans/', scan_list, name='scan-list'), 
-    path('payment/', views.create_payment_intent, name='create-payment-intent'), 
-    path('products/', product_list, name='product-list'), 
-    path('register/', views.RegisterView.as_view(), name='auth-register'),
-    path('users/<int:pk>/', user_detail, name='user-detail'),
+    path('auth/password/change/', views.ChangePasswordView.as_view(), name='change_password'), 
+    path('auth/password/reset/', views.ResetPasswordView.as_view(), name='password_reset'), 
+    path('auth/register/', views.RegisterViewSet.as_view(), name='auth_register'),
+    path('domains/', domain_list, name='domain_list'), 
+    path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
+    path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 
+    path('payment/', views.create_payment_intent, name='create_payment_intent'), 
+    path('products/', product_list, name='product_list'), 
+    path('users/<int:pk>/', user_detail, name='user_detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 
 ]
