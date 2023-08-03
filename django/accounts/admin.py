@@ -68,6 +68,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
     def send_password_reset(self, request, queryset):
         for email_address in queryset:
             email_address.reset_key = get_random_string(length=32)
+            print(email_address)
             password_reset.send(sender='admin', email=email_address.email, key=email_address.reset_key)
             email_address.reset_sent = timezone.now()
             email_address.save()

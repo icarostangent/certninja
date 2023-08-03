@@ -23,7 +23,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
 
 
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
-    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    user = models.OneToOneField(to=User, related_name='email_address', on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
     verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True)
     verified = models.BooleanField(default=False)
@@ -41,8 +41,9 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
         return self.email
 
     def save(self, *args, **kwargs):
-        verify_email.send(sender=self.__class__, email=self.email, key=self.verify_key)
-        self.verification_sent = timezone.now()
+        if not self.id:
+            verify_email.send(sender=self.__class__, email=self.email, key=self.verify_key)
+            self.verification_sent = timezone.now()
         super(EmailAddress, self).save(*args, **kwargs)
 
 

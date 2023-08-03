@@ -30,6 +30,8 @@ DEBUG = True
 
 APPEND_SLASH = False
 
+SECURE_SSL_REDIRECT = False
+
 TIME_ZONE = 'UTC'
 # TIME_ZONE = 'America/Los_Angeles'
 

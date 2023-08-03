@@ -3,6 +3,7 @@ import stripe
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
+from django import http
 from django.http.response import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, viewsets, status
@@ -134,8 +135,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated,]
 
     def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
+        return self.request.user
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -172,8 +172,10 @@ class ResetPasswordView(generics.UpdateAPIView):
     permission_classes = [permissions.AllowAny,]
 
     def get_object(self, queryset=None):
-        email_address = account_models.EmailAddress.objects.filter(reset_key=self.request.POST.get('key')).values()[0]
-        return User.objects.filter(id=email_address['user_id'])
+        try:
+            return User.objects.filter(email_address__reset_key=self.request.data.get('key'))[0]
+        except IndexError:
+            raise http.Http404
 
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -191,8 +193,9 @@ class ResetPasswordView(generics.UpdateAPIView):
             return Response({'invalid_password': [ex]}, status=status.HTTP_400_BAD_REQUEST)
 
         self.object.set_password(serializer.data.get('new_password'))
-        self.object.reset_key = None
         self.object.save()
+        self.object.email_address.reset_key = None
+        self.object.email_address.save()
 
         return Response({
             'status': 'success',
