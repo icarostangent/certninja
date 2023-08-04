@@ -24,7 +24,7 @@
           Confirm
         </label>
         <input
-          v-model="form.passwordConfirm"
+          v-model="form.password2"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           id="confirm"
           type="password"
@@ -50,7 +50,7 @@ export default {
     return {
       form: {
         password: "",
-        passwordConfirm: "",
+        password2: "",
         key: this.$route.query.key,
         id: this.$route.query.id,
       },
@@ -66,14 +66,14 @@ export default {
         );
         return;
       }
-      if (this.form.password !== this.form.passwordConfirm) {
+      if (this.form.password !== this.form.password2) {
         useToast().warning("passwords must match");
         return;
       }
       try {
-        console.log(this.form);
-        this.$store.dispatch("reset", this.form);
-        this.$router.push("login");
+          console.log(this.form);
+          this.$store.dispatch("reset", this.form);
+          this.$router.push("login");
       } catch (e) {
         if (e.response && e.response.data.code === "missing-parameters") {
           useToast().warning("all fields are required");

@@ -1,7 +1,7 @@
 <template>
-  <div class="products">
+  <div class="container products">
 
-    <div class="card-group">
+    <div class="card-deck">
         <div v-for="product in products.items">
           <div class="card mb-4 rounded-3 shadow-sm">
             <div class="card-header py-3">
@@ -10,7 +10,7 @@
             <div class="card-body">
               <h1 class="card-title pricing-card-title">${{ product.amount }}<small
                   class="text-muted fw-light">/mo</small></h1>
-              <div v-html="product.description"></div>
+              <div v-html="product.html"></div>
               <button @click.prevent="submit(product.name)" type="button"
                 class="w-100 btn btn-lg btn-outline-primary">Subscribe
                 now on Stripe</button>

@@ -148,7 +148,7 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/wp-json/backend/v1/user/register`, payload)
+                    const { data } = await axios.post(`/api/auth/register/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -160,7 +160,7 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/wp-json/backend/v1/user/${payload.id}/activate`, payload)
+                    const { data } = await axios.put(`/api/auth/email/verify/${payload.key}/`)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -172,7 +172,7 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/wp-json/backend/v1/user/request`, payload)
+                    const { data } = await axios.post(`/api/auth/password/reset/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)

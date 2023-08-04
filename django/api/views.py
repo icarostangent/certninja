@@ -75,7 +75,7 @@ class ScanViewSet(ReadOnlyModelViewSet):
 
 @api_view(['POST'])
 def create_payment_intent(request):
-    customer = models.StripeCustomer.objects.get(user_id=request.data.get('pk'))
+    customer = account_models.Subscription.objects.get(user_id=request.data.get('pk'))
     try:
         payment_intent = stripe.PaymentIntent.create(
             api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),

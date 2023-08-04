@@ -46,7 +46,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "thanks" */ '../views/Thanks.vue')
     },
     {
-        path: '/activate',
+        path: '/activate/:key',
         name: 'activate',
         component: () => import(/* webpackChunkName: "activate" */ '../views/Activate.vue')
     },
