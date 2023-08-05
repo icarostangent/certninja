@@ -8,7 +8,7 @@ from accounts import models
 
 
 verify_email_signal = Signal() # args: email, key
-password_reset = Signal() # args: email, key
+password_reset_signal = Signal() # args: email, key
 
 
 @receiver(post_save, sender=User)
@@ -37,7 +37,7 @@ def send_verify_email_signal(sender, email, key, **kwargs):
     msg.send()
 
 
-@receiver(password_reset)
+@receiver(password_reset_signal)
 def send_password_reset_email(sender, email, key, **kwargs):
     msg = models.TemplateEmail(
         to=email,

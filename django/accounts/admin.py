@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from accounts import models
-from accounts.signals import password_reset, verify_email_signal_signal_signal
+from accounts.signals import password_reset_signal, verify_email_signal_signal_signal
 
 
 admin.site.unregister(User)
@@ -69,6 +69,6 @@ class EmailAddressAdmin(admin.ModelAdmin):
         for email_address in queryset:
             email_address.reset_key = get_random_string(length=32)
             print(email_address)
-            password_reset.send(sender='admin', email=email_address.email, key=email_address.reset_key)
+            password_reset_signal.send(sender='admin', email=email_address.email, key=email_address.reset_key)
             email_address.reset_sent = timezone.now()
             email_address.save()
