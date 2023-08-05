@@ -96,10 +96,6 @@ server {
         proxy_pass http://wordpress/wp-cron;
     }
 
-    location /xmlrpc.php {
-        proxy_pass http://wordpress/xmlrpc.php;
-    }
-
     location / {
         proxy_pass http://frontend:8080;
     }

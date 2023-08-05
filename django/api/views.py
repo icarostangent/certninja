@@ -38,13 +38,6 @@ class UserViewSet(
     permission_classes = [IsOwner]
 
 
-# class StripeCustomerViewSet(ReadOnlyModelViewSet):
-#     queryset = models.StripeCustomer.objects.all()
-#     serializer_class = serializers.StripeCustomerSerializer
-#     permission_classes = [IsOwner]
-#     lookup_field = 'user'
-
-
 class StripeProductViewSet(ReadOnlyModelViewSet):
     queryset = models.StripeProduct.objects.all()
     serializer_class = serializers.StripeProductSerializer

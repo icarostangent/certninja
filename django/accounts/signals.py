@@ -7,7 +7,7 @@ from django.dispatch import receiver, Signal
 from accounts import models
 
 
-verify_email = Signal() # args: email, key
+verify_email_signal = Signal() # args: email, key
 password_reset = Signal() # args: email, key
 
 
@@ -25,8 +25,8 @@ def create_email_address(sender, instance, created, **kwargs):
         models.EmailAddress.objects.create(user=instance, email=instance.email)
 
 
-@receiver(verify_email)
-def send_verify_email(sender, email, key, **kwargs):
+@receiver(verify_email_signal)
+def send_verify_email_signal(sender, email, key, **kwargs):
     msg = models.TemplateEmail(
         to=email,
         subject=f'Welcome to {settings.DOMAIN_NAME}',

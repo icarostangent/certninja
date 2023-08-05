@@ -8,7 +8,7 @@ from django.utils.crypto import get_random_string
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from django_prometheus.models import ExportModelOperationsMixin
-from accounts.signals import verify_email
+from accounts.signals import verify_email_signal
 
 
 class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
@@ -42,7 +42,7 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            verify_email.send(sender=self.__class__, email=self.email, key=self.verify_key)
+            verify_email_signal.send(sender=self.__class__, email=self.email, key=self.verify_key)
             self.verification_sent = timezone.now()
         super(EmailAddress, self).save(*args, **kwargs)
 
