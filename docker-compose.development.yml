@@ -137,6 +137,10 @@ services:
       REDIS_DB: ${REDIS_DB}
       REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
     volumes:
       - ./django:/app
       - ./static:/app/static

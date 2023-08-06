@@ -16,46 +16,46 @@
             data-bs-parent="#accordionCerts">
             <div class="accordion-body">
               <div class="ms-3 me-auto">
-                <div v-if="JSON.parse(item.last_scan)['error'] === undefined">
+                <div v-if="JSON.parse(item.output)['error'] === undefined">
                   <br />
-                  <h5>Cipher: {{ JSON.parse(item.last_scan)['cipher'] }}</h5>
+                  <h5>Cipher: {{ JSON.parse(item.output)['cipher'] }}</h5>
                   <h5>Subject:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.last_scan)['certificate'][
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
                     'subject'
                   ]" :key="index">
                     <li>{{ field[0][0] }}: {{ field[0][1] }}</li>
                   </ul>
                   <h5>Issuer:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.last_scan)['certificate'][
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
                     'issuer'
                   ]" :key="index">
                     <li>{{ field[0][0] }}: {{ field[0][1] }}</li>
                   </ul>
                   <h5>
-                    Version: {{ JSON.parse(item.last_scan)['certificate']["version"] }}
+                    Version: {{ JSON.parse(item.output)['certificate']["version"] }}
                   </h5>
                   <h5>
                     Serial No:
-                    {{ JSON.parse(item.last_scan)['certificate']["serialNumber"] }}
+                    {{ JSON.parse(item.output)['certificate']["serialNumber"] }}
                   </h5>
                   <h5>
-                    Not Before: {{ JSON.parse(item.last_scan)['certificate']["notBefore"] }}
+                    Not Before: {{ JSON.parse(item.output)['certificate']["notBefore"] }}
                   </h5>
                   <h5>
-                    Not After: {{ JSON.parse(item.last_scan)['certificate']["notAfter"] }}
+                    Not After: {{ JSON.parse(item.output)['certificate']["notAfter"] }}
                   </h5>
                   <h5>Alt Names:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.last_scan)['certificate'][
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
                     'subjectAltName'
                   ]" :key="index">
                     <li>{{ field[0] }}: {{ field[1] }}</li>
                   </ul>
                   <h5>
                     CA Issuer:
-                    {{ JSON.parse(item.last_scan)['certificate']["caIssuers"][0] }}
+                    {{ JSON.parse(item.output)['certificate']["caIssuers"][0] }}
                   </h5>
                   <h5>CRL Distribution Points:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.last_scan)['certificate'][
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
                     'crlDistributionPoints'
                   ]" :key="index">
                     <li>{{ field }}</li>
@@ -63,8 +63,8 @@
                 </div>
                 <div v-else class="ms-3 me-auto">
                   <br />
-                  <h5>Error: {{ JSON.parse(item.last_scan)["error"] }}</h5>
-                  <p>Ex: {{ JSON.parse(item.last_scan)["ex"] }}</p>
+                  <h5>Error: {{ JSON.parse(item.output)["error"] }}</h5>
+                  <p>Ex: {{ JSON.parse(item.output)["ex"] }}</p>
                 </div>
               </div>
             </div>

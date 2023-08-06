@@ -1,10 +1,11 @@
 import os
 import stripe
+from django import http
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
-from django import http
 from django.http.response import HttpResponse, JsonResponse
+from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, viewsets, status
 from rest_framework.decorators import api_view
@@ -14,6 +15,7 @@ from api import models
 from api import serializers
 from api.permissions import IsOwner
 from accounts import models as account_models
+from accounts.signals import password_reset_signal
 
 
 class RegisterViewSet(generics.CreateAPIView):
@@ -159,6 +161,36 @@ class ChangePasswordView(generics.UpdateAPIView):
         })
 
 
+class RequestPasswordResetView(generics.UpdateAPIView):
+    serializer_class = serializers.RequestPasswordResetSerializer
+    model = account_models.EmailAddress
+    permission_classes = [permissions.AllowAny]
+
+    def get_object(self, queryset=None):
+        try:
+            return account_models.EmailAddress.objects.filter(email=self.request.data.get('email'))[0]
+        except IndexError:
+            raise http.Http404
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response({'validation_error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        self.object.reset_key = get_random_string()
+        self.object.save()
+
+        password_reset_signal.send(sender=self, email=self.object.email, key=self.object.reset_key)
+
+        return Response({
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password reset request sent',
+            'data': []
+        })
+
 class ResetPasswordView(generics.UpdateAPIView):
     serializer_class = serializers.ResetPasswordSerializer
     model = User
@@ -177,15 +209,15 @@ class ResetPasswordView(generics.UpdateAPIView):
         if not serializer.is_valid():
             return Response({'validation_error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not serializer.data.get('new_password') == serializer.data.get('new_password2'):
-            return Response({'new_password': ['Passwords must match.']}, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.data.get('password') == serializer.data.get('password2'):
+            return Response({'password': ['Passwords must match.']}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            validate_password(serializer.data.get('new_password'))
+            validate_password(serializer.data.get('password'))
         except Exception as ex :
             return Response({'invalid_password': [ex]}, status=status.HTTP_400_BAD_REQUEST)
 
-        self.object.set_password(serializer.data.get('new_password'))
+        self.object.set_password(serializer.data.get('password'))
         self.object.save()
         self.object.email_address.reset_key = None
         self.object.email_address.save()

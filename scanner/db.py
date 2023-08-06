@@ -54,12 +54,12 @@ def insert(scan_object):
     print(f'[*] executing insert statement {datetime.now()}')
     with engine.connect() as conn:
         conn.execute(
-            text(f"insert into api_scan SET user_id=:user_id, domain_id=:domain_id, uuid=:uuid, last_scan=:last_scan, created=:created"),
+            text(f"insert into api_scan SET user_id=:user_id, domain_id=:domain_id, uuid=:uuid, output=:output, created=:created"),
             {
                 "user_id": scan_object['user_id'], 
                 "domain_id": scan_object['domain_id'], 
                 "uuid": str(uuid.uuid4()), 
-                "last_scan": scan_object['output'], 
+                "output": scan_object['output'], 
                 "created": datetime.now()
             }
         )

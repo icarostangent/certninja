@@ -172,7 +172,7 @@ export default createStore({
             console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
-                    const { data } = await axios.post(`/api/auth/password/reset/`, payload)
+                    const { data } = await axios.put(`/api/auth/password/request/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -185,7 +185,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     console.log(payload);
-                    const { data } = await axios.post(`/wp-json/backend/v1/user/${payload.id}/reset`, payload)
+                    const { data } = await axios.put(`/api/auth/password/reset/`, payload)
                     resolve(data)
                 } catch (e) {
                     reject(e)

@@ -61,7 +61,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "request" */ '../views/Request.vue')
     },
     {
-        path: '/reset',
+        path: '/reset/:key',
         name: 'reset',
         component: () => import(/* webpackChunkName: "reset" */ '../views/Reset.vue')
     },

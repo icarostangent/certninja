@@ -41,7 +41,7 @@ class DomainSerializer(serializers.ModelSerializer):
 class ScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Scan
-        fields = ['id', 'user', 'domain', 'uuid', 'last_scan']
+        fields = ['id', 'user', 'domain', 'uuid', 'output']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -83,9 +83,16 @@ class ChangePasswordSerializer(serializers.Serializer):
         model = User
 
 
+class RequestPasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = account_models.EmailAddress
+
+
 class ResetPasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(required=True)
-    new_password2 = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+    password2 = serializers.CharField(required=True)
 
     class Meta:
         model = User

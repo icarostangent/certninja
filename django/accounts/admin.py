@@ -1,4 +1,3 @@
-import uuid
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm 
@@ -7,7 +6,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from accounts import models
-from accounts.signals import password_reset_signal, verify_email_signal_signal_signal
+from accounts.signals import password_reset_signal, verify_email_signal
 
 
 admin.site.unregister(User)

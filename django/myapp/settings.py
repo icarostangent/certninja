@@ -160,13 +160,6 @@ CSRF_TRUSTED_ORIGINS = [
     os.environ.get('TARGET_URL', ''),
 ]
 
-ACCOUNT_ADAPTER = 'api.adapter.AccountAdapter'
-EMAIL_SUBJECT_PREFIX = 'lol lmao'
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'the great cornholio')
-# SIGNUP_REDIRECT_URL
-# LOGIN_REDIRECT_URL
-EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'heyooooo'
-EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'holla'
 PASSWORD_MIN_LENGTH = 8
 
 
@@ -274,9 +267,17 @@ RQ_QUEUES = {
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-SMTP_HOST = os.environ.get('SMTP_HOST')
-SMTP_PORT = os.environ.get('SMTP_PORT')
-SMTP_USER = os.environ.get('SMTP_USER')
-SMTP_PASS = os.environ.get('SMTP_PASS')
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# SMTP_HOST = os.environ.get('SMTP_HOST')
+# SMTP_PORT = os.environ.get('SMTP_PORT')
+# SMTP_USER = os.environ.get('SMTP_USER')
+# SMTP_PASS = os.environ.get('SMTP_PASS')
 TARGET_URL = os.environ.get('TARGET_URL')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('SMTP_HOST')
+EMAIL_USE_TLS = True
+EMAIL_PORT = os.environ.get('SMTP_PORT')
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = os.environ.get('SMTP_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')

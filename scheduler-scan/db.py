@@ -35,9 +35,9 @@ def get_user_subscription(id):
         exit(1)
 
     cursor = cnx.cursor()
-    stmt = f"select * from api_stripecustomer where user_id = {id}"
+    stmt = f"select * from accounts_subscription where user_id = {id}"
     cursor.execute(stmt)
-    subscription = parse_account([user for user in cursor.fetchall()].pop())['subscription_type']
+    subscription = [parse_account(user) for user in cursor.fetchall()].pop()['subscription_type']
     cursor.close()
     cnx.close()
 
@@ -63,21 +63,21 @@ def parse_domain(domain_raw):
     return {
         'id': domain_raw[0],
         'name': domain_raw[1],
-        'ip_address': domain_raw[2],
-        'port': domain_raw[3],
-        'last_scan': domain_raw[4],
-        'user_id': domain_raw[5],
-        'scan_status': domain_raw[6],
-        'created': domain_raw[7],
-        'modified': domain_raw[8],
+        'created': domain_raw[2],
+        'modified': domain_raw[3],
+        'ip_address': domain_raw[4],
+        'port': domain_raw[5],
+        'last_scan': domain_raw[6],
+        'scan_status': domain_raw[7],
+        'user_id': domain_raw[8],
     }
 
 def parse_account(raw):
     return {
         'id': raw[0],
-        'customer_id': raw[1],
-        'subscription_id': raw[2],
-        'user_id': raw[3],
-        'created': raw[4],
-        'subscription_type': raw[5],
+        'created': raw[1],
+        'customer_id': raw[2],
+        'subscription_id': raw[3],
+        'subscription_type': raw[4],
+        'user_id': raw[5],
     }
