@@ -95,6 +95,11 @@ const routes = [
         name: 'cancel',
         component: () => import(/* webpackChunkName: "cancel" */ '../views/Cancel.vue')
     },
+    {
+        path: '/account',
+        name: 'account',
+        component: () => import(/* webpackChunkName: "account" */ '../views/Account.vue')
+    },
 ]
 
 const router = createRouter({
