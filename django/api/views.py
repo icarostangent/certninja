@@ -105,13 +105,89 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
 
-    print(event)
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
+    # print(event)
+    session = event['data']['object']
+    if event['type'] == 'customer.created':
+        print(f'[+] Customer created {session.status}')
 
-        # client_reference_id = session.get('client_reference_id')
-        # stripe_customer_id = session.get('customer')
-        # stripe_subscription_id = session.get('subscription')
+    if event['type'] == 'customer.subscription.created':
+        print(f'[+] Customer subscription created {session.status}')
+
+    if event['type'] == 'customer.subscription.deleted':
+        print(f'[+] Customer subscription deleted {session.status}')
+
+    if event['type'] == 'customer.subscription.paused':
+        print(f'[+] Customer subscription paused {session.status}')
+
+    if event['type'] == 'customer.subscription.resumed':
+        print(f'[+] Customer subscription resumed {session.status}')
+
+    if event['type'] == 'customer.subscription.trial_will_end':
+        print(f'[+] Customer subscription trial period will end soon {session.status}')
+
+    if event['type'] == 'customer.subscription.updated':
+        print(f'[+] Customer subscription updated {session.status}')
+
+    if event['type'] == 'invoice.created':
+        print(f'[+] Invoice created {session.status}')
+
+    if event['type'] == 'invoice.finalized':
+        print(f'[+] Invoice finalized {session.status}')
+
+    if event['type'] == 'invoice.finalization_failed':
+        print(f'[+] Invoice finalization failed {session.status}')
+
+    if event['type'] == 'invoice.paid':
+        print(f'[+] Invoice paid {session.status}')
+
+    if event['type'] == 'invoice.payment_action_required':
+        print(f'[+] Invoice payment action required {session.status}')
+
+    if event['type'] == 'invoice.payment_failed':
+        print(f'[+] Invoice payment failed {session.status}')
+
+    if event['type'] == 'invoice.upcoming':
+        print(f'[+] Invoice upcoming {session.status}')
+
+    if event['type'] == 'invoice.updated':
+        print(f'[+] Invoice updated {session.status}')
+
+    if event['type'] == 'payment_intent.created':
+        print(f'[+] Payment intent created {session.status}')
+
+    if event['type'] == 'payment_intent.succeeded':
+        print(f'[+] Payment intent succeeded {session.status}')
+
+    if event['type'] == 'subscription_schedule.aborted':
+        print(f'[+] Subscription schedule aborted {session.status}')
+
+    if event['type'] == 'subscription_schedule.canceled':
+        print(f'[+] Subscription schedule canceled {session.status}')
+
+    if event['type'] == 'subscription_schedule.completed':
+        print(f'[+] Subscription schedule completed {session.status}')
+
+    if event['type'] == 'subscription_schedule.created':
+        print(f'[+] Subscription schedule created {session.status}')
+
+    if event['type'] == 'subscription_schedule.expiring':
+        print(f'[+] Subscription schedule expiring {session.status}')
+
+    if event['type'] == 'subscription_schedule.released':
+        print(f'[+] Subscription schedule released {session.status}')
+
+    if event['type'] == 'subscription_schedule.updated':
+        print(f'[+] Subscription schedule updated {session.status}')
+
+    if event['type'] == 'checkout.session.status.completed':
+        print(f'[+] Checkout session.status completed {session.status}')
+        # print(session.status)
+
+        # client_reference_id = session.status.get('client_reference_id')
+        # stripe_customer_id = session.status.get('customer')
+        # stripe_subscription_id = session.status.get('subscription')
+        # print('--------------------------------------')
+        # print(client_reference_id, stripe_customer_id, stripe_subscription_id)
 
         # user = User.objects.get(id=client_reference_id)
         # StripeCustomer.objects.create(

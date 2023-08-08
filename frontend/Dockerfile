@@ -16,5 +16,5 @@ RUN npm i
 # Bundle app source
 COPY . .
 
-EXPOSE 8080
-CMD [ "npm", "run", "serve" ]
+EXPOSE 5173
+CMD [ "npm", "run", "dev" ]

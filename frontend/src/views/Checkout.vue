@@ -6,9 +6,8 @@
             <button @click.prevent="processPayment()" type="button" class="btn btn-primary btn-sm">Submit</button>
         </form>
 
-        <div v-if="this.showSpinner">
-            <i class="fa fa-spinner fa-pulse fa-10x fa-fw"></i>
-        </div>
+        <stripe-pricing-table pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" publishable-key="this.publishableKey">
+        </stripe-pricing-table>
     </div>
 </template>
 
@@ -67,7 +66,7 @@ export default {
             switch (paymentIntent.status) {
                 case 'succeeded':
                     useToast().success('Success! Payment received.');
-                    this.$router.push('account')
+                    this.$router.push({ name: 'account' })
                     break;
 
                 case 'processing':
@@ -98,34 +97,37 @@ export default {
         }
 
         const externalScript = document.createElement('script')
-        externalScript.setAttribute('src', 'https://js.stripe.com/v3/')
-        externalScript.setAttribute('type', 'module')
-        document.head.appendChild(externalScript)
+        externalScript.setAttribute('src', 'https://js.stripe.com/v3/pricing-table.js')
+        // externalScript.setAttribute('src', 'https://js.stripe.com/v3/')
+        // externalScript.setAttribute('type', 'module')
+        // document.head.appendChild(externalScript)
 
-        externalScript.onload = () => {
-            this.$store.dispatch('getPaymentIntent', { plan: this.$route.params.plan, 'pk': this.$store.state.auth.user.pk }).then(() => {
-                this.stripe = Stripe(this.$store.state.stripe.publishable_key)
-                this.elements = this.stripe.elements({
-                    clientSecret: this.$store.state.stripe.client_secret,
-                    appearance: { theme: 'stripe' },
-                })
-                let amount = 0
-                if (this.$route.params.plan === 'basic') {
-                    amount = 10
-                }
-                if (this.$route.params.plan === 'growth') {
-                    amount = 10
-                }
-                if (this.$route.params.plan === 'ultimate') {
-                    amount = 10
-                }
-                this.card = this.elements.create('payment', {
-                    customer: this.$store.state.account.excerpt,
-                    amount: 900,
-                });
-                this.card.mount(this.$refs.card);
-            })
-        }
+        // externalScript.onload = () => {
+        //     this.$store.dispatch('getPaymentIntent', { plan: this.$route.params.plan, 'pk': this.$store.state.auth.user.pk })
+        //         .then(() => {
+        //             this.stripe = Stripe(this.$store.state.stripe.publishable_key)
+        //             this.elements = this.stripe.elements({
+        //                 clientSecret: this.$store.state.stripe.client_secret,
+        //                 appearance: { theme: 'stripe' },
+        //             })
+        //             let amount = 0
+        //             if (this.$route.params.plan === 'basic') {
+        //                 amount = 10
+        //             }
+        //             if (this.$route.params.plan === 'growth') {
+        //                 amount = 10
+        //             }
+        //             if (this.$route.params.plan === 'ultimate') {
+        //                 amount = 10
+        //             }
+        //             this.card = this.elements.create('payment', {
+        //                 customer: this.$store.state.account.excerpt,
+        //                 amount: 900,
+        //             });
+        //             this.card.mount(this.$refs.card);
+        //         }
+        //     )
+        // }
     },
     beforeUnmount() {
         this.card = null;

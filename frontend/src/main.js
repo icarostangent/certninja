@@ -13,4 +13,7 @@ let app = createApp(App)
 app.use(store)
 app.use(router)
 app.use(Toast, { position: POSITION.TOP_CENTER })
+app.config.compilerOptions.isCustomElement = (tag) => {
+    return tag.startsWith('stripe')
+}
 app.mount('#app')
