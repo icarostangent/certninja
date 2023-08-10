@@ -108,7 +108,7 @@ def stripe_webhook(request):
     # print(event)
     session = event['data']['object']
     if event['type'] == 'customer.created':
-        print(f'[+] Customer created {session.status}')
+        print(f'[+] Customer created {session}')
 
     if event['type'] == 'customer.subscription.created':
         print(f'[+] Customer subscription created {session.status}')

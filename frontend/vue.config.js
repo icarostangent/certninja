@@ -6,12 +6,11 @@ module.exports = {
     config.module
       .rule('vue')
       .use('vue-loader')
-        .tap(options => {
-          console.log('hello world')
-          isCustomElement: (tag) => {
-            return tag.startsWith('stripe')
-          }
-          return options
-        })
+      .tap(options => ({
+        ...options,
+        compilerOptions: {
+          isCustomElement: tag => tag.startsWith('stripe-')
+        }
+      }))
   }
 }

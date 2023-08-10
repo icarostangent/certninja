@@ -1,12 +1,13 @@
 <template>
     <div class="col-md-8 mx-auto checkout">
         <h1 class="display-4 fw-normal">Checkout</h1>
-        <form v-show="this.showCardForm">
+        <!-- <form v-show="this.showCardForm">
             <div ref="card"></div>
             <button @click.prevent="processPayment()" type="button" class="btn btn-primary btn-sm">Submit</button>
-        </form>
+        </form> -->
 
-        <stripe-pricing-table pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" publishable-key="this.publishableKey">
+        <lol-1>lol</lol-1>
+        <stripe-pricing-table pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" publishable-key="pk_test_51NLKVHHIL8ZiWr8PTruEZWQtrVZHN76oxWSKjvMzY6T5iw1FgghxWQSgFL1yiV5hsIpgwdI4V3fecMxE9KO6bUlH00XQzex7zZ">
         </stripe-pricing-table>
     </div>
 </template>
@@ -25,6 +26,7 @@ export default {
             showCardForm: true,
             showSpinner: true,
             // customer: this.$store.state.account.post_excerpt,
+            publishableKey: this.$store.state.stripe.publishable_key,
         }
     },
     computed: {
@@ -98,6 +100,8 @@ export default {
 
         const externalScript = document.createElement('script')
         externalScript.setAttribute('src', 'https://js.stripe.com/v3/pricing-table.js')
+        externalScript.setAttribute('type', 'module')
+        document.head.appendChild(externalScript)
         // externalScript.setAttribute('src', 'https://js.stripe.com/v3/')
         // externalScript.setAttribute('type', 'module')
         // document.head.appendChild(externalScript)
