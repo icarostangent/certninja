@@ -12,11 +12,11 @@ domain_detail = views.DomainViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
-product_list = views.StripeProductViewSet.as_view({
-    'get': 'list',
-})
 scan_list = views.ScanViewSet.as_view({
     'get': 'list',
+})
+subscription_detail = views.SubscriptionViewSet.as_view({
+    'get': 'retrieve',
 })
 user_detail = views.UserViewSet.as_view({
     'get': 'retrieve',
@@ -32,7 +32,7 @@ urlpatterns = [
     path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 
     path('payment/', views.create_payment_intent, name='create_payment_intent'), 
-    path('products/', product_list, name='product_list'), 
     path('users/<int:pk>/', user_detail, name='user_detail'),
+    path('users/<int:pk>/subscription/', subscription_detail, name='subscription_detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 
 ]

@@ -12,11 +12,15 @@ from accounts.signals import verify_email_signal
 
 
 class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
-    user = models.OneToOneField(to=User, on_delete=models.CASCADE)
+    user = models.OneToOneField(to=User, related_name='subscription', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     customer_id = models.CharField(max_length=255)
-    subscription_id = models.CharField(max_length=255)
-    subscription_type = models.CharField(max_length=255, default='starter', choices=[('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate')])
+    client_reference_id = models.CharField(max_length=255, default=get_random_string(length=32))
+    subscription_type = models.CharField(
+        max_length=255, 
+        default='starter', 
+        choices=[('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
+    )
 
     def __str__(self):
         return f"{self.user.username}"

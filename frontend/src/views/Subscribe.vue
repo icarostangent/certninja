@@ -8,11 +8,12 @@
     </header>
 
     <main>
-      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        <div class="col">
-          <ProductList />
-        </div>
-      </div>
+      <stripe-pricing-table 
+        pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" 
+        publishable-key="this.publishableKey"
+        client-reference-id="this.clientReferenceId"
+      >
+      </stripe-pricing-table>
 
       <h2 class="display-6 text-center mb-4">Compare plans</h2>
 
@@ -127,26 +128,27 @@
 </template>
 
 <script>
-import ProductList from "@/components/ProductList";
-
 export default {
   name: 'Subscribe',
-  components: {
-    ProductList,
+  data() {
+    return {
+      publishableKey: this.$store.state.stripe.publishable_key,
+      clientReferenceId: this.$store.state.subscription.client_reference_id,
+    }
   },
-  methods: {
-    submitBasic() {
-      //   this.$store.dispatch('subscribe', { price_id: 'price_1L60qbH5nGHVgNhzf762dtbt' }).then((res) => window.location.href = res.url)
-      this.$router.push({ name: 'checkout', params: { plan: 'basic' } })
-    },
-    submitGrowth() {
-      //   this.$store.dispatch('subscribe', { price_id: 'price_1L60r5H5nGHVgNhzrhNxesNi' }).then((res) => window.location.href = res.url)
-      this.$router.push({ name: 'checkout', params: { plan: 'growth' } })
-    },
-    submitUltimate() {
-      //   this.$store.dispatch('subscribe', { price_id: 'price_1L60rcH5nGHVgNhz0ApjoktB' }).then((res) => window.location.href = res.url)
-      this.$router.push({ name: 'checkout', params: { plan: 'ultimate' } })
-    },
+  mounted() {
+    this.$store.dispatch('getSubscription')
+      .then((response) => {
+        const externalScript = document.createElement('script')
+        externalScript.setAttribute('src', 'https://js.stripe.com/v3/pricing-table.js')
+        externalScript.setAttribute('type', 'module')
+        document.head.appendChild(externalScript)
+      })
+      .catch((error) => {
+        console.log('error getting subscription')
+        console.log(error)
+      })
+
   },
 };
 </script>

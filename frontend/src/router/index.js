@@ -81,11 +81,6 @@ const routes = [
         component: () => import(/* webpackChunkName: "subscribe" */ '../views/Subscribe.vue'),
     },
     {
-        path: '/checkout/:plan',
-        name: 'checkout',
-        component: () => import(/* webpackChunkName: "checkout" */ '../views/Checkout.vue'),
-    },
-    {
         path: '/success',
         name: 'success',
         component: () => import(/* webpackChunkName: "success" */ '../views/Success.vue')
@@ -147,5 +142,6 @@ router.beforeEach(async (to, from, next) => {
     }
     next()
 })
+
 
 export default router

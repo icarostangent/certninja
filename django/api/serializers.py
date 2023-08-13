@@ -1,14 +1,16 @@
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from api import models
 from accounts import models as account_models
 
-class GroupSerializer(serializers.ModelSerializer):
+
+class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
-        fields = ['name',]
+        model = account_models.Subscription
+        fields = ['user', 'customer_id', 'client_reference_id', 'subscription_type']
+        read_only_fields = ['user', 'customer_id', 'client_reference_id', 'subscription_type']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,35 +19,22 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
-# class StripeCustomerSerializer(serializers.ModelSerializer):
-#     user = serializers.ReadOnlyField(source='user.username')
-
-#     class Meta:
-#         model = StripeCustomer
-#         fields = ['id', 'user', 'customer_id', 'subscription_id']
-
-
-class StripeProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.StripeProduct
-        fields = ['id', 'name', 'product_id', 'amount', 'html']
-
-
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Domain
         fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'created', 'modified']
-        read_only_fields = ['user']
+        read_only_fields = ['id', 'user', 'last_scan', 'created', 'modified']
 
 
 class ScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Scan
         fields = ['id', 'user', 'domain', 'uuid', 'output']
+        read_only_fields = ['id', 'user', 'domain', 'uuid', 'output']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField( required=True, validators=[UniqueValidator(queryset=User.objects.all())] )
+    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 

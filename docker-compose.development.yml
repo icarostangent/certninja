@@ -155,35 +155,35 @@ services:
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
-  django-worker:
-    command: python manage.py rqworker
-    build:
-      context: ./django
-      dockerfile: Dockerfile.development
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
-      TARGET_URL: ${TARGET_URL}
-      DB_HOST: ${DB_HOST}
-      MYSQL_PORT: ${MYSQL_PORT}
-      DJANGO_DATABASE: ${DJANGO_DATABASE}
-      DJANGO_USER: ${DJANGO_USER}
-      DJANGO_PASSWORD: ${DJANGO_PASSWORD}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_DB: ${REDIS_DB}
-      REDIS_USER: ${REDIS_USER}
-      REDIS_PASS: ${REDIS_PASS}
-    volumes:
-      - ./django:/app
-    depends_on:
-      - db
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    restart: unless-stopped
+  # django-worker:
+  #   command: python manage.py rqworker
+  #   build:
+  #     context: ./django
+  #     dockerfile: Dockerfile.development
+  #   environment:
+  #     DOMAIN_NAME: ${DOMAIN_NAME}
+  #     TARGET_URL: ${TARGET_URL}
+  #     DB_HOST: ${DB_HOST}
+  #     MYSQL_PORT: ${MYSQL_PORT}
+  #     DJANGO_DATABASE: ${DJANGO_DATABASE}
+  #     DJANGO_USER: ${DJANGO_USER}
+  #     DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+  #     STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+  #     STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+  #     STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+  #     REDIS_HOST: ${REDIS_HOST}
+  #     REDIS_PORT: ${REDIS_PORT}
+  #     REDIS_DB: ${REDIS_DB}
+  #     REDIS_USER: ${REDIS_USER}
+  #     REDIS_PASS: ${REDIS_PASS}
+  #   volumes:
+  #     - ./django:/app
+  #   depends_on:
+  #     - db
+  #   labels:
+  #     logging: "promtail"
+  #     logging_jobname: "containerlogs"
+  #   restart: unless-stopped
 
   wordpress:
     build:
@@ -292,17 +292,42 @@ services:
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
 
-  # influxdb:
-  #   image: influxdb:1.8
-  #   ports:
-  #     - 127.0.0.1:8086:8086
-  #   volumes:
-  #     - influxdb_data:/var/lib/influxdb
-  #   environment:
-  #     INFLUXDB_DB: ${INFLUXDB_NAME}
-  #     INFLUXDB_ADMIN_USER: ${INFLUXDB_USER}
-  #     INFLUXDB_ADMIN_PASSWORD: ${INFLUXDB_PASS}
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - 127.0.0.1:8086:8086
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    environment:
+      INFLUXDB_DB: ${INFLUXDB_NAME}
+      INFLUXDB_ADMIN_USER: ${INFLUXDB_USER}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUXDB_PASS}
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
 
   grafana:
     image: grafana/grafana:latest
@@ -376,6 +401,6 @@ volumes:
   prometheus_data: {}
   grafana_data: {}
   loki_data: {}
-  # influxdb_data: {}
+  influxdb_data: {}
   # geoupdate_data: {}
   # nginx_data: {}

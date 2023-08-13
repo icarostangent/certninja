@@ -13,8 +13,3 @@ class DomainAdmin(admin.ModelAdmin):
 @admin.register(models.Scan)
 class ScanAdmin(admin.ModelAdmin):
     readonly_fields = []
-
-
-@admin.register(models.StripeProduct)
-class StripeProductAdmin(admin.ModelAdmin):
-    readonly_fields = []

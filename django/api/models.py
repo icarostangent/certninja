@@ -33,13 +33,3 @@ class Scan(ExportModelOperationsMixin('scan'), models.Model):
 
     def __str__(self):
         return str(self.uuid)
-
-
-class StripeProduct(ExportModelOperationsMixin('stripe_product'), models.Model):
-    name = models.CharField(max_length=255)
-    product_id = models.CharField(max_length=255)
-    amount = models.IntegerField(default=0)
-    html = models.TextField()
-
-    def __str__(self):
-        return self.name

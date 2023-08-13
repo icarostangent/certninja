@@ -37,7 +37,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     readonly_fields = [
         'user',
         'customer_id', 
-        'subscription_id',
+        'client_reference_id',
         'created',
     ]
 

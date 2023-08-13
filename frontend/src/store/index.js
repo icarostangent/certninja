@@ -13,6 +13,12 @@ export default createStore({
         account: {
             title: localStorage.getItem('activated'), // activated
         },
+        subscription: {
+            "user": 0,
+            "customer_id": "",
+            "client_reference_id": "",
+            "subscription_type": ""
+        },
         domains: {
             items: [],
             totalItems: 0,
@@ -56,12 +62,6 @@ export default createStore({
             'client_secret': '',
             'publishable_key': '',
         },
-        stripeCustomer: {
-            'user': '',
-            'customer_id': '',
-            'subscription_id': '',
-        },
-        products: {},
     },
     mutations: {
         SET_AUTH(state, data) {
@@ -77,9 +77,12 @@ export default createStore({
             localStorage.setItem('pk', '')
             localStorage.setItem('access', '')
         },
-        SET_ACCOUNT(state, account) {
-            state.account = account
+        SET_ACCOUNT(state, data) {
+            state.account = data
             localStorage.setItem('activated', account.post_title)
+        },
+        SET_SUBSCRIPTION(state, data) {
+            state.subscription = data
         },
         DELETE_ACCOUNT(state) {
             state.account = {}
@@ -123,12 +126,6 @@ export default createStore({
         },
         SET_STRIPE(state, data) {
             state.stripe = data
-        },
-        SET_STRIPE_CUSTOMER(state, data) {
-            state.stripeCustomer = data
-        },
-        SET_PRODUCTS(state, data) {
-            state.products = data
         },
     },
     actions: {
@@ -194,26 +191,20 @@ export default createStore({
         },
         login({ commit, dispatch }, payload) {
             console.log('login')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(`/api/auth/login/`, payload)
-                    console.log('login response:')
-                    console.log(data)
                     commit('SET_AUTH', data)
+                    dispatch('getSubscription')
                     resolve(data)
                 } catch (e) {
                     reject(e)
                 }
-                // dispatch('getAccount')
-                // dispatch('getStripeCustomer')
             })
         },
         logout({ commit }) {
             console.log('logout')
             commit('DELETE_AUTH')
-            // commit('DELETE_ACCOUNT')
-            // commit('DELETE_STRIPE_CUSTOMER')
         },
         getAccount({ commit, state }) {
             console.log('get account')
@@ -228,6 +219,25 @@ export default createStore({
                     }
                     )
                     commit('SET_ACCOUNT', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getSubscription({ commit, state }) {
+            console.log('get subscription')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data, status } = await axios.get(
+                        `/api/users/${state.auth.user.pk}/subscription/`, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_SUBSCRIPTION', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -468,45 +478,7 @@ export default createStore({
                 }
             })
         },
-        getStripeCustomer({ commit, state }) {
-            console.log('get stripe customer')
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const { data } = await axios.get(
-                        `/api/customer/${this.state.auth.id}/`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${state.auth.access}`,
-                        }
-                    }
-                    )
-                    commit('SET_STRIPE_CUSTOMER', data)
-                    resolve(data)
-                } catch (e) {
-                    reject(e)
-                }
-            })
-        },
-        getProducts({ commit, state }) {
-            console.log('get products')
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const { data } = await axios.get(
-                        `/api/products/`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${state.auth.access}`,
-                        }
-                    }
-                    )
-                    commit('SET_PRODUCTS', data)
-                    resolve(data)
-                } catch (e) {
-                    reject(e)
-                }
-            })
-        },
-        getUser({ commit, state }) {
+        getUser({ commit, state, dispatch }) {
             console.log('get user')
             return new Promise(async (resolve, reject) => {
                 try {
