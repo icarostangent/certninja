@@ -267,14 +267,10 @@ RQ_QUEUES = {
     },
 }
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# SMTP_HOST = os.environ.get('SMTP_HOST')
-# SMTP_PORT = os.environ.get('SMTP_PORT')
-# SMTP_USER = os.environ.get('SMTP_USER')
-# SMTP_PASS = os.environ.get('SMTP_PASS')
 TARGET_URL = os.environ.get('TARGET_URL')
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST')
 EMAIL_USE_TLS = True
 EMAIL_PORT = os.environ.get('SMTP_PORT')

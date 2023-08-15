@@ -49,7 +49,7 @@ server {
     allow 54.187.205.235;
     allow 54.187.216.72;
 
-    deny all;
+    #deny all;
 
     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;

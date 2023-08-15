@@ -23,6 +23,9 @@ class SubscriptionViewSet(ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SubscriptionSerializer
 
+    def get(self, request):
+        pass
+
 
 class RegisterViewSet(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -38,9 +41,6 @@ class UserViewSet(
     # mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = [IsOwner]
@@ -68,28 +68,6 @@ class ScanViewSet(ReadOnlyModelViewSet):
         return models.Scan.objects.filter(domain=self.kwargs['pk'], user=self.request.user)
 
 
-@api_view(['POST'])
-def create_payment_intent(request):
-    customer = account_models.Subscription.objects.get(user_id=request.data.get('pk'))
-    try:
-        payment_intent = stripe.PaymentIntent.create(
-            api_key=os.environ.get('STRIPE_SECRET_KEY', 'go get a secret key'),
-            customer=customer.customer_id,
-            amount=2000,
-            currency="usd",
-            payment_method_types=["card"],
-        )
-    except Exception as ex:
-        print('exception:')
-        print(ex)
-        return HttpResponse(status=400)
-
-    return JsonResponse({
-        'client_secret': payment_intent.client_secret,
-        'publishable_key': settings.STRIPE_PUBLISHABLE_KEY
-    })
-
-
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -105,15 +83,27 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
 
-    # print(event)
     session = event['data']['object']
-    print(f"[*] {event['type']}")
+    # print(f"[*] {event['type']}")
+    # print(session)
+    if event['type'] == 'customer.subscription.created':
+        print(f"[*] {event['type']}")
 
-        # print(session.status)
+    if event['type'] == 'customer.subscription.updated':
+        print(f"[*] {event['type']}")
 
-        # client_reference_id = session.status.get('client_reference_id')
-        # stripe_customer_id = session.status.get('customer')
-        # stripe_subscription_id = session.status.get('subscription')
+    if event['type'] == 'customer.subscription.canceled':
+        print(f"[*] {event['type']}")
+
+    if event['type'] == 'customer.subscription.payment_failed':
+        print(f"[*] {event['type']}")
+
+    if event['type'] == 'invoice.paid':
+        print(f"[*] {event['type']}")
+        print(event)
+        # client_reference_id = session['client_reference_id']
+        # stripe_customer_id = session.status['customer']
+        # stripe_subscription_id = session.status['subscription']
         # print('--------------------------------------')
         # print(client_reference_id, stripe_customer_id, stripe_subscription_id)
 

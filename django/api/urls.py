@@ -31,7 +31,6 @@ urlpatterns = [
     path('domains/', domain_list, name='domain_list'), 
     path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 
-    path('payment/', views.create_payment_intent, name='create_payment_intent'), 
     path('users/<int:pk>/', user_detail, name='user_detail'),
     path('users/<int:pk>/subscription/', subscription_detail, name='subscription_detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 

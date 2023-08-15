@@ -8,11 +8,10 @@
     </header>
 
     <main>
-      <stripe-pricing-table 
-        pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" 
-        publishable-key="this.publishableKey"
-        client-reference-id="this.clientReferenceId"
-      >
+      <stripe-pricing-table pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" 
+        :publishable-key="this.publishableKey"
+        :client-reference-id="this.clientReferenceId"
+        :customer-email="this.email">
       </stripe-pricing-table>
 
       <h2 class="display-6 text-center mb-4">Compare plans</h2>
@@ -130,25 +129,31 @@
 <script>
 export default {
   name: 'Subscribe',
+  computed: {
+    clientReferenceId() {
+      return this.$store.state.auth.user.subscription.client_reference_id
+    },
+    email() {
+      return this.$store.state.auth.user.email_address.email
+    },
+  },
   data() {
     return {
       publishableKey: this.$store.state.stripe.publishable_key,
-      clientReferenceId: this.$store.state.subscription.client_reference_id,
     }
   },
   mounted() {
-    this.$store.dispatch('getSubscription')
+    this.$store.dispatch('getUser')
       .then((response) => {
+        console.log(this.clientReferenceId)
         const externalScript = document.createElement('script')
         externalScript.setAttribute('src', 'https://js.stripe.com/v3/pricing-table.js')
         externalScript.setAttribute('type', 'module')
         document.head.appendChild(externalScript)
       })
       .catch((error) => {
-        console.log('error getting subscription')
         console.log(error)
       })
-
   },
 };
 </script>

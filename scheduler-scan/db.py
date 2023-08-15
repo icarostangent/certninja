@@ -77,7 +77,7 @@ def parse_account(raw):
         'id': raw[0],
         'created': raw[1],
         'customer_id': raw[2],
-        'subscription_id': raw[3],
-        'subscription_type': raw[4],
-        'user_id': raw[5],
+        'subscription_type': raw[3],
+        'user_id': raw[4],
+        'client_reference_id': raw[5],
     }

@@ -9,14 +9,24 @@ from accounts import models as account_models
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.Subscription
-        fields = ['user', 'customer_id', 'client_reference_id', 'subscription_type']
-        read_only_fields = ['user', 'customer_id', 'client_reference_id', 'subscription_type']
+        fields = ['user', 'client_reference_id', 'subscription_type']
+        read_only_fields = ['user', 'client_reference_id', 'subscription_type']
+
+
+class EmailAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = account_models.EmailAddress
+        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
+        read_only_fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
 
 
 class UserSerializer(serializers.ModelSerializer):
+    subscription = SubscriptionSerializer()
+    email_address = EmailAddressSerializer()
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['pk', 'username', 'email', 'first_name', 'last_name', 'subscription', 'email_address']
 
 
 class DomainSerializer(serializers.ModelSerializer):
