@@ -1,14 +1,15 @@
-import os
 import stripe
+from datetime import datetime
 from django import http
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, viewsets, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api import models
@@ -22,9 +23,6 @@ class SubscriptionViewSet(ReadOnlyModelViewSet):
     queryset = account_models.Subscription.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SubscriptionSerializer
-
-    def get(self, request):
-        pass
 
 
 class RegisterViewSet(generics.CreateAPIView):
@@ -83,39 +81,65 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
 
-    session = event['data']['object']
-    # print(f"[*] {event['type']}")
-    # print(session)
+    session = event['data']
+    print(f"[+] {event['type']}")
+    print(event)
+
+    if event['type'] == 'checkout.session.completed':
+        subscription = account_models.Subscription.objects.get(client_reference_id=session['object']['client_reference_id'])
+        if not subscription.customer_id:
+            subscription.customer_id = session['object']['customer']
+            subscription.save()
+
     if event['type'] == 'customer.subscription.created':
-        print(f"[*] {event['type']}")
+        subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
+        subscription.subscription_id = session['object']['id']
+        subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
+        subscription.save()
 
     if event['type'] == 'customer.subscription.updated':
-        print(f"[*] {event['type']}")
+        subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
+        subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
+        # subscription.subscription_id = session['object']['id']
+        subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
+        subscription.save()
 
-    if event['type'] == 'customer.subscription.canceled':
-        print(f"[*] {event['type']}")
+    # if event['type'] == 'customer.subscription.canceled':
+    #     print(f"[*] {event['type']}")
 
-    if event['type'] == 'customer.subscription.payment_failed':
-        print(f"[*] {event['type']}")
+    # if event['type'] == 'customer.subscription.payment_failed':
+    #     print(f"[*] {event['type']}")
 
-    if event['type'] == 'invoice.paid':
-        print(f"[*] {event['type']}")
-        print(event)
-        # client_reference_id = session['client_reference_id']
-        # stripe_customer_id = session.status['customer']
-        # stripe_subscription_id = session.status['subscription']
-        # print('--------------------------------------')
-        # print(client_reference_id, stripe_customer_id, stripe_subscription_id)
-
-        # user = User.objects.get(id=client_reference_id)
-        # StripeCustomer.objects.create(
-        #     user=user,
-        #     stripeCustomerId=stripe_customer_id,
-        #     stripeSubscriptionId=stripe_subscription_id,
-        # )
-        # print(user.username + ' just subscribed.')
+    # if event['type'] == 'invoice.paid':
+    #     print(f"[*] {event['type']}")
 
     return HttpResponse(status=200)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated,])
+def get_customer_portal(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    stripe.billing_portal.Configuration.create(
+        business_profile={
+            "headline": "Cactus Practice partners with Stripe for simplified billing.",
+        },
+        features={ "invoice_history": { "enabled": True } },
+    )
+
+    session = stripe.billing_portal.Session.create(
+        customer=request.user.subscription.customer_id,
+        return_url=f'{settings.TARGET_URL}/account',
+    )
+
+    return HttpResponse(session.url)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -173,7 +197,7 @@ class RequestPasswordResetView(generics.UpdateAPIView):
         if not serializer.is_valid():
             return Response({'validation_error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
-        self.object.reset_key = get_random_string()
+        self.object.reset_key = get_random_string(length=32)
         self.object.save()
 
         password_reset_signal.send(sender=self, email=self.object.email, key=self.object.reset_key)

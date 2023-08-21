@@ -34,4 +34,5 @@ urlpatterns = [
     path('users/<int:pk>/', user_detail, name='user_detail'),
     path('users/<int:pk>/subscription/', subscription_detail, name='subscription_detail'),
     path('webhook/', views.stripe_webhook, name='webhook'), 
+    path('portal/', views.get_customer_portal, name='get_customer_portal'), 
 ]

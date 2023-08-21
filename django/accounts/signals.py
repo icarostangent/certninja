@@ -14,9 +14,7 @@ password_reset_signal = Signal() # args: email, key
 @receiver(post_save, sender=User)
 def create_subscription(sender, instance, created, **kwargs):
     if created == True:
-        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'django needs a stripe secret key')
-        cust = stripe.Customer.create(description=f"{instance.username}",)
-        models.Subscription.objects.create(user=instance, customer_id=cust.id)
+        models.Subscription.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)

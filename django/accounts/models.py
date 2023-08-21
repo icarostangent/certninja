@@ -14,12 +14,21 @@ from accounts.signals import verify_email_signal
 class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     user = models.OneToOneField(to=User, related_name='subscription', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    customer_id = models.CharField(max_length=255)
+    customer_id = models.CharField(max_length=255, default='')
     client_reference_id = models.CharField(max_length=255, default=get_random_string(length=32))
+    subscription_id = models.CharField(max_length=255, default='')
     subscription_type = models.CharField(
         max_length=255, 
         default='starter', 
-        choices=[('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
+        choices=settings.STRIPE_PRODUCT_CHOICES
+    )
+    subscription_active = models.BooleanField(default=False)
+    period_start = models.DateTimeField(default=None, null=True)
+    period_end = models.DateTimeField(default=None, null=True)
+    previous_subscription_type = models.CharField(
+        max_length=255, 
+        default='starter', 
+        choices=settings.STRIPE_PRODUCT_CHOICES
     )
 
     def __str__(self):
@@ -27,7 +36,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
 
 
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
-    user = models.OneToOneField(to=User, related_name='email_address', on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, related_name='email_addresses', on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
     verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True)
     verified = models.BooleanField(default=False)
@@ -35,6 +44,8 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     verification_sent = models.DateTimeField(null=True)
     reset_key = models.CharField(default=None, null=True, max_length=255)
     reset_sent = models.DateTimeField(null=True)
+    primary = models.BooleanField(default=False)
+    billing = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("email address")
@@ -45,7 +56,7 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
         return self.email
 
     def save(self, *args, **kwargs):
-        if not self.id:
+        if not self.id: # if new
             verify_email_signal.send(sender=self.__class__, email=self.email, key=self.verify_key)
             self.verification_sent = timezone.now()
         super(EmailAddress, self).save(*args, **kwargs)

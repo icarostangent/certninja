@@ -188,7 +188,7 @@ export default createStore({
                 try {
                     const { data } = await axios.post(`/api/auth/login/`, payload)
                     commit('SET_AUTH', data)
-                    dispatch('getSubscription')
+                    // dispatch('getSubscription')
                     resolve(data)
                 } catch (e) {
                     reject(e)

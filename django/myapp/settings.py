@@ -277,3 +277,6 @@ EMAIL_PORT = os.environ.get('SMTP_PORT')
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
+
+STRIPE_PRODUCT_CHOICES = [('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
+STRIPE_PRODUCT_IDS = {'prod_OOFSUk9btg0sKT': 'basic', 'prod_OOFUQkPcb1PvcO': 'growth', 'prod_OOFVSPPwQzA4Jd': 'ultimate'}

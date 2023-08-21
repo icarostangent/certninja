@@ -48,7 +48,7 @@ class EmailAddressAdmin(admin.ModelAdmin):
     list_filter = ['verified',]
     search_fields = ['email', 'user__username']
     raw_id_fields = ['user',]
-    readonly_fields = ['user', 'email', 'verify_key', 'verification_sent', 'verified', 'reset_key', 'reset_sent']
+    # readonly_fields = ['user', 'email', 'verify_key', 'verification_sent', 'verified', 'reset_key', 'reset_sent']
     actions = ['make_verified', 'send_verification_email', 'send_password_reset']
 
     @admin.action(description='Mark selected email addresses as verified')
