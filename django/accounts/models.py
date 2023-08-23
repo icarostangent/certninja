@@ -30,6 +30,8 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
         default='starter', 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
+    cancel_at = models.DateTimeField(default=None, null=True)
+    cancel_at_period_end = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}"
@@ -38,12 +40,12 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     user = models.ForeignKey(to=User, related_name='email_addresses', on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
-    verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True)
+    verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True, blank=True)
     verified = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     verification_sent = models.DateTimeField(null=True)
-    reset_key = models.CharField(default=None, null=True, max_length=255)
-    reset_sent = models.DateTimeField(null=True)
+    reset_key = models.CharField(default=None, null=True, max_length=255, blank=True)
+    reset_sent = models.DateTimeField(null=True, blank=True)
     primary = models.BooleanField(default=False)
     billing = models.BooleanField(default=False)
 

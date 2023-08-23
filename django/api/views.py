@@ -105,9 +105,13 @@ def stripe_webhook(request):
         subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
         subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
-        subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
         # subscription.subscription_id = session['object']['id']
         subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
+        if 'items' in session['previous_attributes']:
+            subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
+        subscription.cancel_at_period_end = session['object']['cancel_at_period_end']
+        if session['object']['cancel_at_period_end']:
+            subscription.cancel_at = datetime.utcfromtimestamp(session['object']['cancel_at'])
         subscription.save()
 
     # if event['type'] == 'customer.subscription.canceled':

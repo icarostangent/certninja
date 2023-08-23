@@ -8,14 +8,22 @@ export default createStore({
             'access': localStorage.getItem('access'),
             'user': {
                 'pk': localStorage.getItem('pk'),
+                'username': '',
+                'email': '',
                 'subscription': {
-                    'client_reference_id': ''
+                    'client_reference_id': '',
+                    'subscription_type': '',
+                    'subscription_active': false,
+                    'period_start': '',
+                    'period_end': '',
+                    'previous_subscription_type': '',
+                    'cancel_at': '',
+                    'cancel_at_period_end': false,
                 },
-                'email_address': {
-                    'email': ''
-                },
+                'email_addresses': [],
             },
         },
+        portal: '',
         account: {
             title: localStorage.getItem('activated'), // activated
         },
@@ -83,6 +91,9 @@ export default createStore({
         DELETE_ACCOUNT(state) {
             state.account = {}
             localStorage.setItem('activated', '')
+        },
+        SET_PORTAL(state, data) {
+            state.portal = data
         },
         INSERT_DOMAIN(state, data) {
             state.domains.items.unshift(data)
@@ -212,6 +223,25 @@ export default createStore({
                     }
                     )
                     commit('SET_USER', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getCustomerPortal({ commit, state, dispatch }) {
+            console.log('get customer portal')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/api/portal/`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.auth.access}`,
+                        }
+                    }
+                    )
+                    commit('SET_PORTAL', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
