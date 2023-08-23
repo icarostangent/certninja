@@ -2,31 +2,32 @@
   <div class="col-md-8 mx-auto account">
     <h1>Account</h1>
       <p>username: {{ username }}</p>
-      <p>email: {{ email }}</p>
-    <div>
-      <h3>Subscription</h3>
-      <p>client reference id: {{ clientReferenceId }}</p>
-      <p>subscription type: {{ subscriptionType }}</p>
-      <p>subscription active: {{ subscriptionActive }}</p>
-      <p>period start: {{ periodStart }}</p>
-      <p>period end: {{ periodEnd }}</p>
-      <p>previous subscription type: {{ previousSubscriptionType }}</p>
-      <p>cancel at: {{ cancelAt }}</p>
-      <p>cancel at period end: {{ cancelAtPeriodEnd }}</p>
-      <p>
-        <button @click.prevent="onClickGetPortal" v-show="!this.getCustomerPortal" type="button" class="btn btn-primary btn-sm">Update Subscription</button>
-        <a :href="this.portalHref" v-show="this.getCustomerPortal">{{ portalHref }}</a>
-      </p>
-    </div>
-    <div>
-      <h3>Email</h3>
-      <div v-for="emailAddress in emailAddresses">
-        <p>email: {{ emailAddress.email }}</p>
-        <p>verified: {{ emailAddress.verified }}</p>
-        <p>verification sent: {{ emailAddress.verification_sent }}</p>
-        <p>reset key sent: {{ emailAddress.reset_sent }}</p>
-        <p>primary: {{ emailAddress.primary }}</p>
-        <p>billing: {{ emailAddress.billing }}</p>
+      <p>billing email: {{ email }}</p>
+    <div class="d-flex justify-content-between">
+      <div>
+        <h3>Subscription</h3>
+        <p>client reference id: {{ clientReferenceId }}</p>
+        <p>subscription type: {{ subscriptionType }}</p>
+        <p>subscription active: {{ subscriptionActive }}</p>
+        <p>period start: {{ periodStart }}</p>
+        <p>period end: {{ periodEnd }}</p>
+        <p>previous subscription type: {{ previousSubscriptionType }}</p>
+        <p>cancel at: {{ cancelAt }}</p>
+        <p>cancel at period end: {{ cancelAtPeriodEnd }}</p>
+        <p v-show="subscriptionType !== 'starter' && !previousSusbcriptionType">
+          <button @click.prevent="onClickGetPortal" v-show="!getCustomerPortal" type="button" class="btn btn-primary btn-sm">Update Subscription</button>
+          <a :href="portalHref" v-show="getCustomerPortal">{{ portalHref }}</a>
+        </p>
+      </div>
+      <div>
+        <h3>Email</h3>
+        <div v-for="emailAddress in emailAddresses">
+          <p>email: {{ emailAddress.email }}</p>
+          <p>verified: {{ emailAddress.verified }}</p>
+          <p>verification sent: {{ emailAddress.verification_sent }}</p>
+          <p>reset key sent: {{ emailAddress.reset_sent }}</p>
+          <p>primary: {{ emailAddress.primary }}</p>
+        </div>
       </div>
     </div>
   </div>

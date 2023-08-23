@@ -83,7 +83,7 @@ def stripe_webhook(request):
 
     session = event['data']
     print(f"[+] {event['type']}")
-    print(event)
+    # print(event)
 
     if event['type'] == 'checkout.session.completed':
         subscription = account_models.Subscription.objects.get(client_reference_id=session['object']['client_reference_id'])
@@ -105,7 +105,6 @@ def stripe_webhook(request):
         subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
         subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
-        # subscription.subscription_id = session['object']['id']
         subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
         if 'items' in session['previous_attributes']:
             subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
@@ -114,14 +113,17 @@ def stripe_webhook(request):
             subscription.cancel_at = datetime.utcfromtimestamp(session['object']['cancel_at'])
         subscription.save()
 
-    # if event['type'] == 'customer.subscription.canceled':
-    #     print(f"[*] {event['type']}")
-
-    # if event['type'] == 'customer.subscription.payment_failed':
-    #     print(f"[*] {event['type']}")
-
-    # if event['type'] == 'invoice.paid':
-    #     print(f"[*] {event['type']}")
+    if event['type'] == 'customer.updated':
+        customer = get_object_or_404(User, subscription__customer_id=session['object']['id'])
+        if customer.email != session['object']['email']:
+            customer.email = session['object']['email']
+            customer.save()
+            match = False
+            for email_address in customer.email_addresses.all():
+                if email_address.email == session['object']['email']:
+                    match = True
+            if not match:
+                account_models.EmailAddress.objects.create(user=customer, email=session['object']['email'])
 
     return HttpResponse(status=200)
 

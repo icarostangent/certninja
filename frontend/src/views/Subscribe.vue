@@ -134,7 +134,7 @@ export default {
       return this.$store.state.auth.user.subscription.client_reference_id
     },
     email() {
-      return this.$store.state.auth.user.email_address.email
+      return this.$store.state.auth.user.email
     },
   },
   data() {

@@ -32,7 +32,7 @@
               <router-link v-show="loggedin" to="/domain" class="nav-link">Domains</router-link>
             </li>
             <li class="nav-item">
-              <router-link v-show="loggedin" to="/subscribe" class="nav-link">Subscribe</router-link>
+              <router-link v-show="loggedin && subscriptionType === 'starter' && !previousSubscriptionType" to="/subscribe" class="nav-link">Subscribe</router-link>
             </li>
             <li class="nav-item">
               <router-link v-show="!loggedin" to="/login" class="nav-link">Log in</router-link>
@@ -76,6 +76,12 @@ export default {
     },
     menu() {
       return this.$store.state.menu;
+    },
+    subscriptionType() {
+      return this.$store.state.auth.user.subscription.subscription_type
+    },
+    previousSubscriptionType() {
+      return this.$store.state.auth.user.subscription.previous_subscription_type
     },
   },
   mounted() {

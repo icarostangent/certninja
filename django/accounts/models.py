@@ -19,7 +19,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     subscription_id = models.CharField(max_length=255, default='')
     subscription_type = models.CharField(
         max_length=255, 
-        default='starter', 
+        default=settings.STRIPE_PRODUCT_CHOICES[0][0], 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
     subscription_active = models.BooleanField(default=False)
@@ -27,7 +27,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     period_end = models.DateTimeField(default=None, null=True)
     previous_subscription_type = models.CharField(
         max_length=255, 
-        default='starter', 
+        default=settings.STRIPE_PRODUCT_CHOICES[0][0], 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
     cancel_at = models.DateTimeField(default=None, null=True)
@@ -43,11 +43,10 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True, blank=True)
     verified = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
-    verification_sent = models.DateTimeField(null=True)
+    verification_sent = models.DateTimeField(null=True, blank=True)
     reset_key = models.CharField(default=None, null=True, max_length=255, blank=True)
     reset_sent = models.DateTimeField(null=True, blank=True)
     primary = models.BooleanField(default=False)
-    billing = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("email address")

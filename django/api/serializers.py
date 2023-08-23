@@ -17,7 +17,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class EmailAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.EmailAddress
-        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent', 'primary', 'billing']
+        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent', 'primary']
         read_only_fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
 
 
