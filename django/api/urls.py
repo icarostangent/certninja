@@ -2,6 +2,26 @@ from django.urls import path
 from api import views
 
 
+agent_list = views.AgentViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+agent_detail = views.AgentViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+email_list = views.EmailAddressViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+email_detail = views.EmailAddressViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 domain_list = views.DomainViewSet.as_view({
     'get': 'list',
     'post': 'create'
@@ -32,7 +52,11 @@ urlpatterns = [
     path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 
     path('users/<int:pk>/', user_detail, name='user_detail'),
-    path('users/<int:pk>/subscription/', subscription_detail, name='subscription_detail'),
+    path('users/<int:pk>/subscription/', subscription_detail, name='user_subscription_detail'),
+    path('users/<int:pk>/emails/', email_list, name='user_email_list'),
+    path('users/<int:pk>/emails/<int:email_pk>/', email_detail, name='user_email_detail'),
+    path('users/<int:pk>/agents/', agent_list, name='user_agent_list'), 
+    path('users/<int:pk>/agents/<int:agent_pk>/', agent_detail, name='user_agent_detail'), 
     path('webhook/', views.stripe_webhook, name='webhook'), 
     path('portal/', views.get_customer_portal, name='get_customer_portal'), 
 ]

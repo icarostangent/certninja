@@ -15,7 +15,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     user = models.OneToOneField(to=User, related_name='subscription', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     customer_id = models.CharField(max_length=255, default='')
-    client_reference_id = models.CharField(max_length=255, default=get_random_string(length=32))
+    client_reference_id = models.CharField(max_length=255)
     subscription_id = models.CharField(max_length=255, default='')
     subscription_type = models.CharField(
         max_length=255, 
@@ -36,27 +36,32 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     def __str__(self):
         return f"{self.user.username}"
 
+    def save(self, *args, **kwargs):
+        self.client_reference_id = get_random_string(length=32)
+        super(Subscription, self).save(*args, **kwargs)
+
 
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     user = models.ForeignKey(to=User, related_name='email_addresses', on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
-    verify_key = models.CharField(default=get_random_string(length=32), max_length=255, null=True, blank=True)
+    verify_key = models.CharField(max_length=255, null=True, blank=True)
     verified = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     verification_sent = models.DateTimeField(null=True, blank=True)
     reset_key = models.CharField(default=None, null=True, max_length=255, blank=True)
     reset_sent = models.DateTimeField(null=True, blank=True)
-    primary = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("email address")
         verbose_name_plural = _("email addresses")
         unique_together = [("user", "email")]
+        ordering = ['-created']
 
     def __str__(self):
         return self.email
 
     def save(self, *args, **kwargs):
+        self.verify_key = get_random_string(length=32)
         if not self.id: # if new
             verify_email_signal.send(sender=self.__class__, email=self.email, key=self.verify_key)
             self.verification_sent = timezone.now()

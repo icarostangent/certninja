@@ -6,6 +6,20 @@ from api import models
 from accounts import models as account_models
 
 
+
+class AgentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Agent
+        fields = ['name', 'api_key', 'last_seen']
+
+
+class EmailAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = account_models.EmailAddress
+        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
+        read_only_fields = ['user', 'client_reference_id', 'subscription_type']
+
+
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.Subscription
@@ -17,7 +31,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class EmailAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.EmailAddress
-        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent', 'primary']
+        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
         read_only_fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
 
 

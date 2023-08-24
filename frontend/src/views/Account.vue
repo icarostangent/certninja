@@ -1,92 +1,130 @@
 <template>
   <div class="col-md-8 mx-auto account">
     <h1>Account</h1>
-      <p>username: {{ username }}</p>
-      <p>billing email: {{ email }}</p>
+    <p>
+      login: {{ username }}<br />
+      billing email: {{ email }}
+    </p>
     <div class="d-flex justify-content-between">
-      <div>
+      <div col>
         <h3>Subscription</h3>
-        <p>client reference id: {{ clientReferenceId }}</p>
-        <p>subscription type: {{ subscriptionType }}</p>
-        <p>subscription active: {{ subscriptionActive }}</p>
-        <p>period start: {{ periodStart }}</p>
-        <p>period end: {{ periodEnd }}</p>
-        <p>previous subscription type: {{ previousSubscriptionType }}</p>
-        <p>cancel at: {{ cancelAt }}</p>
-        <p>cancel at period end: {{ cancelAtPeriodEnd }}</p>
+        <p>
+          client reference id: {{ clientReferenceId }}<br />
+          subscription type: {{ subscriptionType }}<br />
+          subscription active: {{ subscriptionActive }}<br />
+          period start: {{ periodStart }}<br />
+          period end: {{ periodEnd }}<br />
+          previous subscription type: {{ previousSubscriptionType }}<br />
+          cancel at: {{ cancelAt }}<br />
+          cancel at period end: {{ cancelAtPeriodEnd }}<br />
+        </p>
         <p v-show="subscriptionType !== 'starter' && !previousSusbcriptionType">
-          <button @click.prevent="onClickGetPortal" v-show="!getCustomerPortal" type="button" class="btn btn-primary btn-sm">Update Subscription</button>
-          <a :href="portalHref" v-show="getCustomerPortal">{{ portalHref }}</a>
+          <button @click.prevent="onClickGetPortal" v-show="!getCustomerPortal" type="button"
+            class="btn btn-primary btn-sm">Update Subscription</button>
+          <a :href="portalHref" v-show="getCustomerPortal">Update Subscription</a>
         </p>
       </div>
-      <div>
+      <div col>
         <h3>Email</h3>
-        <div v-for="emailAddress in emailAddresses">
-          <p>email: {{ emailAddress.email }}</p>
-          <p>verified: {{ emailAddress.verified }}</p>
-          <p>verification sent: {{ emailAddress.verification_sent }}</p>
-          <p>reset key sent: {{ emailAddress.reset_sent }}</p>
-          <p>primary: {{ emailAddress.primary }}</p>
+        <div v-for="email in emails.items">
+          <p>
+            email: {{ email.email }}<br />
+            verified: {{ email.verified }}<br />
+            verification sent: {{ email.verification_sent }}<br />
+            reset key sent: {{ email.reset_sent }}<br />
+          </p>
         </div>
+        <Pagination @page-changed="emailPageChanged" :totalPages="emails.totalPages" :currentPage="currentEmailPage" />
+      </div>
+      <div col>
+        <h3>Agents</h3>
+        <div v-for="agent in agents.items">
+          <p>
+            name: {{ agent.name }}<br />
+            api key: {{ agent.api_key }}<br />
+            last seen: {{ agent.last_seen }}<br />
+          </p>
+        </div>
+        <Pagination @page-changed="agentPageChanged" :totalPages="emails.totalPages" :currentPage="currentAgentPage" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Pagination from "@/components/Pagination";
+
 export default {
-    name: 'Account',
-    computed: {
-      username() {
-        return this.$store.state.auth.user.username
-      },
-      email() {
-        return this.$store.state.auth.user.email
-      },
-      clientReferenceId() {
-        return this.$store.state.auth.user.subscription.client_reference_id
-      },
-      subscriptionType() {
-        return this.$store.state.auth.user.subscription.subscription_type
-      },
-      subscriptionActive() {
-        return this.$store.state.auth.user.subscription.subscription_active
-      },
-      periodStart() {
-        return this.$store.state.auth.user.subscription.period_start
-      },
-      periodEnd() {
-        return this.$store.state.auth.user.subscription.period_end
-      },
-      previousSubscriptionType() {
-        return this.$store.state.auth.user.subscription.previous_subscription_type
-      },
-      cancelAt() {
-        return this.$store.state.auth.user.subscription.cancel_at
-      },
-      cancelAtPeriodEnd() {
-        return this.$store.state.auth.user.subscription.cancel_at_period_end
-      },
-      portalHref() {
-        return this.$store.state.portal
-      },
-      emailAddresses() {
-        return this.$store.state.auth.user.email_addresses
-      },
+  name: 'Account',
+  components: {
+    Pagination,
+  },
+  computed: {
+    username() {
+      return this.$store.state.auth.user.username
     },
-    data() {
-      return {
-        getCustomerPortal: false,
-      }
+    email() {
+      return this.$store.state.auth.user.email
     },
-    methods: {
-      onClickGetPortal(e) {
-        this.getCustomerPortal = true
-        this.$store.dispatch('getCustomerPortal')
-      },
+    clientReferenceId() {
+      return this.$store.state.auth.user.subscription.client_reference_id
     },
-    mounted() {
-      this.$store.dispatch('getUser')
+    subscriptionType() {
+      return this.$store.state.auth.user.subscription.subscription_type
     },
+    subscriptionActive() {
+      return this.$store.state.auth.user.subscription.subscription_active
+    },
+    periodStart() {
+      return this.$store.state.auth.user.subscription.period_start
+    },
+    periodEnd() {
+      return this.$store.state.auth.user.subscription.period_end
+    },
+    previousSubscriptionType() {
+      return this.$store.state.auth.user.subscription.previous_subscription_type
+    },
+    cancelAt() {
+      return this.$store.state.auth.user.subscription.cancel_at
+    },
+    cancelAtPeriodEnd() {
+      return this.$store.state.auth.user.subscription.cancel_at_period_end
+    },
+    portalHref() {
+      return this.$store.state.portal
+    },
+    emails() {
+      return this.$store.state.emails
+    },
+    agents() {
+      return this.$store.state.agents
+    },
+  },
+  data() {
+    return {
+      currentEmailPage: 1,
+      currentAgentPage: 1,
+      getCustomerPortal: false,
+    }
+  },
+  methods: {
+    emailPageChanged(page) {
+      this.currentEmailPage = page;
+      this.$store.dispatch('getEmails', { page: this.currentEmailPage });
+    },
+    agentPageChanged(page) {
+      this.currentAgentPage = page;
+      this.$store.dispatch('getAgents', { page: this.currentAgentPage });
+    },
+    onClickGetPortal(e) {
+      this.getCustomerPortal = true
+      this.$store.dispatch('getCustomerPortal')
+    },
+  },
+  mounted() {
+    this.$store.dispatch('getUser')
+    this.$store.dispatch('getEmails', { 'page': 1 })
+    this.$store.dispatch('getAgents', { 'page': 1 })
+  },
 }
 </script>

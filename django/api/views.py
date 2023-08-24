@@ -19,6 +19,22 @@ from accounts import models as account_models
 from accounts.signals import password_reset_signal
 
 
+class AgentViewSet(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.AgentSerializer
+
+    def get_queryset(self):
+        return models.Agent.objects.filter(user=self.request.user)
+
+
+class EmailAddressViewSet(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.EmailAddressSerializer
+
+    def get_queryset(self):
+        return account_models.EmailAddress.objects.filter(user=self.request.user)
+
+
 class SubscriptionViewSet(ReadOnlyModelViewSet):
     queryset = account_models.Subscription.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
@@ -45,7 +61,6 @@ class UserViewSet(
 
 
 class DomainViewSet(ModelViewSet):
-    queryset = models.Domain.objects.all()
     serializer_class = serializers.DomainSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -57,7 +72,6 @@ class DomainViewSet(ModelViewSet):
 
 
 class ScanViewSet(ReadOnlyModelViewSet):
-    queryset = models.Scan.objects.all()
     serializer_class = serializers.ScanSerializer
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'domain'

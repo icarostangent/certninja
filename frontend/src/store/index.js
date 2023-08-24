@@ -20,8 +20,19 @@ export default createStore({
                     'cancel_at': '',
                     'cancel_at_period_end': false,
                 },
-                'email_addresses': [],
             },
+        },
+        emails: {
+            items: [],
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: 1,
+        },
+        agents: {
+            items: [],
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: 1,
         },
         portal: '',
         account: {
@@ -91,6 +102,12 @@ export default createStore({
         DELETE_ACCOUNT(state) {
             state.account = {}
             localStorage.setItem('activated', '')
+        },
+        SET_EMAILS(state, data) {
+            state.emails = data
+        },
+        SET_AGENTS(state, data) {
+            state.agents = data
         },
         SET_PORTAL(state, data) {
             state.portal = data
@@ -248,19 +265,38 @@ export default createStore({
                 }
             })
         },
-        getAccount({ commit, state }) {
-            console.log('get account')
+        getEmails({ commit, state }, payload) {
+            console.log('get emails')
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data, status } = await axios.get(
-                        `/wp-json/backend/v1/author/${state.auth.id}/account`, {
+                        `/api/users/${state.auth.user.pk}/emails/?page=${payload.page}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
                         }
                     }
                     )
-                    commit('SET_ACCOUNT', data)
+                    commit('SET_EMAILS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getAgents({ commit, state }, payload) {
+            console.log('get agents')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data, status } = await axios.get(
+                        `/api/users/${state.auth.user.pk}/agents/?page=${payload.page}`, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_AGENTS', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
