@@ -12,11 +12,34 @@ from rest_framework import generics, permissions, mixins, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from api import exceptions
 from api import models
 from api import serializers
 from api.permissions import IsOwner
 from accounts import models as account_models
 from accounts.signals import password_reset_signal
+
+
+class ServiceAgentView(generics.RetrieveAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = serializers.ServiceAgentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = models.Agent.objects.get(api_key=request.data['api_key'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class ServiceScanView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = serializers.ServiceScanSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class AgentViewSet(ModelViewSet):
@@ -68,6 +91,11 @@ class DomainViewSet(ModelViewSet):
         return models.Domain.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
+        subscription = self.request.user.subscription
+        if not subscription.subscription_active:
+            raise exceptions.AccountInactive
+        if self.request.user.domains.count() >= settings.DOMAIN_LIMITS[subscription.subscription_type]:
+            raise exceptions.DomainLimitExceeded
         serializer.save(user=self.request.user)
 
 

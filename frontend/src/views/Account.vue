@@ -10,6 +10,7 @@
         <h3>Subscription</h3>
         <p>
           client reference id: {{ clientReferenceId }}<br />
+          customer id: {{ customerId }}<br />
           subscription type: {{ subscriptionType }}<br />
           subscription active: {{ subscriptionActive }}<br />
           period start: {{ periodStart }}<br />
@@ -18,7 +19,7 @@
           cancel at: {{ cancelAt }}<br />
           cancel at period end: {{ cancelAtPeriodEnd }}<br />
         </p>
-        <p v-show="subscriptionType !== 'starter' && !previousSusbcriptionType">
+        <p v-show="subscriptionType !== 'starter' && customerId">
           <button @click.prevent="onClickGetPortal" v-show="!getCustomerPortal" type="button"
             class="btn btn-primary btn-sm">Update Subscription</button>
           <a :href="portalHref" v-show="getCustomerPortal">Update Subscription</a>
@@ -89,6 +90,9 @@ export default {
     },
     cancelAtPeriodEnd() {
       return this.$store.state.auth.user.subscription.cancel_at_period_end
+    },
+    customerId() {
+      return this.$store.state.auth.user.subscription.customer_id
     },
     portalHref() {
       return this.$store.state.portal

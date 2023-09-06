@@ -30,7 +30,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
         default=settings.STRIPE_PRODUCT_CHOICES[0][0], 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
-    cancel_at = models.DateTimeField(default=None, null=True)
+    cancel_at = models.DateTimeField(default=None, blank=True)
     cancel_at_period_end = models.BooleanField(default=False)
 
     def __str__(self):

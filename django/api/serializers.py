@@ -6,13 +6,6 @@ from api import models
 from accounts import models as account_models
 
 
-
-class AgentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Agent
-        fields = ['name', 'api_key', 'last_seen']
-
-
 class EmailAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.EmailAddress
@@ -24,7 +17,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = account_models.Subscription
         fields = ['user', 'client_reference_id', 'subscription_type', 'subscription_active', 'period_start', 
-                  'period_end', 'previous_subscription_type', 'cancel_at', 'cancel_at_period_end']
+                  'period_end', 'previous_subscription_type', 'cancel_at', 'cancel_at_period_end', 'customer_id']
         read_only_fields = ['user', 'client_reference_id', 'subscription_type']
 
 
@@ -56,6 +49,26 @@ class ScanSerializer(serializers.ModelSerializer):
         model = models.Scan
         fields = ['id', 'user', 'domain', 'uuid', 'output']
         read_only_fields = ['id', 'user', 'domain', 'uuid', 'output']
+
+
+class ServiceScanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Scan
+        fields = ['id', 'user', 'domain', 'uuid', 'output']
+
+
+class AgentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Agent
+        fields = ['name', 'api_key', 'last_seen']
+
+
+class ServiceAgentSerializer(serializers.ModelSerializer):
+    domains = DomainSerializer(many=True)
+
+    class Meta:
+        model = models.Agent
+        fields = ['user', 'name', 'api_key', 'last_seen', 'domains']
 
 
 class RegisterSerializer(serializers.ModelSerializer):

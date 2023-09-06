@@ -280,3 +280,4 @@ EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
 
 STRIPE_PRODUCT_CHOICES = [('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
 STRIPE_PRODUCT_IDS = {'prod_OOFSUk9btg0sKT': 'basic', 'prod_OOFUQkPcb1PvcO': 'growth', 'prod_OOFVSPPwQzA4Jd': 'ultimate'}
+DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50}
