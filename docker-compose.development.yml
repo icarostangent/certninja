@@ -192,6 +192,7 @@ services:
     volumes:
       - ./wordpress/wp-config.php:/var/www/html/wp-config.php
       - ./wordpress/wp-content:/var/www/html/wp-content
+      - ./wordpress/wp-cli.phar:/var/www/html/wp-cli.phar
     expose:
       - "80"
     ports:
