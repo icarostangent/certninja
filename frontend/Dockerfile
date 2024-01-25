@@ -8,8 +8,8 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN npm i 
-RUN npm i 
+RUN npm install
+RUN npm update
 # If you are building your code for production
 # RUN npm ci --only=production
 
