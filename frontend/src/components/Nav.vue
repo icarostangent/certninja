@@ -26,9 +26,6 @@
               </template>
             </template>
             <li class="nav-item">
-              <router-link to="/about" class="nav-link">About</router-link>
-            </li>
-            <li class="nav-item">
               <router-link v-show="loggedin" to="/domain" class="nav-link">Domains</router-link>
             </li>
             <li class="nav-item">

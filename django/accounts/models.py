@@ -23,14 +23,14 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
     subscription_active = models.BooleanField(default=False)
-    period_start = models.DateTimeField(default=None, null=True)
-    period_end = models.DateTimeField(default=None, null=True)
+    period_start = models.DateTimeField(default=None, blank=True)
+    period_end = models.DateTimeField(default=None, blank=True)
     previous_subscription_type = models.CharField(
         max_length=255, 
         default=settings.STRIPE_PRODUCT_CHOICES[0][0], 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
-    cancel_at = models.DateTimeField(blank=True)
+    cancel_at = models.DateTimeField(default=None, blank=True)
     cancel_at_period_end = models.BooleanField(default=False)
 
     def __str__(self):
