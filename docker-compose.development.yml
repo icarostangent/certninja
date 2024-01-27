@@ -100,7 +100,7 @@ services:
     restart: unless-stopped
 
   db:
-    image: mysql:latest
+    image: mysql:8.2.0-oraclelinux8
     volumes:
       - db_data:/var/lib/mysql
       - ./db/backup:/docker-entrypoint-initdb.d
