@@ -60,6 +60,8 @@ services:
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
+    extra_hosts:
+      - ${DOMAIN_NAME}:${PUBLIC_IP}
     restart: unless-stopped
 
   cleaner:
