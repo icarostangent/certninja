@@ -163,7 +163,7 @@ services:
       context: ./wordpress
     volumes:
       - ./wordpress/wp-config.php:/var/www/html/wp-config.php
-      - ./wordpress/plugins:/var/www/html/wp-content/plugins
+      - ./wordpress/wp-content:/var/www/html/wp-content
     expose:
       - "80"
     ports:
