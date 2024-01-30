@@ -5,6 +5,9 @@
         <router-link to="/" class="navbar-brand" aria-current="page">Welcome</router-link>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <router-link to="/" class="nav-link">Home</router-link>
+            </li>
             <template v-for="item in menu.items" :key="item.ID">
               <template v-if="item.child_items !== undefined">
                 <li class="nav-item dropdown">
