@@ -55,8 +55,8 @@ export default {
                     this.port = null
                     useToast().success('Success')
                 })
-                .catch(() => {
-                    useToast().error('Error creating domain')
+                .catch((e) => {
+                    useToast().error(e.response.data.detail)
                 })
 
         }
