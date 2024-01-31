@@ -61,11 +61,14 @@ export default {
 
         this.$router.push({ path })
       } catch (e) {
-        if (e.response && e.response.status === 403) {
-          useToast().warning('invalid credentials')
+        if (e.response && e.response.status !== 200) {
+          console.log(e.response)
+          useToast().warning(e.response.data.non_field_errors[0])
           return
         }
-        useToast().warning('network unavailable')
+        else {
+          useToast().error('network error')
+        }
       }
     }
   }

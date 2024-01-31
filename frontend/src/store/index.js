@@ -78,7 +78,7 @@ export default createStore({
         },
         theme: '',
         stripe: {
-            'publishable_key': 'pk_test_51NLKVHHIL8ZiWr8PTruEZWQtrVZHN76oxWSKjvMzY6T5iw1FgghxWQSgFL1yiV5hsIpgwdI4V3fecMxE9KO6bUlH00XQzex7zZ',
+            'publishable_key': 'pk_test_51NLKVHHIL8ZiWr8Poy6jbesP5ZNptA4RAKboFlGtmKRgie1qjyOVBcvGC5rULaAesRv7EXFMVwU9wclMoZ3ZoiI400FSwTpeEj',
         },
     },
     mutations: {
