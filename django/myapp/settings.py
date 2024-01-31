@@ -270,8 +270,8 @@ RQ_QUEUES = {
 
 TARGET_URL = os.environ.get('TARGET_URL')
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST')
 EMAIL_USE_TLS = True
 EMAIL_PORT = os.environ.get('SMTP_PORT')
@@ -280,5 +280,5 @@ EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
 
 STRIPE_PRODUCT_CHOICES = [('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
-STRIPE_PRODUCT_IDS = {'prod_OOFSUk9btg0sKT': 'basic', 'prod_OOFUQkPcb1PvcO': 'growth', 'prod_OOFVSPPwQzA4Jd': 'ultimate'}
+STRIPE_PRODUCT_IDS = {'prod_PTSy6xWEyh1cSj': 'basic', 'prod_PTSzoWKIclfNpF': 'growth', 'prod_PTSz97CdCYbBLx': 'ultimate'}
 DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50}

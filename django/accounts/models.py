@@ -22,7 +22,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
         default=settings.STRIPE_PRODUCT_CHOICES[0][0], 
         choices=settings.STRIPE_PRODUCT_CHOICES
     )
-    subscription_active = models.BooleanField(default=False)
+    subscription_active = models.BooleanField(default=True)
     period_start = models.DateTimeField(default=None, blank=True, null=True)
     period_end = models.DateTimeField(default=None, blank=True, null=True)
     previous_subscription_type = models.CharField(

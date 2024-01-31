@@ -110,6 +110,10 @@ class ScanViewSet(ReadOnlyModelViewSet):
 
 @csrf_exempt
 def stripe_webhook(request):
+    if not settings.STRIPE_SECRET_KEY:
+        print('stripe secret key not configured')
+    if not settings.STRIPE_WEBHOOK_SECRET:
+        print('stripe webhook secret not configured')
     stripe.api_key = settings.STRIPE_SECRET_KEY
     webhook_secret = settings.STRIPE_WEBHOOK_SECRET
     payload = request.body
@@ -128,6 +132,7 @@ def stripe_webhook(request):
     # print(event)
 
     if event['type'] == 'checkout.session.completed':
+        # check to see if customer exists. if not, create it
         subscription = account_models.Subscription.objects.get(client_reference_id=session['object']['client_reference_id'])
         if not subscription.customer_id:
             subscription.customer_id = session['object']['customer']

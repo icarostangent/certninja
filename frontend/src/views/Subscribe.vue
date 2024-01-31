@@ -8,7 +8,7 @@
     </header>
 
     <main>
-      <stripe-pricing-table pricing-table-id="prctbl_1NcddcHIL8ZiWr8P5VMi2eum" 
+      <stripe-pricing-table pricing-table-id="prctbl_1OeW7fCJv8M3GruewZBD9Ncd" 
         :publishable-key="this.publishableKey"
         :client-reference-id="this.clientReferenceId"
         :customer-email="this.email">
