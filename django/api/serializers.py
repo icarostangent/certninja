@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from dj_rest_auth.serializers import JWTSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from api import models
@@ -130,3 +131,7 @@ class VerifyEmailSerializer(serializers.Serializer):
 
     class Meta:
         model = account_models.EmailAddress
+
+
+class CustomJWTSerializer(JWTSerializer):
+    user = UserSerializer()
