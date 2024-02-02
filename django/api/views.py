@@ -128,17 +128,29 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
 
     session = event['data']
-    print(f"[+] {event['type']}")
-    # print(event)
+    import json
+    import pathlib
+    now = datetime.now().strftime("%m/%d/%Y - %H:%M:%S")
 
     if event['type'] == 'checkout.session.completed':
+        print(f"[*] {event['type']}")
+        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
+        with open(f'src/{now}/checkout.session.completed.json', 'w') as f:
+            json.dump(session, f, indent=4)
+        # print(session)
         # check to see if customer exists. if not, create it
         subscription = account_models.Subscription.objects.get(client_reference_id=session['object']['client_reference_id'])
         if not subscription.customer_id:
+            print(f"[+] new customer")
             subscription.customer_id = session['object']['customer']
             subscription.save()
 
     if event['type'] == 'customer.subscription.created':
+        print(f"[+] {event['type']}")
+        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
+        with open(f'src/{now}/customer.subscription.created.json', 'w') as f:
+            json.dump(session, f, indent=4)
+        # print(session)
         subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
         subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
@@ -148,6 +160,11 @@ def stripe_webhook(request):
         subscription.save()
 
     if event['type'] == 'customer.subscription.updated':
+        print(f"[+] {event['type']}")
+        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
+        with open(f'src/{now}/customer.subscription.updated.json', 'w') as f:
+            json.dump(session, f, indent=4)
+        # print(session)
         subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
         subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
@@ -161,6 +178,10 @@ def stripe_webhook(request):
         subscription.save()
 
     if event['type'] == 'customer.updated':
+        print(f"[+] {event['type']}")
+        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
+        with open(f'src/{now}/customer.updated.json', 'w') as f:
+            json.dump(session, f, indent=4)
         customer = get_object_or_404(User, subscription__customer_id=session['object']['id'])
         if customer.email != session['object']['email']:
             customer.email = session['object']['email']

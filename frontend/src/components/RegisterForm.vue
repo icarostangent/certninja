@@ -127,7 +127,10 @@ export default {
           useToast().warning("username or email already registered");
           return;
         }
-        useToast().error("network unavailable");
+        else {
+          console.log(e.response.data)
+          // useToast().error(e.response.data.);
+        }
       }
     },
   },
