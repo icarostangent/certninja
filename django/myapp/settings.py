@@ -279,6 +279,13 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
 
-STRIPE_PRODUCT_CHOICES = [('starter', 'Starter'), ('basic', 'Basic'), ('growth', 'Growth'), ('ultimate', 'Ultimate'), ('pending', 'Pending')]
+STRIPE_PRODUCT_CHOICES = [
+    ('starter', 'Starter'), 
+    ('basic', 'Basic'), 
+    ('growth', 'Growth'), 
+    ('ultimate', 'Ultimate'), 
+    ('pending', 'Pending'),
+    ('canceled', 'Canceled'),
+]
 STRIPE_PRODUCT_IDS = {'prod_PTSy6xWEyh1cSj': 'basic', 'prod_PTSzoWKIclfNpF': 'growth', 'prod_PTSz97CdCYbBLx': 'ultimate'}
-DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50}
+DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50, 'canceled': 1}

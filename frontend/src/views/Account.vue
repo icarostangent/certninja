@@ -20,9 +20,8 @@
           cancel at period end: {{ cancelAtPeriodEnd }}<br />
         </p>
         <p v-show="subscriptionType !== 'starter' && customerId">
-          <button @click.prevent="onClickGetPortal" v-show="!getCustomerPortal" type="button"
+          <button @click.prevent="onClickGetPortal" type="button"
             class="btn btn-primary btn-sm">Update Subscription</button>
-          <a :href="portalHref" v-show="getCustomerPortal">Update Subscription</a>
         </p>
       </div>
       <div col>
@@ -122,7 +121,9 @@ export default {
     },
     onClickGetPortal(e) {
       this.getCustomerPortal = true
-      this.$store.dispatch('getCustomerPortal')
+      this.$store.dispatch('getCustomerPortal').then(() => {
+        window.location.href = this.$store.state.portal
+      })
     },
   },
   mounted() {

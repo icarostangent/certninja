@@ -93,7 +93,7 @@ class DomainViewSet(ModelViewSet):
     def perform_create(self, serializer):
         subscription = self.request.user.subscription
         if not subscription.subscription_active:
-            raise exceptions.AccountInactive
+            raise exceptions.SubscriptionInactive
         if self.request.user.domains.count() >= settings.DOMAIN_LIMITS[subscription.subscription_type]:
             raise exceptions.DomainLimitExceeded
         serializer.save(user=self.request.user)
@@ -127,71 +127,81 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError as e:
         return HttpResponse(status=400)
 
-    session = event['data']
+    session = event['data']['object']
     import json
-    import pathlib
-    now = datetime.now().strftime("%m/%d/%Y - %H:%M:%S")
+    now = datetime.now().strftime("%m-%d-%H:%M:%S")
+    print_str = f"{now} {event['type']}"
 
     if event['type'] == 'checkout.session.completed':
-        print(f"[*] {event['type']}")
-        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
-        with open(f'src/{now}/checkout.session.completed.json', 'w') as f:
+        print(f'[*] {print_str}')
+        with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
         # print(session)
         # check to see if customer exists. if not, create it
-        subscription = account_models.Subscription.objects.get(client_reference_id=session['object']['client_reference_id'])
+        subscription = get_object_or_404(account_models.Subscription, client_reference_id=session['client_reference_id'])
         if not subscription.customer_id:
             print(f"[+] new customer")
-            subscription.customer_id = session['object']['customer']
+            subscription.customer_id = session['customer']
             subscription.save()
+        stripe_sub = stripe.Subscription.retrieve(session['subscription'])
+        with open(f'src/{now} subscription.json', 'w') as f:
+            json.dump(stripe_sub, f, indent=4)
+        # fulfill_subscription(stripe_sub) 
+        subscription = get_object_or_404(account_models.Subscription, customer_id=stripe_sub['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
+        subscription.subscription_id = session['id']
+        subscription.subscription_active = session['items']['data'][0]['plan']['active']
+        subscription.save()
 
     if event['type'] == 'customer.subscription.created':
-        print(f"[+] {event['type']}")
-        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
-        with open(f'src/{now}/customer.subscription.created.json', 'w') as f:
+        print(f'[*] {print_str}')
+        with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
         # print(session)
-        subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
-        subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
-        subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
-        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
-        subscription.subscription_id = session['object']['id']
-        subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
+        subscription = get_object_or_404(account_models.Subscription, customer_id=session['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
+        subscription.subscription_id = session['id']
+        subscription.subscription_active = session['items']['data'][0]['plan']['active']
         subscription.save()
 
     if event['type'] == 'customer.subscription.updated':
-        print(f"[+] {event['type']}")
-        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
-        with open(f'src/{now}/customer.subscription.updated.json', 'w') as f:
+        print(f'[*] {print_str}')
+        with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
         # print(session)
-        subscription = get_object_or_404(account_models.Subscription, customer_id=session['object']['customer'])
-        subscription.period_start = datetime.utcfromtimestamp(session['object']['current_period_start'])
-        subscription.period_end = datetime.utcfromtimestamp(session['object']['current_period_end'])
-        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['object']['items']['data'][0]['plan']['product']]
-        subscription.subscription_active = session['object']['items']['data'][0]['plan']['active']
-        if 'items' in session['previous_attributes']:
-            subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
-        subscription.cancel_at_period_end = session['object']['cancel_at_period_end']
-        if session['object']['cancel_at_period_end']:
-            subscription.cancel_at = datetime.utcfromtimestamp(session['object']['cancel_at'])
+        subscription = get_object_or_404(account_models.Subscription, customer_id=session['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
+        subscription.subscription_active = session['items']['data'][0]['plan']['active']
+        # if 'items' in session['previous_attributes']:
+        #     subscription.previous_subscription_type = settings.STRIPE_PRODUCT_IDS[session['previous_attributes']['items']['data'][0]['plan']['product']]
+        if session['cancel_at_period_end']:
+            subscription.cancel_at = datetime.utcfromtimestamp(session['cancel_at'])
+        if session['cancellation_details']['reason'] == 'cancellation_requested':
+            subscription.cancel_at_period_end = True
+            subscription.previous_subscription_type = subscription.subscription_type
+            subscription.subscription_type = 'canceled'
         subscription.save()
 
     if event['type'] == 'customer.updated':
-        print(f"[+] {event['type']}")
-        pathlib.Path(f'src/{now}').mkdir(parents=True, exist_ok=True) 
-        with open(f'src/{now}/customer.updated.json', 'w') as f:
+        print(f'[*] {print_str}')
+        with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
-        customer = get_object_or_404(User, subscription__customer_id=session['object']['id'])
-        if customer.email != session['object']['email']:
-            customer.email = session['object']['email']
+        customer = get_object_or_404(User, subscription__customer_id=session['id'])
+        if customer.email != session['email']:
+            customer.email = session['email']
             customer.save()
             match = False
             for email_address in customer.email_addresses.all():
-                if email_address.email == session['object']['email']:
+                if email_address.email == session['email']:
                     match = True
             if not match:
-                account_models.EmailAddress.objects.create(user=customer, email=session['object']['email'])
+                account_models.EmailAddress.objects.create(user=customer, email=session['email'])
 
     return HttpResponse(status=200)
 
