@@ -24,18 +24,7 @@
             class="btn btn-primary btn-sm">Update Subscription</button>
         </p>
       </div>
-      <div col>
-        <h3>Email</h3>
-        <div v-for="email in emails.items">
-          <p>
-            email: {{ email.email }}<br />
-            verified: {{ email.verified }}<br />
-            verification sent: {{ email.verification_sent }}<br />
-            reset key sent: {{ email.reset_sent }}<br />
-          </p>
-        </div>
-        <Pagination @page-changed="emailPageChanged" :totalPages="emails.totalPages" :currentPage="currentEmailPage" />
-      </div>
+
       <div col>
         <h3>Agents</h3>
         <div v-for="agent in agents.items">
@@ -128,7 +117,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch('getUser')
-    this.$store.dispatch('getEmails', { 'page': 1 })
     this.$store.dispatch('getAgents', { 'page': 1 })
   },
 }

@@ -31,6 +31,24 @@ const routes = [
         }
     },
     {
+        path: '/agent',
+        name: 'agents',
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Agents.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresActivated: true,
+        }
+    },
+    {
+        path: '/email',
+        name: 'email',
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Email.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresActivated: true,
+        }
+    },
+    {
         path: '/register',
         name: 'register',
         component: () => import(/* webpackChunkName: "register" */ '../views/Register.vue')

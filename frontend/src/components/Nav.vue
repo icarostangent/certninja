@@ -16,9 +16,7 @@
               </template>
               <template v-else-if="item.object === 'page' || item.object === 'post'">
                 <li class="nav-item">
-                  <router-link :to="makePath(item)" class="nav-link">{{
-                    item.title
-                  }}</router-link>
+                  <router-link :to="makePath(item)" class="nav-link">{{ item.title }}</router-link>
                 </li>
               </template>
             </template>
@@ -29,7 +27,14 @@
               <router-link v-show="loggedin" to="/domain" class="nav-link">Domains</router-link>
             </li>
             <li class="nav-item">
-              <router-link v-show="loggedin && subscriptionType === 'starter' && !customer_id" to="/subscribe" class="nav-link">Subscribe</router-link>
+              <router-link v-show="loggedin" to="/agent" class="nav-link">Agents</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link v-show="loggedin" to="/email" class="nav-link">Email</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link v-show="loggedin && subscriptionType === 'starter' && !customer_id" to="/subscribe"
+                class="nav-link">Subscribe</router-link>
             </li>
             <li class="nav-item">
               <router-link v-show="!loggedin" to="/login" class="nav-link">Log in</router-link>

@@ -42,7 +42,7 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
 
 
 class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
-    user = models.ForeignKey(to=User, related_name='email_addresses', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='emails', on_delete=models.CASCADE)
     email = models.EmailField(max_length=255)
     verify_key = models.CharField(max_length=255, null=True, blank=True)
     verified = models.BooleanField(default=False)
@@ -52,8 +52,8 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     reset_sent = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        verbose_name = _("email address")
-        verbose_name_plural = _("email addresses")
+        verbose_name = _("email")
+        verbose_name_plural = _("emails")
         unique_together = [("user", "email")]
         ordering = ['-created']
 

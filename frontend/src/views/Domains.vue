@@ -1,6 +1,6 @@
 <template>
     <div class="col-md-8 mx-auto domains">
-        <h1>Check Domains</h1>
+        <h1>Domains</h1>
 
         <BannerUpgrade v-if="!showDomainCreate" />
         <DomainCreate v-if="showDomainCreate" />

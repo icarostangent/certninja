@@ -2,20 +2,13 @@
   <div class="row">
     <div class="domain-details-top col-md-8 d-flex justify-content-end flex-fill">
       <div class="dropdown">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          id="dropdownMenuButton1"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+          aria-expanded="false">
           <i class="fa fa-cog"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li>
-            <a @click.prevent="deleteItem" class="dropdown-item" href="#"
-              >Delete</a
-            >
+            <a @click.prevent="deleteItem" class="dropdown-item" href="#">Delete</a>
           </li>
         </ul>
       </div>
@@ -36,7 +29,7 @@
     <div class="col-md-4 flex-fill">
       <div class="domain">
         <h3>{{ domain.name }}</h3>
-        <p>{{ domain.ip_address }} {{  domain.port }}</p>
+        <p>{{ domain.ip_address }} {{ domain.port }}</p>
         <p>Created: {{ domain.created }}</p>
         <p>Activity: {{ domain.modified }}</p>
       </div>

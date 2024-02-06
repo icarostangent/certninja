@@ -106,6 +106,12 @@ export default createStore({
         SET_EMAILS(state, data) {
             state.emails = data
         },
+        INSERT_EMAIL(state, data) {
+            state.emails.items.unshift(data)
+            if (state.emails.items.length > 10) {
+                state.emails.items.pop()
+            }
+        },
         SET_AGENTS(state, data) {
             state.agents = data
         },
@@ -270,7 +276,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data, status } = await axios.get(
-                        `/api/users/${state.auth.user.pk}/emails/?page=${payload.page}`, {
+                        `/api/emails/?page=${payload.page}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
@@ -278,6 +284,25 @@ export default createStore({
                     }
                     )
                     commit('SET_EMAILS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        createEmail({ commit, state }, payload) {
+            console.log('create email')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.post(
+                        `/api/emails/`, payload, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                    )
+                    commit('INSERT_EMAIL', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

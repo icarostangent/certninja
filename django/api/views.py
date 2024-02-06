@@ -56,6 +56,9 @@ class EmailAddressViewSet(ModelViewSet):
 
     def get_queryset(self):
         return account_models.EmailAddress.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class SubscriptionViewSet(ReadOnlyModelViewSet):

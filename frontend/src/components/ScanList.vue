@@ -9,7 +9,10 @@
           <h1 class="accordion-header" :id="`heading-${item.id}`">
             <button class="accordion-button" type="button" data-bs-toggle="collapse"
               :data-bs-target="`#collapse-${item.id}`" aria-expanded="false" :aria-controls="`collapse-${item.id}`">
-              <div class="fw-bold">{{ item.uuid }}</div>
+              <div class="fw-bold">
+                {{ JSON.parse(item.output)['certificate']['issuer'][1][0][1] }}<br />
+                Not After: {{ JSON.parse(item.output)['certificate']["notAfter"] }}
+              </div>
             </button>
           </h1>
           <div :id="`collapse-${item.id}`" class="accordion-collapse collapse" :aria-labelledby="`heading-${item.id}`"
@@ -18,17 +21,13 @@
               <div class="ms-3 me-auto">
                 <div v-if="JSON.parse(item.output)['error'] === undefined">
                   <br />
-                  <h5>Cipher: {{ JSON.parse(item.output)['cipher'] }}</h5>
+                  <h5>Cipher: {{ JSON.parse(item.output)['cipher'][0] }}</h5>
                   <h5>Subject:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
-                    'subject'
-                  ]" :key="index">
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate']['subject']" :key="index">
                     <li>{{ field[0][0] }}: {{ field[0][1] }}</li>
                   </ul>
                   <h5>Issuer:</h5>
-                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate'][
-                    'issuer'
-                  ]" :key="index">
+                  <ul v-for="(field, index) in JSON.parse(item.output)['certificate']['issuer']" :key="index">
                     <li>{{ field[0][0] }}: {{ field[0][1] }}</li>
                   </ul>
                   <h5>
@@ -101,5 +100,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
