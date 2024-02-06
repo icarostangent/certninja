@@ -112,6 +112,12 @@ export default createStore({
                 state.emails.items.pop()
             }
         },
+        INSERT_AGENT(state, data) {
+            state.agents.items.unshift(data)
+            if (state.agents.items.length > 10) {
+                state.agents.items.pop()
+            }
+        },
         SET_AGENTS(state, data) {
             state.agents = data
         },
@@ -312,16 +318,36 @@ export default createStore({
         getAgents({ commit, state }, payload) {
             console.log('get agents')
             return new Promise(async (resolve, reject) => {
+                const url = payload.page === undefined ? `/api/agents/` : `/api/agents/?page=${payload.page}`
                 try {
                     const { data, status } = await axios.get(
-                        `/api/users/${state.auth.user.pk}/agents/?page=${payload.page}`, {
+                        url, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
                         }
+                    })
+
+                    commit('SET_AGENTS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        createAgent({ commit, state }, payload) {
+            console.log('create agent')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.post(
+                        `/api/agents/`, payload, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json',
+                        }
                     }
                     )
-                    commit('SET_AGENTS', data)
+                    commit('INSERT_AGENT', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

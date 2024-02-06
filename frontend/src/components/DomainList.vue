@@ -1,13 +1,5 @@
 <template>
   <div class="domains">
-    <!-- <i class="fas fa-check"></i>
-    <i class="fas fa-asterisk"></i>
-    <i class="fas fa-exclamation"></i>
-    <i class="fas fa-times"></i>
-    <i class="fas fa-power-off"></i>
-    <i class="fas fa-hashtag"></i>
-    <i class="fas fa-trash"></i> -->
-
     <ul v-for="domain in domains.items" :key="domain.id" class="list-group">
       <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
         @click.prevent="onClickShowDetail(domain.id)">

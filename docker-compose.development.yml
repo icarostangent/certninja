@@ -107,8 +107,6 @@ services:
     restart: unless-stopped
     expose:
       - "3306"
-    ports:
-      - "127.0.0.1:3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -146,8 +144,6 @@ services:
     volumes:
       - ./django:/app
       - ./static:/app/static
-    ports:
-      - "127.0.0.1:8888:8888"
     expose:
       - "8888"
     depends_on:
@@ -166,8 +162,6 @@ services:
       - ./wordpress/wp-content:/var/www/html/wp-content
     expose:
       - "80"
-    ports:
-      - "127.0.0.1:8000:80"
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_USER: ${MYSQL_USER}
