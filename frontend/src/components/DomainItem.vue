@@ -1,4 +1,13 @@
 <template>
+  <i class="fas fa-check"></i>
+  <i class="fas fa-asterisk"></i>
+  <i class="fas fa-exclamation"></i>
+  <i class="fas fa-times"></i>
+  <i class="fas fa-power-off"></i>
+  <i class="fas fa-hashtag"></i>
+  <i class="fas fa-trash"></i>
+  <i class="fas fa-plus"></i>
+
   <div class="row">
     <div class="domain-details-top col-md-8 d-flex justify-content-end flex-fill">
       <div class="dropdown">
@@ -7,9 +16,9 @@
           <i class="fa fa-cog"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li>
-            <a @click.prevent="deleteItem" class="dropdown-item" href="#">Delete</a>
-          </li>
+          <li><a @click.prevent="assignAgent" class="dropdown-item" href="#">Assign Agent</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a @click.prevent="deleteItem" class="dropdown-item" href="#">Delete</a></li>
         </ul>
       </div>
     </div>
@@ -32,6 +41,7 @@
         <p>{{ domain.ip_address }} {{ domain.port }}</p>
         <p>Created: {{ domain.created }}</p>
         <p>Activity: {{ domain.modified }}</p>
+        <p>Agent: {{ domain.agents }}</p>
       </div>
     </div>
   </div>

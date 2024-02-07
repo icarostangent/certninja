@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-n*yc7k&%z0a!gs#afcaw6+25n!876p-u2%^0ym^lxhs=xv_$u1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 APPEND_SLASH = True
 
@@ -202,8 +202,6 @@ REST_AUTH = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'myapp.pagination.CustomPagination',

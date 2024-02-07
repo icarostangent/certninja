@@ -5,38 +5,21 @@
       login: {{ username }}<br />
       billing email: {{ email }}
     </p>
-    <div class="d-flex justify-content-between">
-      <div col>
-        <h3>Subscription</h3>
-        <p>
-          client reference id: {{ clientReferenceId }}<br />
-          customer id: {{ customerId }}<br />
-          subscription type: {{ subscriptionType }}<br />
-          subscription active: {{ subscriptionActive }}<br />
-          period start: {{ periodStart }}<br />
-          period end: {{ periodEnd }}<br />
-          previous subscription type: {{ previousSubscriptionType }}<br />
-          cancel at: {{ cancelAt }}<br />
-          cancel at period end: {{ cancelAtPeriodEnd }}<br />
-        </p>
-        <p v-show="subscriptionType !== 'starter' && customerId">
-          <button @click.prevent="onClickGetPortal" type="button"
-            class="btn btn-primary btn-sm">Update Subscription</button>
-        </p>
-      </div>
-
-      <div col>
-        <h3>Agents</h3>
-        <div v-for="agent in agents.items">
-          <p>
-            name: {{ agent.name }}<br />
-            api key: {{ agent.api_key }}<br />
-            last seen: {{ agent.last_seen }}<br />
-          </p>
-        </div>
-        <Pagination @page-changed="agentPageChanged" :totalPages="emails.totalPages" :currentPage="currentAgentPage" />
-      </div>
-    </div>
+    <h3>Subscription</h3>
+    <p>
+      client reference id: {{ clientReferenceId }}<br />
+      customer id: {{ customerId }}<br />
+      subscription type: {{ subscriptionType }}<br />
+      subscription active: {{ subscriptionActive }}<br />
+      period start: {{ periodStart }}<br />
+      period end: {{ periodEnd }}<br />
+      previous subscription type: {{ previousSubscriptionType }}<br />
+      cancel at: {{ cancelAt }}<br />
+      cancel at period end: {{ cancelAtPeriodEnd }}<br />
+    </p>
+    <p v-show="subscriptionType !== 'starter' && customerId">
+      <button @click.prevent="onClickGetPortal" type="button" class="btn btn-primary btn-sm">Update Subscription</button>
+    </p>
   </div>
 </template>
 

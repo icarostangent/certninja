@@ -1,10 +1,8 @@
 <template>
   <link rel="stylesheet" :href="theme" />
   <Nav />
-  <div class="container-fluid">
-    <div class="row padding-top">
-      <router-view :key="$route.path" />
-    </div>
+  <div class="padding-top">
+    <router-view :key="$route.path" />
   </div>
 </template>
 

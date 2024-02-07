@@ -1,14 +1,4 @@
 <template>
-  <i class="fas fa-check"></i>
-  <i class="fas fa-asterisk"></i>
-  <i class="fas fa-exclamation"></i>
-  <i class="fas fa-times"></i>
-  <i class="fas fa-power-off"></i>
-  <i class="fas fa-hashtag"></i>
-  <i class="fas fa-trash"></i>
-  <i class="fas fa-plus"></i>
-
-
   <div class="col-md-8 mx-auto domain">
     <h1>Domain Details</h1>
     <DomainItem :domain="domain" />
