@@ -61,6 +61,7 @@ urlpatterns = [
     path('users/<int:pk>/agents/<int:agent_pk>/', agent_detail, name='user_agent_detail'), 
     path('webhook/', views.stripe_webhook, name='webhook'), 
     path('portal/', views.get_customer_portal, name='get_customer_portal'), 
+    path('scannow/', views.scan_now, name='scan_now'), 
     path('service/agent/', views.ServiceAgentView.as_view(), name='service_agent_detail'), 
     path('service/scan/', views.ServiceScanView.as_view(), name='service_scan_detail'), 
 ]

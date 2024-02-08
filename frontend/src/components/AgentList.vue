@@ -3,8 +3,8 @@
     <div v-for="agent in agents.items">
       <p>
         name: {{ agent.name }}<br />
-        verified: {{ agent.api_key }}<br />
-        verification sent: {{ agent.last_seen }}
+        api key: {{ agent.api_key }}<br />
+        last seen: {{ agent.last_seen }}
       </p>
     </div>
     <Pagination @page-changed="pageChanged" :totalPages="agents.totalPages" :currentPage="currentPage" />

@@ -16,6 +16,7 @@
           <i class="fa fa-cog"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a @click.prevent="scanNow" class="dropdown-item" href="#">Scan Now</a></li>
           <li><a @click.prevent="assignAgent" class="dropdown-item" href="#">Assign Agent</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a @click.prevent="deleteItem" class="dropdown-item" href="#">Delete</a></li>

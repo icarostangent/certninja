@@ -1,9 +1,11 @@
+import json
 import stripe
 from datetime import datetime
 from django import http
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
+from django.core.management import call_command
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
@@ -230,6 +232,28 @@ def get_customer_portal(request):
     )
 
     return HttpResponse(session.url)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated,])
+def scan_now(request):
+    user = request.user
+    if not user.subscription.subscription_active:
+        # return HttpResponse(data, content_type='application/json', status=200)
+        raise exceptions.AccountInactive
+
+    try:
+        id = json.loads(request.body)['id']
+    except:
+        raise exceptions.DomainIDRequired
+    
+    try:
+        domain = user.domains.get(id=id)
+    except:
+        raise exceptions.DomainNotFound
+
+    call_command('schedule_domain_scan_now', domain.id)
+    return HttpResponse(status=200)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
