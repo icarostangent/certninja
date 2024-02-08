@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-n*yc7k&%z0a!gs#afcaw6+25n!876p-u2%^0ym^lxhs=xv_$u1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 APPEND_SLASH = True
 
@@ -287,3 +287,4 @@ STRIPE_PRODUCT_CHOICES = [
 ]
 STRIPE_PRODUCT_IDS = {'prod_PTSy6xWEyh1cSj': 'basic', 'prod_PTSzoWKIclfNpF': 'growth', 'prod_PTSz97CdCYbBLx': 'ultimate'}
 DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50, 'canceled': 1}
+REDIS_DOMAIN_REGISTER = 'domains_register'

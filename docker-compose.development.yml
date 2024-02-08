@@ -154,6 +154,82 @@ services:
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
+  django-scheduler:
+    command: sh bootstrap-scheduler.sh
+    build:
+      context: ./django
+      dockerfile: Dockerfile.development
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      TARGET_URL: ${TARGET_URL}
+      DB_HOST: ${DB_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      DJANGO_DATABASE: ${DJANGO_DATABASE}
+      DJANGO_USER: ${DJANGO_USER}
+      DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASS: ${REDIS_PASS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+    volumes:
+      - ./django:/app
+      - ./static:/app/static
+    expose:
+      - "8888"
+    depends_on:
+      - db
+      - redis
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    restart: unless-stopped
+
+  django-deactivator:
+    command: sh bootstrap-expire-accounts.sh
+    build:
+      context: ./django
+      dockerfile: Dockerfile.development
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      TARGET_URL: ${TARGET_URL}
+      DB_HOST: ${DB_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      DJANGO_DATABASE: ${DJANGO_DATABASE}
+      DJANGO_USER: ${DJANGO_USER}
+      DJANGO_PASSWORD: ${DJANGO_PASSWORD}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASS: ${REDIS_PASS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+    volumes:
+      - ./django:/app
+      - ./static:/app/static
+    expose:
+      - "8888"
+    depends_on:
+      - db
+      - redis
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    restart: unless-stopped
+
   wordpress:
     build:
       context: ./wordpress

@@ -99,7 +99,7 @@ class DomainViewSet(ModelViewSet):
     def perform_create(self, serializer):
         subscription = self.request.user.subscription
         if not subscription.subscription_active:
-            raise exceptions.SubscriptionInactive
+            raise exceptions.AccountInactive
         if self.request.user.domains.count() >= settings.DOMAIN_LIMITS[subscription.subscription_type]:
             raise exceptions.DomainLimitExceeded
         serializer.save(user=self.request.user)

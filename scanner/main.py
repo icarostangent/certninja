@@ -15,29 +15,29 @@ except Exception as ex:
 
 job = r.lpop('domains_register')
 if job:
-    json_obj = json.loads(job)
-    print(f'[*] got job from redis {json_obj}')
+    domain = json.loads(job)
+    print(f'[*] got job from redis {domain}')
 
-    if json_obj['ip']:
-        ip = json_obj['ip']
+    if domain['ip_address']:
+        ip = domain['ip_address']
     else:
         ip = ''
     
-    if json_obj['port']:
-        port = json_obj['port']
+    if domain['port']:
+        port = domain['port']
     else:
         port = 443
 
-    output = sslcheck.connect(json_obj['domain'], ip=ip, port=port)
+    output = sslcheck.connect(domain['name'], ip=ip, port=port)
     print(f'[*] Completed job {output}')
 
     db.insert({
-        'user_id': json_obj['user_id'],
-        'domain_id': json_obj['domain_id'],
-        'domain': json_obj['domain'],
-        'ip': json_obj['ip'],
-        'port': json_obj['port'],
+        'user_id': domain['user'],
+        'domain_id': domain['id'],
+        'domain': domain['name'],
+        'ip': domain['ip_address'],
+        'port': domain['port'],
         'output': output,
     })
-    # print(f'[*] Resetting scan status on domain id {json_obj["domain_id"]}')
-    # db.set_scan_status('complete', json_obj['domain_id'])
+    # print(f'[*] Resetting scan status on domain id {domain["domain_id"]}')
+    # db.set_scan_status('complete', domain['domain_id'])
