@@ -1,5 +1,6 @@
 <template>
-  <div class="col-md-8 mx-auto page">
+  <AnoymousScan />
+  <div class="col mx-auto page">
     <div>
       <h1>{{ this.page.title.rendered }}</h1>
     </div>
@@ -8,10 +9,12 @@
 </template>
 
 <script>
+import AnoymousScan from "@/components/AnonymousScan"
 
 export default {
   name: "Home",
   components: {
+    AnoymousScan,
   },
   computed: {
     page() {

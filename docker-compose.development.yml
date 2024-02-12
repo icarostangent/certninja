@@ -1,20 +1,20 @@
 version: "3.9"
 
 services:
-  scheduler-scan:
-    build:
-      context: ./scheduler-scan
-    environment:
-      DB_USER: ${DJANGO_USER}
-      DB_PASSWORD: ${DJANGO_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_DATABASE: ${DJANGO_DATABASE}
-    volumes:
-      - ./scheduler-scan:/app
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    restart: unless-stopped
+  # scheduler-scan:
+  #   build:
+  #     context: ./scheduler-scan
+  #   environment:
+  #     DB_USER: ${DJANGO_USER}
+  #     DB_PASSWORD: ${DJANGO_PASSWORD}
+  #     DB_HOST: ${DB_HOST}
+  #     DB_DATABASE: ${DJANGO_DATABASE}
+  #   volumes:
+  #     - ./scheduler-scan:/app
+  #   labels:
+  #     logging: "promtail"
+  #     logging_jobname: "containerlogs"
+  #   restart: unless-stopped
 
   scheduler-cleaner:
     build:

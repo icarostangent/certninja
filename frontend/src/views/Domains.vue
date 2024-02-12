@@ -1,7 +1,17 @@
 <template>
     <div class="col-md-8 mx-auto domains">
         <h1>Domains</h1>
-
+        <div class="col-md-8 d-flex justify-content-end flex-fill">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-cog"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a @click.prevent="trackDomain" class="dropdown-item" href="#">Track Domain</a></li>
+                </ul>
+            </div>
+        </div>
         <BannerUpgrade v-if="!showDomainCreate" />
         <DomainCreate v-if="showDomainCreate" />
         <DomainList />
