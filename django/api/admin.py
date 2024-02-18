@@ -16,4 +16,4 @@ class DomainAdmin(admin.ModelAdmin):
 
 @admin.register(models.Scan)
 class ScanAdmin(admin.ModelAdmin):
-    readonly_fields = []
+    readonly_fields = ['activity']

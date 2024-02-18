@@ -248,10 +248,6 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'go get a publishable key')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')
-
 RQ_QUEUES = {
     'default': {
         'HOST': os.environ.get('REDIS_HOST', 'REDIS_HOST not configured'),
@@ -288,3 +284,7 @@ STRIPE_PRODUCT_CHOICES = [
 STRIPE_PRODUCT_IDS = {'prod_PTSy6xWEyh1cSj': 'basic', 'prod_PTSzoWKIclfNpF': 'growth', 'prod_PTSz97CdCYbBLx': 'ultimate'}
 DOMAIN_LIMITS = {'starter': 1, 'basic': 10, 'growth': 25, 'ultimate': 50, 'canceled': 1}
 REDIS_DOMAIN_REGISTER = 'domains_register'
+
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'go get a publishable key')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')

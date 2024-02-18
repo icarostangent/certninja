@@ -1,4 +1,6 @@
 <template>
+  <h1 class="text-center mb-3">Welcome to CertNinja</h1>
+  <h4 class="text-center mb-4">Badass</h4>
   <AnoymousScan />
   <div class="col mx-auto page">
     <div>

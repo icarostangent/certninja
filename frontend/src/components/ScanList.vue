@@ -11,7 +11,8 @@
               :data-bs-target="`#collapse-${item.id}`" aria-expanded="false" :aria-controls="`collapse-${item.id}`">
               <div class="fw-bold">
                 {{ JSON.parse(item.output)['certificate']['issuer'][1][0][1] }}<br />
-                Not After: {{ JSON.parse(item.output)['certificate']["notAfter"] }}
+                Not After: {{ JSON.parse(item.output)['certificate']["notAfter"] }}<br />
+                Not After: {{ item.not_after }}
               </div>
             </button>
           </h1>

@@ -81,7 +81,6 @@ export default {
       this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
     },
     certificateStatus() {
-      console.log(typeof this.domain.last_scan, this.domain.last_scan);
       if (!this.domain.last_scan) return "pending";
       if (JSON.parse(this.domain.last_scan)["error"]) return "error";
       return "success";

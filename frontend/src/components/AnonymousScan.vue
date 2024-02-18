@@ -1,26 +1,24 @@
 <template>
-    <div class="p-5 mb-5 text-center bg-body-tertiary">
-        <h1 class="mb-3">Welcome to CertNinja</h1>
-        <h4 class="mb-4">Badass</h4>
+    <div class="p-5 mb-5 bg-body-tertiary">
         <form class="row g-3 mb-5">
             <div class="col-12">
                 <div class="form-outline">
-                    <input v-model="domain" type="text" class="form-control" id="validationDomain" required />
                     <label for="validationDomain" class="form-label">Domain Name</label>
+                    <input v-model="domain" type="text" class="form-control" id="validationDomain" required />
                     <div class="invalid-feedback">Invalid Domain</div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-outline">
-                    <input v-model="ip" type="text" class="form-control" id="validationIPAddress" required />
                     <label for="validationIPAddress" class="form-label">IP Address (Optional)</label>
+                    <input v-model="ip" type="text" class="form-control" id="validationIPAddress" required />
                     <div class="invalid-feedback">Invalid IP Address</div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-outline">
-                    <input v-model="port" type="text" class="form-control" id="validationPort" required />
                     <label for="validationPort" class="form-label">Port (Optional)</label>
+                    <input v-model="port" type="text" class="form-control" id="validationPort" required />
                     <div class="invalid-feedback">Invalid Port</div>
                 </div>
             </div>

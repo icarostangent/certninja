@@ -8,12 +8,14 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.management import call_command
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, permissions, mixins, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework_api_key.permissions import HasAPIKey
 from api import exceptions
 from api import models
 from api import serializers
@@ -27,21 +29,34 @@ class ServiceAgentView(generics.RetrieveAPIView):
     serializer_class = serializers.ServiceAgentSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        instance = models.Agent.objects.get(api_key=request.data['api_key'])
+        print(request.data)
+        instance = get_object_or_404(models.Agent, api_key=request.data['api_key'])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
 
 class ServiceScanView(generics.CreateAPIView):
+    queryset = models.Scan.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.ServiceScanSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def perform_create(self, serializer):
+        serial_number = serializer.validated_data.get('serial_number')
+        try:
+            existing_scan = models.Scan.objects.get(serial_number=serial_number)
+            # If a Scan with this serial number exists, update its activity field
+            existing_scan.activity = timezone.now()
+            existing_scan.save()
+        except models.Scan.DoesNotExist:
+            # If no Scan with this serial number exists, create a new one
+            super().perform_create(serializer)
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
 
 class AgentViewSet(ModelViewSet):
@@ -136,7 +151,6 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
 
     session = event['data']['object']
-    import json
     now = datetime.now().strftime("%m-%d-%H:%M:%S")
     print_str = f"{now} {event['type']}"
 

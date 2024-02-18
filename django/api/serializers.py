@@ -31,6 +31,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['pk', 'username', 'email', 'subscription', 'emails']
 
 
+class ScanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Scan
+        # fields = ['id', 'user', 'domain', 'uuid', 'output']
+        # read_only_fields = ['id', 'user', 'domain', 'uuid', 'output']
+        fields = '__all__'
+
+
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Domain
@@ -38,17 +46,11 @@ class DomainSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'last_scan', 'created', 'modified']
 
 
-class ScanSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Scan
-        fields = ['id', 'user', 'domain', 'uuid', 'output']
-        read_only_fields = ['id', 'user', 'domain', 'uuid', 'output']
-
-
 class ServiceScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Scan
-        fields = ['id', 'user', 'domain', 'uuid', 'output']
+        # fields = ['id', 'user', 'domain', 'uuid', 'output']
+        fields = '__all__'
 
 
 class AgentSerializer(serializers.ModelSerializer):

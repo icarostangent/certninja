@@ -1,44 +1,42 @@
 <template>
-  <div class="domains">
-    <ul v-for="domain in domains.items" :key="domain.id" class="list-group">
-      <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
-        @click.prevent="onClickShowDetail(domain.id)">
-        <div class="d-flex justify-content-between align-items-start">
-          <div class="ms-2 me-auto">
-            <div>
-              <div class="fw-bold">{{ domain.name }}</div>
-              <div v-if="domain.ip_address || domain.port">{{ domain.ip_address }}:{{ domain.port }}</div>
+  <ul v-for="domain in domains.items" :key="domain.id" class="list-group">
+    <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
+      @click.prevent="onClickShowDetail(domain.id)">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div>
+            <div class="fw-bold">{{ domain.name }}</div>
+            <div v-if="domain.ip_address || domain.port">{{ domain.ip_address }}:{{ domain.port }}</div>
+          </div>
+          <div v-if="!domain.last_scan">no scan found</div>
+          <div v-else>
+            <div v-if="certificateStatus(domain.last_scan) === 'error'">
+              Error: {{ JSON.parse(domain.last_scan)["error"] }}
             </div>
-            <div v-if="!domain.last_scan">no scan found</div>
             <div v-else>
-              <div v-if="certificateStatus(domain.last_scan) === 'error'">
-                Error: {{ JSON.parse(domain.last_scan)["error"] }}
-              </div>
-              <div v-else>
-                Not After:
-                {{
-                  new Date(
-                    JSON.parse(domain.last_scan)['certificate']['notAfter']
-                  ).toUTCString()
-                }}<br />
-              </div>
+              Not After:
+              {{
+                new Date(
+                  JSON.parse(domain.last_scan)['certificate']['notAfter']
+                ).toUTCString()
+              }}<br />
             </div>
-          </div>
-          <div v-if="certificateStatus(domain.last_scan) === 'success'">
-            <i class="fa fa-check fa-2x fa-fw"></i>
-          </div>
-          <div v-if="certificateStatus(domain.last_scan) === 'pending'">
-            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-          </div>
-          <div v-if="certificateStatus(domain.last_scan) === 'error'">
-            <i class="fa fa-exclamation fa-2x fa-fw"></i>
           </div>
         </div>
-      </li>
-    </ul>
+        <div v-if="certificateStatus(domain.last_scan) === 'success'">
+          <i class="fa fa-check fa-2x fa-fw"></i>
+        </div>
+        <div v-if="certificateStatus(domain.last_scan) === 'pending'">
+          <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        </div>
+        <div v-if="certificateStatus(domain.last_scan) === 'error'">
+          <i class="fa fa-exclamation fa-2x fa-fw"></i>
+        </div>
+      </div>
+    </li>
+  </ul>
 
-    <Pagination @page-changed="pageChanged" :totalPages="domains.totalPages" :currentPage="currentPage" />
-  </div>
+  <Pagination @page-changed="pageChanged" :totalPages="domains.totalPages" :currentPage="currentPage" />
 </template>
 
 <script>

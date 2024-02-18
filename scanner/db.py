@@ -1,5 +1,6 @@
 import mysql.connector
 import os
+import pytz
 import uuid
 from datetime import datetime
 from sqlalchemy import create_engine, text
@@ -20,47 +21,27 @@ def insert(scan_object):
         print(f'[!] {ex}')
         exit(1)
 
-    # insert_scan = (
-    #     """INSERT INTO api_scan (
-    #         user,
-    #         domain,
-    #         name,
-    #         created,
-    #         last_scan
-    #     )
-    #     VALUES (
-    #         :user,
-    #         :domain,
-    #         :name,
-    #         :created,
-    #         :last_scan
-    #     )"""
-    # )
 
-    # data = {
-    #     'user': scan_object['user_id'],
-    #     'domain': scan_object['domain'],
-    #     'name': uuid.uuid4(),
-    #     'created': datetime.now(),
-    #     'last_scan': scan_object['output']
-    # }
-
-    # print(f'[*] creating insert statement {datetime.now()}')
-    # stmt = (
-    #     insert('api_scan').
-    #     values(user_id=scan_object['user_id'], domain_id=scan_object['domain'], last_scan=scan_object['output'])
-    # )
-
+    print('scan object')
+    print(scan_object['output'])
     print(f'[*] executing insert statement {datetime.now()}')
     with engine.connect() as conn:
         conn.execute(
-            text(f"insert into api_scan SET user_id=:user_id, domain_id=:domain_id, uuid=:uuid, output=:output, created=:created"),
+            text(f"insert into api_scan SET user_id=:user_id, domain_id=:domain_id, uuid=:uuid, output=:output, created=:created, alt_names=:alt_names, common_name=:common_name, issuer=:issuer, not_after=:not_after, not_before=:not_before, serial_number=:serial_number, signature_algorithm=:signature_algorithm, error=:error"),
             {
                 "user_id": scan_object['user_id'], 
                 "domain_id": scan_object['domain_id'], 
                 "uuid": str(uuid.uuid4()), 
                 "output": scan_object['output'], 
-                "created": datetime.now()
+                "created": datetime.now(),
+                "alt_names": scan_object['alt_names'], 
+                "common_name": scan_object['common_name'], 
+                "issuer": scan_object['issuer'], 
+                "not_after": scan_object['not_after'], 
+                "not_before": scan_object['not_before'], 
+                "serial_number": scan_object['serial_number'], 
+                "signature_algorithm": scan_object['signature_algorithm'],
+                "error": scan_object['error'],
             }
         )
 

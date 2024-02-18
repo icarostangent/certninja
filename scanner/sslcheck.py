@@ -17,24 +17,27 @@ def connect(domain, port=443, ip=''):
         try:
             ip = socket.gethostbyname(domain)
         except socket.gaierror as ex:
-            print({ 'error': 'dns lookup failed', 'ex': ex  })
-            return json.dumps({ 'error': 'dns lookup failed', 'ex': str(ex)  })
+            # print({ 'error': 'dns lookup failed', 'ex': ex  })
+            return json.dumps({ 'error': 'DNS lookup failed', 'ex': str(ex)  })
 
     try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        # ctx.verify_mode = ssl.CERT_NONE
         with socket.create_connection((ip, port)) as sock:
-            with ssl.create_default_context().wrap_socket(sock, server_hostname=domain) as ssock:
+            with ctx.wrap_socket(sock, server_hostname=domain) as ssock:
                 return json.dumps({
                     'certificate': ssock.getpeercert(),
                     'cipher': ssock.cipher(),
                 })
 
     except ssl.SSLEOFError as ex:
-        print({ 'error': 'SSL EOF error', 'ex': ex })
+        # print({ 'error': 'SSL EOF error', 'ex': ex })
         return json.dumps({ 'error': 'SSL EOF error', 'ex': str(ex)  })
 
     except ssl.SSLCertVerificationError as ex:
-        print({ 'error': ex })
-        return json.dumps({ 'error': 'certificate has expired', 'ex': str(ex)  })
+        # print({ 'error': ex })
+        return json.dumps({ 'error': 'Certificate verify failed', 'ex': str(ex)  })
 
     except Exception as ex:
         print('[!] ssl connect failed')
