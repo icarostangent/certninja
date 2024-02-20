@@ -55,6 +55,8 @@ services:
       DB_PASSWORD: ${DJANGO_PASSWORD}
       DB_HOST: ${DB_HOST}
       DB_DATABASE: ${DJANGO_DATABASE}
+      TARGET_URL: ${TARGET_URL}
+      SCANNER_TOKEN: ${SCANNER_TOKEN}
     volumes:
       - ./scanner:/app
     labels:
@@ -141,6 +143,7 @@ services:
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
+      SCANNER_USER: ${SCANNER_USER}
     volumes:
       - ./django:/app
       - ./static:/app/static

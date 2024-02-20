@@ -23,6 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), 
     path('api/auth/', include('dj_rest_auth.urls')),
-    path('django-rq/', include('django_rq.urls')),
     path('monitor/', include('django_prometheus.urls')),
 ]

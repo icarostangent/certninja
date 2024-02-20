@@ -55,6 +55,7 @@
 
 <script>
 import ScanList from "@/components/ScanList";
+import { useToast } from 'vue-toastification'
 
 export default {
   name: "DomainDetail",

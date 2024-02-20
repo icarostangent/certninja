@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
-    'django_rq',
     'django_prometheus',
     'rest_framework',
     'rest_framework.authtoken',
@@ -202,6 +201,8 @@ REST_AUTH = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'myapp.pagination.CustomPagination',
@@ -288,3 +289,5 @@ REDIS_DOMAIN_REGISTER = 'domains_register'
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'go get a publishable key')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'go get a key')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'go get a webhook')
+
+SCANNER_USER = os.environ.get('SCANNER_USER', 'scanner')

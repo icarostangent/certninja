@@ -40,10 +40,12 @@ class ScanSerializer(serializers.ModelSerializer):
 
 
 class DomainSerializer(serializers.ModelSerializer):
+    scans = ScanSerializer(many=True)
+
     class Meta:
         model = models.Domain
-        fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'created', 'modified']
-        read_only_fields = ['id', 'user', 'last_scan', 'created', 'modified']
+        fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'created', 'modified', 'scans']
+        read_only_fields = ['id', 'user', 'last_scan', 'created', 'modified', 'scans']
 
 
 class ServiceScanSerializer(serializers.ModelSerializer):

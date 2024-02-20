@@ -23,10 +23,15 @@ class Command(BaseCommand):
                 # self.stdout.write(self.style.WARNING(f'[*] {now} User subscription inactive: {user}'))
                 continue
             for domain in list(user.domains.all())[:settings.DOMAIN_LIMITS[user.subscription.subscription_type]]:
-                if not domain.last_scan: 
+                if not domain.scan_status: 
+                    print(f'[+] {domain.name} status empty')
+                    domain.scan_status = 'pending'
+                    domain.save()
                     r.rpush(settings.REDIS_DOMAIN_REGISTER, json.dumps(model_to_dict(domain)))
                     self.stdout.write(self.style.SUCCESS(f'[+] {now} Found new domain for user {user}: {domain.name}'))
-                elif domain.modified < now - relativedelta(hours=1):
+                elif domain.modified < now - relativedelta(minutes=5) and domain.scan_status != 'pending':
+                    domain.scan_status = 'pending'
+                    domain.save()
                     r.rpush(settings.REDIS_DOMAIN_REGISTER, json.dumps(model_to_dict(domain)))
                     self.stdout.write(self.style.SUCCESS(f'[+] {now} Found job for user {user}: {domain.name}'))
                 # else:

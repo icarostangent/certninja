@@ -6,7 +6,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
 from django.core.management import call_command
-from django.http.response import HttpResponse
+from django.forms.models import model_to_dict
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -15,7 +16,6 @@ from rest_framework import generics, permissions, mixins, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework_api_key.permissions import HasAPIKey
 from api import exceptions
 from api import models
 from api import serializers
@@ -25,11 +25,11 @@ from accounts.signals import password_reset_signal
 
 
 class ServiceAgentView(generics.RetrieveAPIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.ServiceAgentSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        print(request.data)
+        # print(request.data)
         instance = get_object_or_404(models.Agent, api_key=request.data['api_key'])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -37,27 +37,60 @@ class ServiceAgentView(generics.RetrieveAPIView):
 
 class ServiceScanView(generics.CreateAPIView):
     queryset = models.Scan.objects.all()
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.ServiceScanSerializer
 
     def perform_create(self, serializer):
-        serial_number = serializer.validated_data.get('serial_number')
-        try:
-            existing_scan = models.Scan.objects.get(serial_number=serial_number)
-            # If a Scan with this serial number exists, update its activity field
-            existing_scan.activity = timezone.now()
-            existing_scan.save()
-        except models.Scan.DoesNotExist:
-            # If no Scan with this serial number exists, create a new one
-            super().perform_create(serializer)
+        print('auth user', self.request.user)
+        print('post', self.request.data)
+        if self.request.user.username == settings.SCANNER_USER:
+            try:
+                domain = models.Domain.objects.get(id=self.request.data.get('domain'))
+            except:
+                print(1)
+                raise exceptions.DomainNotFound
+        else:
+            try:
+                domain = self.request.user.domains.get(id=self.request.data.get('domain'))
+            except:
+                print(2)
+                raise exceptions.DomainNotFound
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
+        if serializer.validated_data.get('error') != None:
+                existing_scan = domain.scans.first()
+                if existing_scan != None and existing_scan.error == serializer.validated_data.get('error'):
+                    print('found existing scan with same error')
+                    existing_scan.activity = timezone.now()
+                    existing_scan.save()
+                    domain.last_scan = serializer.validated_data.get('output')
+                    domain.scan_status = 'complete'
+                    domain.modified = timezone.now()
+                    domain.save()
+                else:
+                    print('found new error')
+                    super().perform_create(serializer)
+                    domain.last_scan = serializer.validated_data.get('output')
+                    domain.scan_status = 'complete'
+                    domain.modified = timezone.now()
+                    domain.save()
+        else:
+            try:
+                existing_scan = domain.scans.get(serial_number=serializer.validated_data.get('serial_number'))
+                print('found scan with same serial number')
+                existing_scan.activity = timezone.now()
+                existing_scan.save()
+                domain.last_scan = serializer.validated_data.get('output')
+                domain.scan_status = 'complete'
+                domain.modified = timezone.now()
+                domain.save()
+            except models.Scan.DoesNotExist:
+                print('found found new serial number')
+                super().perform_create(serializer)
+                domain.last_scan = serializer.validated_data.get('output')
+                domain.scan_status = 'complete'
+                domain.modified = timezone.now()
+                domain.save()
+
 
 class AgentViewSet(ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
@@ -253,7 +286,6 @@ def get_customer_portal(request):
 def scan_now(request):
     user = request.user
     if not user.subscription.subscription_active:
-        # return HttpResponse(data, content_type='application/json', status=200)
         raise exceptions.AccountInactive
 
     try:
@@ -267,7 +299,7 @@ def scan_now(request):
         raise exceptions.DomainNotFound
 
     call_command('schedule_domain_scan_now', domain.id)
-    return HttpResponse(status=200)
+    return JsonResponse(json.dumps(model_to_dict(domain)), safe=False)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
