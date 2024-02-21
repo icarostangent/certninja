@@ -1,58 +1,110 @@
 <template>
-    <div class="col-md-8 mx-auto domains">
-        <h1>Domains</h1>
-        <div class="col-md-8 d-flex justify-content-end flex-fill">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-cog"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a @click.prevent="trackDomain" class="dropdown-item" href="#">Track Domain</a></li>
-                </ul>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col">
+                <h1 class="mb-3">Domains</h1>
+                <router-link class="btn btn-primary mb-3" to="/domains/create/">Track Domain</router-link>
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Search</label>
+                    <input @input="searchDomains" v-model="search" type="text" class="form-control mb-3" id="search" />
+                </div>
+                <div class="table-responsive mb-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Domain</th>
+                                <th>IP Address</th>
+                                <th>Port</th>
+                                <th>Activity</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in domains.items" :key="item.id" @click.prevent="showDomain(item.id)"
+                                class="domain-item">
+                                <td v-if="item.scan_status !== 'complete'"><i class="fa fa-spinner fa-pulse fa-2x"></i></td>
+                                <td v-else-if="item.scans[0].error !== ''"><i class="fas fa-exclamation fa-2x"></i></td>
+                                <td v-else><i class="fas fa-check fa-2x"></i></td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.ip_address }}</td>
+                                <td>{{ item.port }}</td>
+                                <td>{{ item.modified }}</td>
+                                <td><a class="btn btn-secondary rounded-pill">Show</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <Pagination @page-changed="pageChanged" :totalPages="domains.totalPages" :currentPage="currentPage" />
             </div>
         </div>
-        <BannerUpgrade v-if="!showDomainCreate" />
-        <DomainCreate v-if="showDomainCreate" />
-        <DomainList />
     </div>
 </template>
 
 <script>
-import BannerUpgrade from '@/components/BannerUpgrade.vue'
-import DomainCreate from '@/components/DomainCreate.vue'
-import DomainList from '@/components/DomainList.vue'
+import Pagination from "@/components/Pagination";
 
 export default {
     name: 'Domains',
     components: {
-        BannerUpgrade,
-        DomainCreate,
-        DomainList,
+        Pagination,
     },
     data() {
-        return {}
+        return {
+            currentPage: 1,
+            now: new Date(),
+            interval: null,
+            search: "",
+        };
     },
     computed: {
-        showDomainCreate() {
-            if (this.$store.state.account.user_role === 'starter') {
-                return (this.$store.state.domains.totalItems < 1);
-                // return true;
-            }
-            else if (this.$store.state.account.user_role === 'basic') {
-                return (this.$store.state.domains.totalItems < 5);
-                // return true;
-            }
-            else if (this.$store.state.account.user_role === 'growth') {
-                return (this.$store.state.domains.totalItems < 25);
-                // return true;
-            }
-            else if (this.$store.state.account.user_role === 'ultimate') {
-                return (this.$store.state.domains.totalItems < 100);
-                // return true;
-            }
-            return true;
+        domains() {
+            return this.$store.state.domains;
         },
+    },
+    mounted() {
+        this.$store.dispatch("getDomains", { page: this.currentPage })
+            .then(() => {
+                this.interval = setInterval(() => {
+                    this.domains.items.forEach((item) => {
+                        if (item.scan_status !== 'complete') {
+                            this.$store.dispatch("pollDomain", { domainId: item.id })
+                                .then((domain) => {
+                                    if (domain.scan_status === "complete") {
+                                        this.domains.items = this.domains.items.map((item) => {
+                                            if (item.id === domain.id) {
+                                                return domain;
+                                            }
+                                            return item;
+                                        });
+                                    }
+                                });
+                        }
+                    });
+                }, 2000);
+            });
+    },
+    beforeUnmount() {
+        this.interval = null;
+    },
+    methods: {
+        showDomain(id) {
+            this.$router.push({ name: 'domain', params: { id: id } })
+        },
+        pageChanged(page) {
+            this.currentPage = page;
+            this.$store.dispatch("getDomains", { page: this.currentPage });
+        },
+        searchDomains() {
+            this.$store.dispatch("searchDomains", { search: this.search });
+        },
+
     },
 }
 </script>
+
+<style scope>
+.domain-item {
+    cursor: pointer;
+}
+</style>

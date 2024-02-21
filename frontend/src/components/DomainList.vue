@@ -1,4 +1,5 @@
 <template>
+
   <ul v-for="domain in domains.items" :key="domain.id" class="list-group">
     <li class="list-group-item pointer" :class="certificateStatus(domain.last_scan)"
       @click.prevent="onClickShowDetail(domain.id)">
@@ -35,6 +36,7 @@
       </div>
     </li>
   </ul>
+
 
   <Pagination @page-changed="pageChanged" :totalPages="domains.totalPages" :currentPage="currentPage" />
 </template>

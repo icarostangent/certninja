@@ -23,13 +23,7 @@
             <router-link to="/blog" class="nav-link">Blog</router-link>
           </li>
           <li class="nav-item">
-            <router-link v-show="loggedin" to="/domain" class="nav-link">Domains</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-show="loggedin" to="/agent" class="nav-link">Agents</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-show="loggedin" to="/email" class="nav-link">Email</router-link>
+            <router-link v-show="loggedin" to="/domains" class="nav-link">Domains</router-link>
           </li>
           <li class="nav-item">
             <router-link v-show="loggedin && subscriptionType === 'starter' && !customer_id" to="/subscribe"
@@ -83,19 +77,13 @@
           </li>
 
           <li class="nav-item dropdown">
-            <a v-show="loggedin" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
               data-bs-toggle="dropdown" aria-expanded="false">
               Menu
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li class="nav-item">
-                <router-link v-show="loggedin" to="/domain" class="nav-link">Domains</router-link>
-              </li>
-              <li class="nav-item">
-                <router-link v-show="loggedin" to="/agent" class="nav-link">Agents</router-link>
-              </li>
-              <li class="nav-item">
-                <router-link v-show="loggedin" to="/email" class="nav-link">Email</router-link>
+                <router-link v-show="loggedin" to="/domains" class="nav-link">Domains</router-link>
               </li>
               <li class="nav-item">
                 <router-link v-show="loggedin && subscriptionType === 'starter' && !customer_id" to="/subscribe"
@@ -108,7 +96,7 @@
                 <router-link v-show="!loggedin" to="/register" class="nav-link">Sign Up</router-link>
               </li>
               <li>
-                <router-link to="/account" class="nav-link">Account</router-link>
+                <router-link v-show="loggedin" to="/account" class="nav-link">Account</router-link>
                 <hr class="dropdown-divider" />
               </li>
               <li>

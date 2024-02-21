@@ -1,16 +1,31 @@
 <template>
-    <div id="createDomainForm">
-        <form class="mb-3">
-            <div class="form-control">
-                <input class="form-control" type="text" v-model="domain" name="domain" placeholder="Domain" />
-                <div class="input-group">
-                    <input class="form-control" type="text" v-model="ip" name="ip"
-                        placeholder="IP Address (Use to bypass DNS lookup)" />
-                    <input class="form-control" type="text" v-model="port" name="ip" placeholder="Port (optional)" />
+    <!-- Content -->
+    <div class="container">
+        <div class="row pt-5 mt-5 mb-3">
+            <h1>Track Domain</h1>
+            <div class="col-md-12">
+                <div class="form-outline">
+                    <label for="validationDomain" class="form-label">Domain Name</label>
+                    <input v-model="domain" type="text" class="form-control" id="validationDomain" required />
+                    <div class="invalid-feedback">Invalid Domain</div>
                 </div>
-                <button @click.prevent="onClickCreate" type="button" class="btn btn-primary btn-sm">Save</button>
             </div>
-        </form>
+            <div class="col-md-6">
+                <div class="form-outline">
+                    <label for="validationIPAddress" class="form-label">IP Address (Optional)</label>
+                    <input v-model="ip" type="text" class="form-control" id="validationIPAddress" required />
+                    <div class="invalid-feedback">Invalid IP Address</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-outline">
+                    <label for="validationPort" class="form-label">Port (Optional)</label>
+                    <input v-model="port" type="text" class="form-control" id="validationPort" required />
+                    <div class="invalid-feedback">Invalid Port</div>
+                </div>
+            </div>
+        </div>
+        <a @click.prevent="onClickCreate" class="btn btn-primary mb-5" href="">Track Domain</a>
     </div>
 </template>
 
@@ -50,11 +65,8 @@ export default {
             }
             this.$store.dispatch('createDomain', { 'name': this.domain, 'ip_address': this.ip, 'port': this.port })
                 .then(() => {
-                    this.$store.state.domains.totalItems += 1
-                    this.domain = ''
-                    this.ip = null
-                    this.port = null
                     useToast().success('Success')
+                    this.$router.push({ 'name': 'domains'})
                 })
                 .catch((e) => {
                     useToast().error(e.response.data.detail)

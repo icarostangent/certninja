@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password 
 from django.core.management import call_command
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -41,13 +42,10 @@ class ServiceScanView(generics.CreateAPIView):
     serializer_class = serializers.ServiceScanSerializer
 
     def perform_create(self, serializer):
-        print('auth user', self.request.user)
-        print('post', self.request.data)
         if self.request.user.username == settings.SCANNER_USER:
             try:
                 domain = models.Domain.objects.get(id=self.request.data.get('domain'))
             except:
-                print(1)
                 raise exceptions.DomainNotFound
         else:
             try:
@@ -153,6 +151,20 @@ class DomainViewSet(ModelViewSet):
         if self.request.user.domains.count() >= settings.DOMAIN_LIMITS[subscription.subscription_type]:
             raise exceptions.DomainLimitExceeded
         serializer.save(user=self.request.user)
+
+
+class DomainSearchViewSet(ModelViewSet):
+    serializer_class = serializers.DomainSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+        by_user = models.Domain.objects.filter(user=self.request.user)
+        return by_user.filter(
+            Q(name__icontains=search) |
+            Q(ip_address__icontains=search) |
+            Q(port__icontains=search)
+        )
 
 
 class ScanViewSet(ReadOnlyModelViewSet):

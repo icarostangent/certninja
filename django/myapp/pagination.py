@@ -7,14 +7,15 @@ from rest_framework.response import Response
 class CustomPagination(PageNumberPagination):
     def get_paginated_response(self, data):
         prev = self.get_previous_link()
-        print(prev)
         next = self.get_next_link()
+        total_pages = math.ceil(self.page.paginator.count/settings.REST_FRAMEWORK['PAGE_SIZE']),
         # previous link null
         if not prev:
             current = 1
         # next link null
         elif not next:
-            current = int(prev.split('=')[1]) + 1
+            # current = int(prev.split('=')[1]) + 1
+            current = total_pages
         else:
             try:
                 current = int( ( int(prev.split('=')[1]) + int(next.split('=')[1]) ) / 2 )
@@ -25,5 +26,5 @@ class CustomPagination(PageNumberPagination):
             'currentPage': current,
             'items': data,
             'totalItems': self.page.paginator.count,
-            'totalPages': math.ceil(self.page.paginator.count/settings.REST_FRAMEWORK['PAGE_SIZE']),
+            'totalPages': total_pages
         })

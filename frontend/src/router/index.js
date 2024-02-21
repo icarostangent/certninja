@@ -13,7 +13,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Blog" */ '../views/Blog.vue'),
     },
     {
-        path: '/domain/:id',
+        path: '/domains/:id',
         name: 'domain',
         component: () => import(/* webpackChunkName: "domaindetail" */ '../views/DomainDetail.vue'),
         meta: {
@@ -22,7 +22,16 @@ const routes = [
         }
     },
     {
-        path: '/domain',
+        path: '/domains/create',
+        name: 'domain-create',
+        component: () => import(/* webpackChunkName: "domains" */ '../views/DomainCreate.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresActivated: true,
+        }
+    },
+    {
+        path: '/domains',
         name: 'domains',
         component: () => import(/* webpackChunkName: "domains" */ '../views/Domains.vue'),
         meta: {
@@ -31,7 +40,7 @@ const routes = [
         }
     },
     {
-        path: '/agent',
+        path: '/agents',
         name: 'agents',
         component: () => import(/* webpackChunkName: "domains" */ '../views/Agents.vue'),
         meta: {
@@ -40,7 +49,7 @@ const routes = [
         }
     },
     {
-        path: '/email',
+        path: '/emails',
         name: 'email',
         component: () => import(/* webpackChunkName: "domains" */ '../views/Email.vue'),
         meta: {
@@ -79,12 +88,12 @@ const routes = [
         component: () => import(/* webpackChunkName: "reset" */ '../views/Reset.vue')
     },
     {
-        path: '/page/:slug',
+        path: '/pages/:slug',
         name: 'page',
         component: () => import(/* webpackChunkName: "page" */ '../views/Page.vue'),
     },
     {
-        path: '/post/:id',
+        path: '/posts/:id',
         name: 'post',
         component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue'),
     },

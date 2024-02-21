@@ -356,11 +356,29 @@ export default createStore({
         },
         getDomains({ commit, state }, payload) {
             console.log('get domains')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data, status } = await axios.get(
                         `/api/domains/?page=${payload.page}`, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_DOMAINS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        searchDomains({ commit, state }, payload) {
+            console.log('search domains')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data, status } = await axios.get(
+                        `/api/domains/search?search=${payload.search}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'

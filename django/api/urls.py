@@ -53,6 +53,7 @@ urlpatterns = [
     path('agents/', agent_list, name='agent_list'), 
     path('agents/<int:pk>/', agent_detail, name='agent_detail'), 
     path('domains/', domain_list, name='domain_list'), 
+    path('domains/search/', views.DomainSearchViewSet.as_view({'get': 'list'}), name='domain_search'), 
     path('domains/<int:pk>/', domain_detail, name='domain_detail'), 
     path('domains/<int:pk>/scans/', scan_list, name='scan_list'), 
     path('users/<int:pk>/', user_detail, name='user_detail'),
