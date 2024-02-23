@@ -38,7 +38,7 @@ export default {
         return {
             domain: '',
             ip: null,
-            port: null,
+            port: 443,
         }
     },
     methods: {

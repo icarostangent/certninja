@@ -1,67 +1,89 @@
 <template>
-  <div class="col-md-8 mx-auto domain">
-    <i class="fas fa-check"></i>
-    <i class="fas fa-asterisk"></i>
-    <i class="fas fa-exclamation"></i>
-    <i class="fas fa-times"></i>
-    <i class="fas fa-power-off"></i>
-    <i class="fas fa-hashtag"></i>
-    <i class="fas fa-trash"></i>
-    <i class="fas fa-plus"></i>
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col">
+        <h1 class="mb-3">{{ domain.name }}</h1>
 
-    <h1>{{ domain.name }}</h1>
-    <div class="row">
-      <div class="col-md-8 d-flex justify-content-end flex-fill">
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa fa-cog"></i>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a @click.prevent="scanNow" class="dropdown-item" href="#">Scan Now</a></li>
-            <li><a @click.prevent="assignAgent" class="dropdown-item" href="#">Assign Agent</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a @click.prevent="deleteItem" class="dropdown-item" href="#">Delete</a></li>
-          </ul>
+        <div class="row mb-5">
+          <div class="col-md">
+            <i v-if="domain.scan_status !== 'complete'" class="fa fa-spinner fa-pulse fa-5x"></i>
+            <i v-else-if="domain.last_scan_error !== ''" class="fas fa-exclamation fa-5x"></i>
+            <i v-else class="fas fa-check fa-4x"></i>
+            <br />Status: {{ domain.last_scan_error }}
+          </div>
+
+          <div class="col-md">
+            <span>Domain: {{ domain.name }} </span><br />
+            <span>IP: {{ domain.ip }}</span><br />
+            <span>Port: {{ domain.port }} </span><br />
+            <span>Activity: {{ new Date(domain.modified).toLocaleString() }}</span>
+          </div>
         </div>
+
+        <h3>Certificates</h3>
+        <div class="table-responsive mb-3">
+          <table class="table table-lg">
+            <thead>
+              <th>Common Name</th>
+              <th>Issuer</th>
+              <th>First Seen</th>
+              <th>Valid From</th>
+              <th>Valid To</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr v-for="item in scans.items" :key="item.id" @click.prevent="showScan(item.id)" class="scan-item">
+                <td>{{ item.common_name }}</td>
+                <td>{{ item.issuer }}</td>
+                <td>{{ new Date(item.created).toLocaleString() }}</td>
+                <td>{{ new Date(item.not_before).toLocaleString() }}</td>
+                <td>{{ new Date(item.not_after).toLocaleString() }}</td>
+                <td><a class="btn btn-secondary rounded-pill">Show</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <a class="btn btn-primary mb-5">Scan Now</a>
+
+        <h3>Email Targets</h3>
+        <div class="table-responsive mb-3">
+          <table class="table table-md mb-3">
+            <thead>
+              <th>Email Address</th>
+              <th class="text-end"></th>
+            </thead>
+            <tbody>
+              <!-- <tr>
+                <td>user100@email.com</td>
+                <td><a class="btn btn-secondary rounded-pill float-end">Trash</a></td>
+              </tr>
+              <tr>
+                <td>user101@email.com</td>
+                <td><a class="btn btn-secondary rounded-pill float-end">Trash</a></td>
+              </tr>
+              <tr>
+                <td>user102@email.com</td>
+                <td><a class="btn btn-secondary rounded-pill float-end">Trash</a></td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+        <a class="btn btn-primary mb-5">Add Email</a>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div v-if="certificateStatus() === 'success'">
-          <i class="fa fa-check fa-6x fa-fw"></i>
-        </div>
-        <div v-if="certificateStatus() === 'pending'">
-          <i class="fa fa-spinner fa-pulse fa-6x fa-fw"></i>
-        </div>
-        <div v-if="certificateStatus() === 'error'">
-          <i class="fa fa-exclamation fa-6x fa-fw"></i>
-        </div>
-      </div>
-      <div class="col-md-4 flex-fill">
-        <div class="domain">
-          <p>{{ domain.ip_address }} {{ domain.port }}</p>
-          <p>Created: {{ domain.created }}</p>
-          <p>Activity: {{ domain.modified }}</p>
-          <p>Agent: {{ domain.agents }}</p>
-        </div>
+    <div class="row text-center mb-5">
+      <div class="" col>
+        <a class="btn btn-danger mb-5">Delete</a>
       </div>
     </div>
-    <ScanList :scans="scans" @page-changed="pageChanged" />
   </div>
 </template>
 
 <script>
-import ScanList from "@/components/ScanList";
 import { useToast } from 'vue-toastification'
 
 export default {
   name: "DomainDetail",
-  components: {
-    ScanList,
-  },
   computed: {
     domain() {
       return this.$store.state.domain;
@@ -81,11 +103,6 @@ export default {
       this.currentPage = page;
       this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
     },
-    certificateStatus() {
-      if (!this.domain.last_scan) return "pending";
-      if (JSON.parse(this.domain.last_scan)["error"]) return "error";
-      return "success";
-    },
     deleteItem() {
       if (confirm("are you sure?")) {
         try {
@@ -99,28 +116,14 @@ export default {
     },
   },
   mounted() {
-    try {
-      this.$store.dispatch("getDomain", { domainId: this.domainId });
-    } catch (error) {
-      console.log("error getting domain");
-      this.$router.push({ name: "domains" });
-    }
-    try {
-      this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
-    } catch (error) {
-      console.log("error getting scans");
-    }
-    try {
-      this.$store.dispatch("getAgents", {})
-    } catch (error) {
-      console.log("error getting agents");
-    }
-  },
-};
+    this.$store.dispatch("getDomain", { domainId: this.domainId });
+    this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
+  }
+}
 </script>
 
 <style scope>
-.scans {
+.scan-item {
   cursor: pointer;
 }
 </style>

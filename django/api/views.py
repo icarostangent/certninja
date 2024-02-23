@@ -51,26 +51,15 @@ class ServiceScanView(generics.CreateAPIView):
             try:
                 domain = self.request.user.domains.get(id=self.request.data.get('domain'))
             except:
-                print(2)
                 raise exceptions.DomainNotFound
 
-        if serializer.validated_data.get('error') != None:
-                existing_scan = domain.scans.first()
-                if existing_scan != None and existing_scan.error == serializer.validated_data.get('error'):
-                    print('found existing scan with same error')
-                    existing_scan.activity = timezone.now()
-                    existing_scan.save()
-                    domain.last_scan = serializer.validated_data.get('output')
-                    domain.scan_status = 'complete'
-                    domain.modified = timezone.now()
-                    domain.save()
-                else:
-                    print('found new error')
-                    super().perform_create(serializer)
-                    domain.last_scan = serializer.validated_data.get('output')
-                    domain.scan_status = 'complete'
-                    domain.modified = timezone.now()
-                    domain.save()
+        if serializer.validated_data.get('error') != '':
+            print('scan error', serializer.validated_data.get('error'))
+            domain.last_scan = serializer.validated_data.get('output')
+            domain.last_scan_error = serializer.validated_data.get('error')
+            domain.scan_status = 'complete'
+            domain.modified = timezone.now()
+            domain.save()
         else:
             try:
                 existing_scan = domain.scans.get(serial_number=serializer.validated_data.get('serial_number'))

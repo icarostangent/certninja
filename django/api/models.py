@@ -31,6 +31,7 @@ class Domain(ExportModelOperationsMixin('domain'), models.Model):
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     port = models.IntegerField(default=443, blank=True, null=True)
     last_scan = models.TextField(blank=True, null=True)
+    last_scan_error = models.TextField(blank=True, null=True)
     scan_status = models.CharField(max_length=100, blank=True, null=True)
     agent = models.OneToOneField(Agent, related_name='domains', blank=True, null=True, on_delete=models.PROTECT)
 

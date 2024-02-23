@@ -41,11 +41,11 @@ if job:
         'Authorization': f'Token {TOKEN}',
         'Content-Type': 'application/json',
     }
-    print('json', json_output)
+    # print('json', json_output)
 
     if 'error' in json_output:
         print(f"error: {json_output['error']}")
-        resp = requests.post(ENDPOINT, headers=headers, json={
+        resp = requests.post(ENDPOINT, verify=False, headers=headers, json={
             'user': domain['user'],
             'domain': domain['id'],
             'ip': domain['ip_address'],
@@ -61,21 +61,25 @@ if job:
             'error': json_output['error'],
         })
     else:
-        print(f"no errror")
+        print(f"no error")
         not_after = datetime.strptime(json_output['certificate']['notAfter'], "%b %d %H:%M:%S %Y %Z")
         not_after.replace(tzinfo=pytz.UTC)
         not_before = datetime.strptime(json_output['certificate']['notBefore'], "%b %d %H:%M:%S %Y %Z")
         not_before.replace(tzinfo=pytz.UTC)
 
-        resp = requests.post(ENDPOINT, headers=headers, json={
+        common_name = ''
+        for item in json_output['certificate']['subject']:
+            if item[0][0] == 'commonName':
+                common_name = item[0][1]
+
+        resp = requests.post(ENDPOINT, verify=False, headers=headers, json={
             'user': domain['user'],
             'domain': domain['id'],
-            # 'domain': domain['name'],
             'ip': domain['ip_address'],
             'port': domain['port'],
             'output': output,
             'alt_names': ', '.join([name[1] for name in json_output['certificate']['subjectAltName']]),
-            'common_name': json_output['certificate']['subject'][0][0][1],
+            'common_name': common_name,
             'issuer': json_output['certificate']['issuer'][1][0][1],
             'not_after': str(not_after),
             'not_before': str(not_before),
@@ -84,4 +88,4 @@ if job:
             'error': '',
         })
 
-    print(resp.status_code, resp.text)
+    # print(resp.status_code, resp.text)

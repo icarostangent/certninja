@@ -11,25 +11,25 @@
                 <div class="table-responsive mb-3">
                     <table class="table">
                         <thead>
-                            <tr>
-                                <th></th>
-                                <th>Domain</th>
-                                <th>IP Address</th>
-                                <th>Port</th>
-                                <th>Activity</th>
-                                <th></th>
-                            </tr>
+                            <th></th>
+                            <th>Domain</th>
+                            <th>IP Address</th>
+                            <th>Port</th>
+                            <th>Activity</th>
+                            <th>Error</th>
+                            <th></th>
                         </thead>
                         <tbody>
                             <tr v-for="item in domains.items" :key="item.id" @click.prevent="showDomain(item.id)"
                                 class="domain-item">
                                 <td v-if="item.scan_status !== 'complete'"><i class="fa fa-spinner fa-pulse fa-2x"></i></td>
-                                <td v-else-if="item.scans[0].error !== ''"><i class="fas fa-exclamation fa-2x"></i></td>
+                                <td v-else-if="item.last_scan_error"><i class="fas fa-exclamation fa-2x"></i></td>
                                 <td v-else><i class="fas fa-check fa-2x"></i></td>
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.ip_address }}</td>
                                 <td>{{ item.port }}</td>
-                                <td>{{ item.modified }}</td>
+                                <td>{{ new Date(item.modified).toLocaleString() }}</td>
+                                <td>{{ item.last_scan_error }}</td>
                                 <td><a class="btn btn-secondary rounded-pill">Show</a></td>
                             </tr>
                         </tbody>

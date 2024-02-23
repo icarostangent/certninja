@@ -24,7 +24,7 @@ const routes = [
     {
         path: '/domains/create',
         name: 'domain-create',
-        component: () => import(/* webpackChunkName: "domains" */ '../views/DomainCreate.vue'),
+        component: () => import(/* webpackChunkName: "domain-create" */ '../views/DomainCreate.vue'),
         meta: {
             requiresAuth: true,
             requiresActivated: true,
@@ -42,7 +42,7 @@ const routes = [
     {
         path: '/agents',
         name: 'agents',
-        component: () => import(/* webpackChunkName: "domains" */ '../views/Agents.vue'),
+        component: () => import(/* webpackChunkName: "agents" */ '../views/Agents.vue'),
         meta: {
             requiresAuth: true,
             requiresActivated: true,
@@ -51,7 +51,7 @@ const routes = [
     {
         path: '/emails',
         name: 'email',
-        component: () => import(/* webpackChunkName: "domains" */ '../views/Email.vue'),
+        component: () => import(/* webpackChunkName: "emails" */ '../views/Email.vue'),
         meta: {
             requiresAuth: true,
             requiresActivated: true,
