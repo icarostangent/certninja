@@ -202,13 +202,12 @@ def stripe_webhook(request):
         stripe_sub = stripe.Subscription.retrieve(session['subscription'])
         with open(f'src/{now} subscription.json', 'w') as f:
             json.dump(stripe_sub, f, indent=4)
-        # fulfill_subscription(stripe_sub) 
-        subscription = get_object_or_404(account_models.Subscription, customer_id=stripe_sub['customer'])
-        subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
-        subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
-        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
-        subscription.subscription_id = session['id']
-        subscription.subscription_active = session['items']['data'][0]['plan']['active']
+        # subscription = get_object_or_404(account_models.Subscription, customer_id=stripe_sub['customer'])
+        subscription.period_start = datetime.utcfromtimestamp(stripe_sub['current_period_start'])
+        subscription.period_end = datetime.utcfromtimestamp(stripe_sub['current_period_end'])
+        subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[stripe_sub['items']['data'][0]['plan']['product']]
+        subscription.subscription_id = stripe_sub['id']
+        subscription.subscription_active = stripe_sub['items']['data'][0]['plan']['active']
         subscription.save()
 
     if event['type'] == 'customer.subscription.created':
@@ -290,7 +289,7 @@ def scan_now(request):
         raise exceptions.AccountInactive
 
     try:
-        id = json.loads(request.body)['id']
+        id = json.loads(request.body)['domainId']
     except:
         raise exceptions.DomainIDRequired
     
@@ -300,6 +299,9 @@ def scan_now(request):
         raise exceptions.DomainNotFound
 
     call_command('schedule_domain_scan_now', domain.id)
+    domain.scan_status = 'pending'
+    domain.save()
+
     return JsonResponse(json.dumps(model_to_dict(domain)), safe=False)
 
 

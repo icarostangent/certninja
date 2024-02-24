@@ -51,7 +51,10 @@ export default createStore({
             totalPages: '',
             currentPage: 1,
         },
-        menu: {
+        primaryMenu: {
+            items: [],
+        },
+        footerMenu: {
             items: [],
         },
         page: [{
@@ -79,6 +82,7 @@ export default createStore({
         theme: '',
         stripe: {
             'publishable_key': 'pk_test_51OeVx1CJv8M3GrueVVmF4W8fSgahPryhItjBc6MenOSsanOUYEX3xpSRbkp9guQ6HFoAbCVANhxyN2jHa8phV0bO00peW6B0EE',
+            'customer_portal': 'https://billing.stripe.com/p/login/test_dR63dL7St7NM7KgfYY'
         },
     },
     mutations: {
@@ -106,29 +110,11 @@ export default createStore({
         SET_EMAILS(state, data) {
             state.emails = data
         },
-        INSERT_EMAIL(state, data) {
-            state.emails.items.unshift(data)
-            if (state.emails.items.length > 10) {
-                state.emails.items.pop()
-            }
-        },
-        INSERT_AGENT(state, data) {
-            state.agents.items.unshift(data)
-            if (state.agents.items.length > 10) {
-                state.agents.items.pop()
-            }
-        },
         SET_AGENTS(state, data) {
             state.agents = data
         },
         SET_PORTAL(state, data) {
             state.portal = data
-        },
-        INSERT_DOMAIN(state, data) {
-            state.domains.items.unshift(data)
-            if (state.domains.items.length > 10) {
-                state.domains.items.pop()
-            }
         },
         REMOVE_DOMAIN(state, id) {
             const index = state.domains.items.findIndex(item => item.id === id)
@@ -143,8 +129,11 @@ export default createStore({
         SET_SCANS(state, data) {
             state.scans = data
         },
-        SET_MENU(state, data) {
-            state.menu = data
+        SET_PRIMARY_MENU(state, data) {
+            state.primaryMenu = data
+        },
+        SET_FOOTER_MENU(state, data) {
+            state.primaryMenu = data
         },
         SET_PAGE(state, data) {
             state.page = data
@@ -308,7 +297,6 @@ export default createStore({
                         }
                     }
                     )
-                    commit('INSERT_EMAIL', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -347,7 +335,6 @@ export default createStore({
                         }
                     }
                     )
-                    commit('INSERT_AGENT', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -394,7 +381,6 @@ export default createStore({
         },
         getDomain({ commit, state }, payload) {
             console.log('get domain')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
@@ -414,7 +400,6 @@ export default createStore({
         },
         pollDomain({ commit, state }, payload) {
             console.log('poll domain')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
@@ -433,7 +418,6 @@ export default createStore({
         },
         createDomain({ commit, state }, payload) {
             console.log('create domain')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(
@@ -444,7 +428,6 @@ export default createStore({
                         }
                     }
                     )
-                    commit('INSERT_DOMAIN', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -453,7 +436,6 @@ export default createStore({
         },
         deleteDomain({ commit, state }, payload) {
             console.log('delete domain')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.delete(
@@ -473,7 +455,6 @@ export default createStore({
         },
         getScans({ commit, state }, payload) {
             console.log('get scans')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
@@ -491,8 +472,28 @@ export default createStore({
                 }
             })
         },
+        scanNow({ commit, state }, payload) {
+            console.log('scan now')
+            console.log(payload)
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.post(
+                        `/api/scannow/`, payload, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_DOMAIN', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
         getPrimaryMenu({ commit, state }) {
-            console.log('get menus')
+            console.log('get primary menu')
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.get(
@@ -502,7 +503,25 @@ export default createStore({
                         }
                     }
                     )
-                    commit('SET_MENU', data)
+                    commit('SET_PRIMARY_MENU', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getFooterMenu({ commit, state }) {
+            console.log('get menus')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/wp-json/menus/v1/menus/footer`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_FOOTER_MENU', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

@@ -123,7 +123,7 @@ export default {
       return this.$store.state.auth.access !== "";
     },
     menu() {
-      return this.$store.state.menu;
+      return this.$store.state.primaryMenu;
     },
     subscriptionType() {
       return this.$store.state.auth.user.subscription.subscription_type

@@ -66,3 +66,11 @@ class Scan(ExportModelOperationsMixin('scan'), models.Model):
 
     def __str__(self):
         return str(self.domain)
+
+    
+class ScanNow(ExportModelOperationsMixin('scan_now'), models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_accessed = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username

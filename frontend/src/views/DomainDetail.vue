@@ -7,9 +7,9 @@
         <div class="row mb-5">
           <div class="col-md">
             <i v-if="domain.scan_status !== 'complete'" class="fa fa-spinner fa-pulse fa-5x"></i>
-            <i v-else-if="domain.last_scan_error !== ''" class="fas fa-exclamation fa-5x"></i>
-            <i v-else class="fas fa-check fa-4x"></i>
-            <br />Status: {{ domain.last_scan_error }}
+            <i v-else-if="domain.last_scan_error" class="fas fa-exclamation fa-5x"></i>
+            <i v-else class="fas fa-check fa-5x"></i><br />
+            <span class="mt-3">Status: {{ domain.last_scan_error }}</span>
           </div>
 
           <div class="col-md">
@@ -43,7 +43,7 @@
             </tbody>
           </table>
         </div>
-        <a class="btn btn-primary mb-5">Scan Now</a>
+        <a @click.prevent="scanNow" class="btn btn-primary mb-5">Scan Now</a>
 
         <h3>Email Targets</h3>
         <div class="table-responsive mb-3">
@@ -114,10 +114,27 @@ export default {
         }
       }
     },
+    scanNow() {
+      this.$store.dispatch("scanNow", { domainId: this.domainId })
+    },
   },
   mounted() {
-    this.$store.dispatch("getDomain", { domainId: this.domainId });
-    this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
+    this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage })
+    this.$store.dispatch("getDomain", { domainId: this.domainId })
+      .then(() => {
+        this.interval = setInterval(() => {
+          if (this.domain.scan_status !== 'complete') {
+            this.$store.dispatch("pollDomain", { domainId: this.domainId })
+              .then((domain) => {
+                if (domain.scan_status === "complete") {
+                  this.$store.commit('SET_DOMAIN', domain)
+                  this.currentPage = 1
+                  this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage })
+                }
+              })
+          }
+        }, 2000)
+      })
   }
 }
 </script>

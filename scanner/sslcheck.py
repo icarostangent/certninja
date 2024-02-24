@@ -40,7 +40,6 @@ def connect(domain, port=443, ip=''):
         return json.dumps({ 'error': 'Certificate verify failed', 'ex': str(ex)  })
 
     except Exception as ex:
-        print('[!] ssl connect failed')
         print(ex)
         return json.dumps({ 'error': str(ex) })
 
