@@ -1,6 +1,6 @@
 <template>
   <div class="agents">
-    <div v-for="agent in agents.items">
+    <div v-for="agent in agents.items" :key="agent.id">
       <p>
         name: {{ agent.name }}<br />
         api key: {{ agent.api_key }}<br />

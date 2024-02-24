@@ -1,6 +1,6 @@
 <template>
   <div class="emails">
-    <div v-for="email in emails.items">
+    <div v-for="email in emails.items" :key="email.id">
       <p>
         email: {{ email.email }}<br />
         verified: {{ email.verified }}<br />

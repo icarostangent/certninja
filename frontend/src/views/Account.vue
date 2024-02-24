@@ -24,13 +24,8 @@
 </template>
 
 <script>
-import Pagination from "@/components/Pagination";
-
 export default {
   name: 'Account',
-  components: {
-    Pagination,
-  },
   computed: {
     username() {
       return this.$store.state.auth.user.username

@@ -2,13 +2,16 @@
   <div class="container">
     <div class="row mb-5">
       <div class="col">
-        <h1 class="mb-3">{{ domain.name }}</h1>
+        <h1 class="mb-3"><router-link class="plain" to="/domains/">Domains / </router-link>{{ domain.name }}</h1>
+
 
         <div class="row mb-5">
           <div class="col-md">
-            <i v-if="domain.scan_status !== 'complete'" class="fa fa-spinner fa-pulse fa-5x"></i>
-            <i v-else-if="domain.last_scan_error" class="fas fa-exclamation fa-5x"></i>
-            <i v-else class="fas fa-check fa-5x"></i><br />
+            <div class="mb-3">
+              <i v-if="domain.scan_status !== 'complete'" class="fa fa-spinner fa-pulse fa-5x"></i>
+              <i v-else-if="domain.last_scan_error" class="fas fa-exclamation fa-5x"></i>
+              <i v-else class="fas fa-check fa-5x"></i><br />
+            </div>
             <span class="mt-3">Status: {{ domain.last_scan_error }}</span>
           </div>
 
@@ -142,5 +145,10 @@ export default {
 <style scope>
 .scan-item {
   cursor: pointer;
+}
+
+.plain {
+  text-decoration: none;
+  color: black;
 }
 </style>

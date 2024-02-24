@@ -25,6 +25,7 @@ def connect(domain, port=443, ip=''):
         ctx.check_hostname = False
         # ctx.verify_mode = ssl.CERT_NONE
         with socket.create_connection((ip, port)) as sock:
+            sock.settimeout(5)
             with ctx.wrap_socket(sock, server_hostname=domain) as ssock:
                 return json.dumps({
                     'certificate': ssock.getpeercert(),

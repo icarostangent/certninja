@@ -243,21 +243,6 @@ def stripe_webhook(request):
             subscription.subscription_type = 'canceled'
         subscription.save()
 
-    if event['type'] == 'customer.updated':
-        print(f'[*] {print_str}')
-        with open(f'src/{print_str}.json', 'w') as f:
-            json.dump(session, f, indent=4)
-        customer = get_object_or_404(User, subscription__customer_id=session['id'])
-        if customer.email != session['email']:
-            customer.email = session['email']
-            customer.save()
-            match = False
-            for email_address in customer.email_addresses.all():
-                if email_address.email == session['email']:
-                    match = True
-            if not match:
-                account_models.EmailAddress.objects.create(user=customer, email=session['email'])
-
     return HttpResponse(status=200)
 
 
