@@ -57,9 +57,9 @@ export default {
         console.log(result)
 
         const { redirect = false } = this.$route.query
-        const path = redirect ? decodeURI(redirect) : '/domain/'
+        const path = redirect ? decodeURI(redirect) : '/domains/'
 
-        this.$router.push({ path })
+        this.$router.push({ 'name': 'domains' })
       } catch (e) {
         if (e.response && e.response.status !== 200) {
           console.log(e.response)

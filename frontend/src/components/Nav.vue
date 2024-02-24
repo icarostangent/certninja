@@ -40,7 +40,7 @@
               data-bs-toggle="dropdown" aria-expanded="false">
               Menu
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
               <li>
                 <router-link to="/account" class="nav-link">Account</router-link>
                 <hr class="dropdown-divider" />
@@ -77,11 +77,11 @@
           </li>
 
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
               Menu
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
               <li class="nav-item">
                 <router-link v-show="loggedin" to="/domains" class="nav-link">Domains</router-link>
               </li>

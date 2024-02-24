@@ -64,30 +64,32 @@ export default {
     },
     mounted() {
         this.$store.dispatch("getDomains", { page: this.currentPage })
-            .then(() => {
-                this.interval = setInterval(() => {
-                    this.domains.items.forEach((item) => {
-                        if (item.scan_status !== 'complete') {
-                            this.$store.dispatch("pollDomain", { domainId: item.id })
-                                .then((domain) => {
-                                    if (domain.scan_status === "complete") {
-                                        this.domains.items = this.domains.items.map((item) => {
-                                            if (item.id === domain.id) {
-                                                return domain;
-                                            }
-                                            return item;
-                                        });
-                                    }
-                                });
-                        }
-                    });
-                }, 2000);
-            });
+        this.pollDomains()
     },
     beforeUnmount() {
-        this.interval = null;
+        clearInterval(this.interval)
+        this.interval = null
     },
     methods: {
+        pollDomains() {
+            this.interval = setInterval(() => {
+                this.domains.items.forEach((item) => {
+                    if (item.scan_status !== 'complete') {
+                        this.$store.dispatch("pollDomain", { domainId: item.id })
+                            .then((domain) => {
+                                if (domain.scan_status === "complete") {
+                                    this.domains.items = this.domains.items.map((item) => {
+                                        if (item.id === domain.id) {
+                                            return domain
+                                        }
+                                        return item
+                                    })
+                                }
+                            })
+                    }
+                })
+            }, 2000)
+        },
         showDomain(id) {
             this.$router.push({ name: 'domain', params: { id: id } })
         },

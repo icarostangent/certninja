@@ -76,7 +76,7 @@
     </div>
     <div class="row text-center mb-5">
       <div class="" col>
-        <a class="btn btn-danger mb-5">Delete</a>
+        <a @click.prevent="deleteItem" class="btn btn-danger mb-5">Delete</a>
       </div>
     </div>
   </div>
@@ -98,10 +98,25 @@ export default {
   data() {
     return {
       currentPage: 1,
+      interval: null,
       domainId: this.$route.params.id,
     }
   },
   methods: {
+    pollDomain() {
+      this.interval = setInterval(() => {
+        if (this.domain.scan_status !== 'complete') {
+          this.$store.dispatch("pollDomain", { domainId: this.domainId })
+            .then((domain) => {
+              if (domain.scan_status === "complete") {
+                this.$store.commit('SET_DOMAIN', domain)
+                this.currentPage = 1
+                this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage })
+              }
+            })
+        }
+      }, 2000)
+    },
     pageChanged(page) {
       this.currentPage = page;
       this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage });
@@ -111,6 +126,8 @@ export default {
         try {
           this.$store.dispatch("deleteDomain", this.domain.id);
           useToast().success("domain successfully deleted");
+          clearInterval(this.interval)
+          this.interval = null
           this.$router.push({ name: "domains" });
         } catch (error) {
           useToast().error("error deleting domain");
@@ -124,21 +141,12 @@ export default {
   mounted() {
     this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage })
     this.$store.dispatch("getDomain", { domainId: this.domainId })
-      .then(() => {
-        this.interval = setInterval(() => {
-          if (this.domain.scan_status !== 'complete') {
-            this.$store.dispatch("pollDomain", { domainId: this.domainId })
-              .then((domain) => {
-                if (domain.scan_status === "complete") {
-                  this.$store.commit('SET_DOMAIN', domain)
-                  this.currentPage = 1
-                  this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPage })
-                }
-              })
-          }
-        }, 2000)
-      })
-  }
+    this.pollDomain()
+  },
+  beforeUnmount() {
+    clearInterval(this.interval)
+    this.interval = null
+  },
 }
 </script>
 

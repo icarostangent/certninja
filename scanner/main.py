@@ -12,7 +12,7 @@ ENDPOINT = f"{os.environ.get('TARGET_URL')}/api/service/scans/"
 TOKEN = os.environ.get('SCANNER_TOKEN')
 
 try:
-    print(f'[*] scanner connect to redis {datetime.now()}')
+    # print(f'[*] scanner connect to redis {datetime.now()}')
     r = redis.StrictRedis(host='redis', port=6379,
                             db=0, decode_responses=True)
 except Exception as ex:

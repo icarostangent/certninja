@@ -1,7 +1,7 @@
 <template>
   <link rel="stylesheet" :href="theme" />
   <Nav />
-  <div class="padding-top">
+  <div ref="top" class="padding-top">
     <router-view :key="$route.path" />
   </div>
   <Footer />
