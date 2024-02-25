@@ -2,7 +2,7 @@
     <!-- Content -->
     <div class="container">
         <div class="row mb-3">
-            <h1 class="mb-3"><router-link class="plain" to="/domains/">Domains</router-link> / Create</h1>
+            <h1 class="mb-3"><router-link class="plain" to="/domains/">Emails</router-link> / Create</h1>
             <div class="col-md-12">
                 <div class="form-outline">
                     <label for="validationDomain" class="form-label">Domain Name</label>
@@ -33,7 +33,7 @@
 import { useToast } from 'vue-toastification'
 
 export default {
-    name: 'DomainCreate',
+    name: 'EmailCreate',
     data() {
         return {
             domain: '',

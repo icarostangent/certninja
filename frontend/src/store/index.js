@@ -164,7 +164,6 @@ export default createStore({
         },
         register({ commit }, payload) {
             console.log('register')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(`/api/auth/register/`, payload)
@@ -176,7 +175,6 @@ export default createStore({
         },
         activate({ commit, dispatch }, payload) {
             console.log('activate')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.put(`/api/auth/email/verify/${payload.key}/`)
@@ -188,7 +186,6 @@ export default createStore({
         },
         request({ commit, state }, payload) {
             console.log('request')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.put(`/api/auth/password/request/`, payload)
@@ -200,7 +197,6 @@ export default createStore({
         },
         reset({ commit, state }, payload) {
             console.log('reset')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     console.log(payload);
@@ -217,7 +213,6 @@ export default createStore({
                 try {
                     const { data } = await axios.post(`/api/auth/login/`, payload)
                     commit('SET_AUTH', data)
-                    // dispatch('getSubscription')
                     resolve(data)
                 } catch (e) {
                     reject(e)
@@ -474,7 +469,6 @@ export default createStore({
         },
         scanNow({ commit, state }, payload) {
             console.log('scan now')
-            console.log(payload)
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data } = await axios.post(

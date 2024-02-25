@@ -49,9 +49,18 @@ const routes = [
         }
     },
     {
+        path: '/emails/create',
+        name: 'email-create',
+        component: () => import(/* webpackChunkName: "emails" */ '../views/EmailCreate.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresActivated: true,
+        }
+    },
+    {
         path: '/emails',
         name: 'email',
-        component: () => import(/* webpackChunkName: "emails" */ '../views/Email.vue'),
+        component: () => import(/* webpackChunkName: "emails" */ '../views/Emails.vue'),
         meta: {
             requiresAuth: true,
             requiresActivated: true,
@@ -136,7 +145,7 @@ router.beforeEach(async (to, from, next) => {
             // we have a state.auth object but
             // we need to check if the token is still valid
             try {
-                await store.dispatch('validate', {'token': store.state.auth.access})
+                await store.dispatch('validate', { 'token': store.state.auth.access })
                 // user is logged in with a valid token
                 next()
             } catch (e) {
@@ -159,7 +168,7 @@ router.beforeEach(async (to, from, next) => {
 router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresActivated)) {
         if (store.state.account.post_title === 'false') {
-            next({path: '/account'})
+            next({ path: '/account' })
         }
     }
     next()

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from accounts.models import Subscription
+from api.models import Subscription
 
 
 class Command(BaseCommand):

@@ -21,8 +21,7 @@ from api import exceptions
 from api import models
 from api import serializers
 from api.permissions import IsOwner
-from accounts import models as account_models
-from accounts.signals import password_reset_signal
+from api.signals import password_reset_signal
 
 
 class ServiceAgentView(generics.RetrieveAPIView):
@@ -37,7 +36,6 @@ class ServiceAgentView(generics.RetrieveAPIView):
 
 
 class ServiceScanView(generics.CreateAPIView):
-    queryset = models.Scan.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.ServiceScanSerializer
 
@@ -69,6 +67,7 @@ class ServiceScanView(generics.CreateAPIView):
                 domain.last_scan = serializer.validated_data.get('output')
                 domain.scan_status = 'complete'
                 domain.modified = timezone.now()
+                domain.last_scan_error = ''
                 domain.save()
             except models.Scan.DoesNotExist:
                 print('found found new serial number')
@@ -95,14 +94,14 @@ class EmailAddressViewSet(ModelViewSet):
     serializer_class = serializers.EmailAddressSerializer
 
     def get_queryset(self):
-        return account_models.EmailAddress.objects.filter(user=self.request.user)
+        return models.EmailAddress.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class SubscriptionViewSet(ReadOnlyModelViewSet):
-    queryset = account_models.Subscription.objects.all()
+    queryset = models.Subscription.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.SubscriptionSerializer
 
@@ -194,7 +193,7 @@ def stripe_webhook(request):
             json.dump(session, f, indent=4)
         # print(session)
         # check to see if customer exists. if not, create it
-        subscription = get_object_or_404(account_models.Subscription, client_reference_id=session['client_reference_id'])
+        subscription = get_object_or_404(models.Subscription, client_reference_id=session['client_reference_id'])
         if not subscription.customer_id:
             print(f"[+] new customer")
             subscription.customer_id = session['customer']
@@ -202,7 +201,6 @@ def stripe_webhook(request):
         stripe_sub = stripe.Subscription.retrieve(session['subscription'])
         with open(f'src/{now} subscription.json', 'w') as f:
             json.dump(stripe_sub, f, indent=4)
-        # subscription = get_object_or_404(account_models.Subscription, customer_id=stripe_sub['customer'])
         subscription.period_start = datetime.utcfromtimestamp(stripe_sub['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(stripe_sub['current_period_end'])
         subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[stripe_sub['items']['data'][0]['plan']['product']]
@@ -215,7 +213,7 @@ def stripe_webhook(request):
         with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
         # print(session)
-        subscription = get_object_or_404(account_models.Subscription, customer_id=session['customer'])
+        subscription = get_object_or_404(models.Subscription, customer_id=session['customer'])
         subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
         subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
@@ -228,7 +226,7 @@ def stripe_webhook(request):
         with open(f'src/{print_str}.json', 'w') as f:
             json.dump(session, f, indent=4)
         # print(session)
-        subscription = get_object_or_404(account_models.Subscription, customer_id=session['customer'])
+        subscription = get_object_or_404(models.Subscription, customer_id=session['customer'])
         subscription.period_start = datetime.utcfromtimestamp(session['current_period_start'])
         subscription.period_end = datetime.utcfromtimestamp(session['current_period_end'])
         subscription.subscription_type = settings.STRIPE_PRODUCT_IDS[session['items']['data'][0]['plan']['product']]
@@ -283,9 +281,9 @@ def scan_now(request):
     except:
         raise exceptions.DomainNotFound
 
-    call_command('schedule_domain_scan_now', domain.id)
     domain.scan_status = 'pending'
     domain.save()
+    call_command('schedule_domain_scan_now', domain.id)
 
     return JsonResponse(json.dumps(model_to_dict(domain)), safe=False)
 
@@ -329,12 +327,12 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 class RequestPasswordResetView(generics.UpdateAPIView):
     serializer_class = serializers.RequestPasswordResetSerializer
-    model = account_models.EmailAddress
+    model = models.EmailAddress
     permission_classes = [permissions.AllowAny]
 
     def get_object(self, queryset=None):
         try:
-            return account_models.EmailAddress.objects.filter(email=self.request.data.get('email'))[0]
+            return models.EmailAddress.objects.filter(email=self.request.data.get('email'))[0]
         except IndexError:
             raise http.Http404
 
@@ -397,9 +395,9 @@ class ResetPasswordView(generics.UpdateAPIView):
 
 
 class VerifyEmailView(generics.UpdateAPIView):
-    queryset = account_models.EmailAddress.objects.all()
+    queryset = models.EmailAddress.objects.all()
     serializer_class = serializers.VerifyEmailSerializer
-    model = account_models.EmailAddress
+    model = models.EmailAddress
     permission_classes = [permissions.AllowAny,]
     lookup_field = 'verify_key'
 

@@ -4,12 +4,11 @@ from dj_rest_auth.serializers import JWTSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from api import models
-from accounts import models as account_models
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = account_models.Subscription
+        model = models.Subscription
         fields = ['user', 'client_reference_id', 'subscription_type', 'subscription_active', 'period_start', 
                   'period_end', 'previous_subscription_type', 'cancel_at', 'cancel_at_period_end', 'customer_id']
         read_only_fields = ['user', 'client_reference_id', 'subscription_type']
@@ -17,7 +16,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class EmailAddressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = account_models.EmailAddress
+        model = models.EmailAddress
         fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
         read_only_fields = ['id', 'user', 'verified', 'created', 'verification_sent', 'reset_sent']
 
@@ -110,7 +109,7 @@ class RequestPasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = account_models.EmailAddress
+        model = models.EmailAddress
 
 
 class ResetPasswordSerializer(serializers.Serializer):
@@ -125,7 +124,7 @@ class VerifyEmailSerializer(serializers.Serializer):
     key = serializers.CharField(required=True)
 
     class Meta:
-        model = account_models.EmailAddress
+        model = models.EmailAddress
 
 
 class CustomJWTSerializer(JWTSerializer):

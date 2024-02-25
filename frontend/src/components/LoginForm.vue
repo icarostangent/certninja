@@ -54,7 +54,6 @@ export default {
       }
       try {
         const result = await this.$store.dispatch('login', this.form)
-        console.log(result)
 
         const { redirect = false } = this.$route.query
         const path = redirect ? decodeURI(redirect) : '/domains/'
@@ -62,7 +61,6 @@ export default {
         this.$router.push({ 'name': 'domains' })
       } catch (e) {
         if (e.response && e.response.status !== 200) {
-          console.log(e.response)
           useToast().warning(e.response.data.non_field_errors[0])
           return
         }

@@ -68,7 +68,7 @@ export default {
     },
     beforeUnmount() {
         clearInterval(this.interval)
-        this.interval = null
+        // this.interval = null
     },
     methods: {
         pollDomains() {
