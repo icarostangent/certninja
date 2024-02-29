@@ -28,8 +28,6 @@
   </div>
 </template>
 <script>
-import { useToast } from "vue-toastification";
-
 export default {
   data() {
     return {
@@ -44,27 +42,25 @@ export default {
     reset() {
       let passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/
       if (!this.form.password.match(passwordRegex)) {
-        useToast().warning(
-          "password must be 8 characters, contain at least one capital and one lowercase letter, and have at least one special character"
-        )
+        this.$store.commit("SET_MESSAGE", { title: "Error", text: "password must be 8 characters, contain at least one capital and one lowercase letter, and have at least one special character", display: true, style: "bg-warning" })
         return
       }
       if (this.form.password !== this.form.password2) {
-        useToast().warning("passwords must match")
+        this.$store.commit("SET_MESSAGE", { title: "Error", text: "Passwords must match", display: true, style: "bg-warning" })
         return
       }
       this.$store.dispatch("reset", this.form)
         .then((response) => {
-          useToast().success('Password changed successfully')
+          this.$store.commit("SET_MESSAGE", { title: "Success", text: "Password changed successfully", display: true, style: "bg-success" })
           this.$router.push({ name: 'login' })
         })
         .catch((error) => {
           if (error.response && error.response.data.code === "missing-parameters") {
-            useToast().warning("all fields are required")
+            this.$store.commit("SET_MESSAGE", { title: "Error", text: "All fields are required", display: true, style: "bg-warning" })
             return
           }
           else {
-            useToast().error("network unavailable")
+            this.$store.commit("SET_MESSAGE", { title: "Error", text: "Network unavailable", display: true, style: "bg-warning" })
             return
           }
         })

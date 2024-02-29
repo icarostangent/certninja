@@ -22,6 +22,15 @@ const routes = [
         }
     },
     {
+        path: '/domains/:domain_id/scans/:scan_id',
+        name: 'scan',
+        component: () => import(/* webpackChunkName: "scandetail" */ '../views/ScanDetail.vue'),
+        meta: {
+            requiresAuth: true,
+            requiresActivated: true,
+        }
+    },
+    {
         path: '/domains/create',
         name: 'domain-create',
         component: () => import(/* webpackChunkName: "domain-create" */ '../views/DomainCreate.vue'),
@@ -49,7 +58,7 @@ const routes = [
         }
     },
     {
-        path: '/emails/create',
+        path: '/emails/:domainId/create',
         name: 'email-create',
         component: () => import(/* webpackChunkName: "emails" */ '../views/EmailCreate.vue'),
         meta: {

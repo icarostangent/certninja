@@ -1,6 +1,7 @@
 <template>
   <link rel="stylesheet" :href="theme" />
   <Nav />
+  <Message />
   <div ref="top" class="padding-top">
     <router-view :key="$route.path" />
   </div>
@@ -9,11 +10,13 @@
 
 <script>
 import Footer from "@/components/Footer.vue";
+import Message from "@/components/Message.vue";
 import Nav from "@/components/Nav.vue";
 
 export default {
   components: {
     Footer,
+    Message,
     Nav,
   },
   computed: {

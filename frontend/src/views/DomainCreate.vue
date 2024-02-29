@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
-
 export default {
     name: 'DomainCreate',
     data() {
@@ -44,32 +42,35 @@ export default {
     methods: {
         onClickCreate() {
             const domainPattern = new RegExp('^(?=.{1,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z]{2,}$)')
-            // const domainPattern = new RegExp(/^((http|https):\/\/)?([a-zA-Z0-9_][-_a-zA-Z0-9]{0,62}\.)+([a-zA-Z0-9]{1,10})$/igm)
             const ipPattern = new RegExp(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)
 
             if (!domainPattern.test(this.domain)) {
-                useToast().warning('Invalid domain')
+                this.$store.commit("SET_MESSAGE", { title: "Error", text: "Invalid Domain Name", display: true, style: "bg-warning" })
                 return
             }
             if (this.ip && !ipPattern.test(this.ip)) {
-                useToast().warning('Invalid IP')
+                this.$store.commit("SET_MESSAGE", { title: "Error", text: "Invalid IP Address", display: true, style: "bg-warning" })
                 return
             }
             if (this.port && !parseInt(this.port)) {
-                useToast().warning('Invalid port')
+                this.$store.commit("SET_MESSAGE", { title: "Error", text: "Invalid Port", display: true, style: "bg-warning" })
                 return
             }
             if (parseInt(this.port) <= 0 || parseInt(this.port) > 65535) {
-                useToast().warning('Invalid port')
+                this.$store.commit("SET_MESSAGE", { title: "Error", text: "Invalid Port", display: true, style: "bg-warning" })
                 return
             }
             this.$store.dispatch('createDomain', { 'name': this.domain, 'ip_address': this.ip, 'port': this.port })
                 .then(() => {
-                    useToast().success('Success')
+                    this.$store.commit("SET_MESSAGE", { title: "Success", text: "Domain created successfully", display: true, style: "bg-success" })
                     this.$router.push({ 'name': 'domains' })
                 })
                 .catch((e) => {
-                    useToast().error(e.response.data.detail)
+                    if (e.response.data.detail === "Domain limit exceeded for subscription.") {
+                        this.$store.commit("SET_MESSAGE", { title: "Error", text: `Domain limit exceeded.`, display: true, style: "bg-warning", path: "/account" })
+                    } else {
+                        this.$store.commit("SET_MESSAGE", { title: "Error", text: e.response.data, display: true, style: "bg-danger" })
+                    }
                 })
 
         }

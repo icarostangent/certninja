@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
-
 export default {
     name: 'AgentCreate',
     data() {
@@ -25,10 +23,10 @@ export default {
                 .then(() => {
                     this.$store.state.agents.totalItems += 1
                     this.name = ''
-                    useToast().success('Success')
+                    this.$store.commit("SET_MESSAGE", { title: "Success", text: "Agent created successfully", display: true, style: "bg-success" })
                 })
                 .catch((e) => {
-                    useToast().error(e.response.data.detail)
+                    this.$store.commit("SET_MESSAGE", { title: "Error", text: e.response.data.detail, display: true, style: "bg-warning" })
                 })
 
         }

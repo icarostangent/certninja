@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row mb-5">
       <div class="col">
-        <h1 class="mb-3"><router-link class="plain" to="/domains/">Domains / </router-link>{{ domain.name }}</h1>
+        <h1 class="mb-3">{{ domain.name }}</h1>
 
         <div class="row mb-5">
           <div class="col-md">
@@ -22,61 +22,72 @@
           </div>
         </div>
 
-        <h3>Certificates</h3>
-        <div class="table-responsive mb-3">
-          <table class="table table-lg">
-            <thead>
-              <th>Common Name</th>
-              <th>Issuer</th>
-              <th>First Seen</th>
-              <th>Valid From</th>
-              <th>Valid To</th>
-              <th></th>
-            </thead>
-            <tbody>
-              <tr v-for="item in scans.items" :key="item.id" @click.prevent="showScan(item.id)" class="scan-item">
-                <td>{{ item.common_name }}</td>
-                <td>{{ item.issuer }}</td>
-                <td>{{ new Date(item.created).toLocaleString() }}</td>
-                <td>{{ new Date(item.not_before).toLocaleString() }}</td>
-                <td>{{ new Date(item.not_after).toLocaleString() }}</td>
-                <td><a class="btn btn-secondary rounded-pill">Show</a></td>
-              </tr>
-            </tbody>
-          </table>
-          <Pagination @page-changed="pageChangedScans" :totalPages="scans.totalPages" :currentPage="currentPageScans" />
+        <div class="row mb-5">
+          <div class="col-md">
+            <h3>Certificates</h3>
+            <div class="table-responsive mb-3">
+              <table class="table">
+                <thead>
+                  <th>Common Name</th>
+                  <th>Issuer</th>
+                  <th>First Seen</th>
+                  <th>Valid From</th>
+                  <th>Valid To</th>
+                  <th></th>
+                </thead>
+                <tbody>
+                  <tr v-for="item in scans.items" :key="item.id" @click.prevent="showScan(item.id)" class="click">
+                    <td>{{ item.common_name }}</td>
+                    <td>{{ item.issuer }}</td>
+                    <td>{{ new Date(item.created).toLocaleString() }}</td>
+                    <td>{{ new Date(item.not_before).toLocaleString() }}</td>
+                    <td>{{ new Date(item.not_after).toLocaleString() }}</td>
+                    <td><a class="btn btn-secondary rounded-pill">Show</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              <Pagination @page-changed="pageChangedScans" :totalPages="scans.totalPages"
+                :currentPage="currentPageScans" />
+            </div>
+            <a @click.prevent="scanNow" class="btn btn-primary">Scan Now</a>
+          </div>
         </div>
-        <a @click.prevent="scanNow" class="btn btn-primary mb-5">Scan Now</a>
 
-        <h3>Email Targets</h3>
-        <div class="table-responsive mb-3">
-          <table class="table table-md mb-3">
-            <thead>
-              <th>Email Address</th>
-              <th class="text-end"></th>
-            </thead>
-            <tbody>
-              <tr v-for="item in emails.items" :key="item.id" @click.prevent="showScan(item.id)" class="email-item">
-              </tr>
-            </tbody>
-          </table>
-          <Pagination @page-changed="pageChangedEmails" :totalPages="emails.totalPages"
-            :currentPage="currentPageEmails" />
+        <div class="row mb-5">
+          <div class="col-md">
+            <h3>Email Targets</h3>
+            <div class="table-responsive mb-3">
+              <table class="table mb-3">
+                <thead>
+                  <th>Email Address</th>
+                  <th></th>
+                </thead>
+                <tbody>
+                  <tr v-for="item in emails.items" :key="item.id" @click.prevent="showEmail(item.id)" class="click">
+                    <td>{{ item.email }}
+                    </td>
+                    <td><a class="btn btn-secondary rounded-pill">Show</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              <Pagination @page-changed="pageChangedEmails" :totalPages="emails.totalPages"
+                :currentPage="currentPageEmails" />
+            </div>
+            <a @click.prevent="createEmail" class="btn btn-primary">Create Email</a>
+          </div>
         </div>
-        <router-link class="btn btn-primary mb-5" to="/emails/create/">Add Email</router-link>
       </div>
     </div>
     <div class="row text-center mb-5">
       <div class="col">
-        <a @click.prevent="deleteItem" class="btn btn-danger mb-5">Delete</a>
+        <a @click.prevent="deleteItem" class="btn btn-danger">Delete</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/Pagination"
 
 export default {
   name: "DomainDetail",
@@ -85,13 +96,13 @@ export default {
   },
   computed: {
     domain() {
-      return this.$store.state.domain;
+      return this.$store.state.domain
     },
     scans() {
-      return this.$store.state.scans;
+      return this.$store.state.scans
     },
     emails() {
-      return this.$store.state.emails;
+      return this.$store.state.emails
     },
   },
   data() {
@@ -103,6 +114,9 @@ export default {
     }
   },
   methods: {
+    showScan(scan_id) {
+      this.$router.push({ name: 'scan', params: { domain_id: this.domainId, scan_id: scan_id } })
+    },
     pollDomain() {
       this.interval = setInterval(() => {
         if (this.domain.scan_status !== 'complete') {
@@ -121,15 +135,19 @@ export default {
       this.currentPageScans = page;
       this.$store.dispatch("getScans", { domainId: this.domainId, page: this.currentPageScans });
     },
+    pageChangedEmails(page) {
+      this.currentPageEmails = page;
+      this.$store.dispatch("getEMails", { domainId: this.domainId, page: this.currentPageEmails });
+    },
     deleteItem() {
       if (confirm("are you sure?")) {
         try {
           this.$store.dispatch("deleteDomain", this.domain.id);
-          useToast().success("domain successfully deleted");
+          this.$store.commit("SET_MESSAGE", { title: "Success", text: "Domain deleted successfully", display: true, style: "bg-success" })
           clearInterval(this.interval)
           this.$router.push({ name: "domains" });
         } catch (error) {
-          useToast().error("error deleting domain");
+          this.$store.commit("SET_MESSAGE", { title: "Error", text: "Failed to delete domain", display: true, style: "bg-warning" })
         }
       }
     },
@@ -137,7 +155,7 @@ export default {
       this.$store.dispatch("scanNow", { domainId: this.domainId })
     },
     createEmail() {
-      this.$store.dispatch("createEmail", { domainId: this.domainId })
+      this.$router.push({ name: 'email-create', params: { domainId: this.domainId } })
     },
   },
   mounted() {
@@ -153,7 +171,7 @@ export default {
 </script>
 
 <style scope>
-.scan-item {
+.click {
   cursor: pointer;
 }
 
@@ -162,3 +180,4 @@ export default {
   color: black;
 }
 </style>
+                                                  

@@ -21,7 +21,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in domains.items" :key="item.id" @click.prevent="showDomain(item.id)"
-                                class="domain-item">
+                                class="click">
                                 <td v-if="item.scan_status !== 'complete'"><i class="fa fa-spinner fa-pulse fa-2x"></i></td>
                                 <td v-else-if="item.last_scan_error"><i class="fas fa-exclamation fa-2x"></i></td>
                                 <td v-else><i class="fas fa-check fa-2x"></i></td>
@@ -106,7 +106,7 @@ export default {
 </script>
 
 <style scope>
-.domain-item {
+.click {
     cursor: pointer;
 }
 </style>

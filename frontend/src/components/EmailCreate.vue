@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
-
 export default {
     name: 'EmailCreate',
     data() {
@@ -24,17 +22,17 @@ export default {
             const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
             if (!emailPattern.test(this.email)) {
-                useToast().warning('Invalid email')
+                this.$store.commit("SET_MESSAGE", { title: "Error", text: "Invalid email", display: true, style: "bg-warning" })
                 return
             }
             this.$store.dispatch('createEmail', { 'email': this.email })
                 .then(() => {
                     this.$store.state.emails.totalItems += 1
                     this.email = ''
-                    useToast().success('Success')
+                    this.$store.commit("SET_MESSAGE", { title: "Success", text: "Email created successfully", display: true, style: "bg-success" })
                 })
                 .catch((e) => {
-                    useToast().error(e.response.data.detail)
+                    this.$store.commit("SET_MESSAGE", { title: "Error", text: e.response.data.detail, display: true, style: "bg-warning" })
                 })
 
         }

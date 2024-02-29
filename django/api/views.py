@@ -8,7 +8,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.management import call_command
 from django.db.models import Q
 from django.forms.models import model_to_dict
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -22,6 +22,25 @@ from api import models
 from api import serializers
 from api.permissions import IsOwner
 from api.signals import password_reset_signal
+from myapp.pagination import CustomPagination
+
+
+class NotificationsViewSet(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.NotificationsSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(models.Notifications, user=self.request.user)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def partial_update(self, serializer):
+        instance = self.request.user.notifications
+        serializer = self.get_serializer(instance, data=self.request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ServiceAgentView(generics.RetrieveAPIView):
@@ -29,7 +48,6 @@ class ServiceAgentView(generics.RetrieveAPIView):
     serializer_class = serializers.ServiceAgentSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        # print(request.data)
         instance = get_object_or_404(models.Agent, api_key=request.data['api_key'])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
@@ -86,7 +104,7 @@ class AgentViewSet(ModelViewSet):
         return models.Agent.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, domain=self.request.GET.domain_id)
 
 
 class EmailAddressViewSet(ModelViewSet):
@@ -97,7 +115,21 @@ class EmailAddressViewSet(ModelViewSet):
         return models.EmailAddress.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, domain_id=self.request.data['domain_id'])
+
+    def list(self, request, *args, **kwargs):
+        queryset = models.EmailAddress.objects.filter(domain=kwargs['domain_id'], user=request.user)
+        paginator = CustomPagination()
+        serializer = self.get_serializer(queryset, many=True)
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            return paginator.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    # def create(self, request, *args, **kwargs):
+    #     queryset = models.EmailAddress.objects.filter(domain=kwargs['domain_id'], user=request.user)
+    #     serializer = self.get_serializer(queryset)
+    #     return Response(serializer.data)
 
 
 class SubscriptionViewSet(ReadOnlyModelViewSet):
@@ -158,10 +190,23 @@ class DomainSearchViewSet(ModelViewSet):
 class ScanViewSet(ReadOnlyModelViewSet):
     serializer_class = serializers.ScanSerializer
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'domain'
 
-    def get_queryset(self):
-        return models.Scan.objects.filter(domain=self.kwargs['pk'], user=self.request.user)
+    # def get_queryset(self):
+    #     return models.Scan.objects.filter(domain=self.kwargs['domain_id'], user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = models.Scan.objects.filter(domain=kwargs['domain_id'], user=request.user)
+        paginator = CustomPagination()
+        serializer = self.get_serializer(queryset, many=True)
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            return paginator.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = models.Scan.objects.filter(user=request.user, id=kwargs['pk']).first()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 @csrf_exempt
@@ -285,7 +330,7 @@ def scan_now(request):
     domain.save()
     call_command('schedule_domain_scan_now', domain.id)
 
-    return JsonResponse(json.dumps(model_to_dict(domain)), safe=False)
+    return Response(model_to_dict(domain))
 
 
 class ChangePasswordView(generics.UpdateAPIView):

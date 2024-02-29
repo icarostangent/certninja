@@ -9,6 +9,11 @@ from api import models
 from api.signals import password_reset_signal, verify_email_signal
 
 
+@admin.register(models.Notifications)
+class NotificationsAdmin(admin.ModelAdmin):
+    readonly_fields = []
+
+
 @admin.register(models.Agent)
 class AgentAdmin(admin.ModelAdmin):
     readonly_fields = []

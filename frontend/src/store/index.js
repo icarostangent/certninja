@@ -4,21 +4,35 @@ import axios from 'axios'
 
 export default createStore({
     state: {
+        message: {
+            title: 'Success',
+            text: 'Hello World',
+            display: true,
+            style: 'bg-success',
+            path: null,
+        },
         auth: {
-            'access': localStorage.getItem('access'),
-            'user': {
-                'pk': localStorage.getItem('pk'),
-                'username': '',
-                'email': '',
-                'subscription': {
-                    'client_reference_id': '',
-                    'subscription_type': '',
-                    'subscription_active': false,
-                    'period_start': '',
-                    'period_end': '',
-                    'previous_subscription_type': '',
-                    'cancel_at': '',
-                    'cancel_at_period_end': false,
+            access: localStorage.getItem('access'),
+            user: {
+                pk: localStorage.getItem('pk'),
+                username: '',
+                email: '',
+                subscription: {
+                    client_reference_id: '',
+                    subscription_type: '',
+                    subscription_active: false,
+                    period_start: '',
+                    period_end: '',
+                    previous_subscription_type: '',
+                    cancel_at: '',
+                    cancel_at_period_end: false,
+                },
+                notifications: {
+                    daily: false,
+                    changed: false,
+                    one_days: false,
+                    seven_days: false,
+                    two_weeks: false,
                 },
             },
         },
@@ -36,7 +50,7 @@ export default createStore({
         },
         portal: '',
         account: {
-            title: localStorage.getItem('activated'), // activated
+            title: localStorage.getItem('activated'),
         },
         domains: {
             items: [],
@@ -50,6 +64,20 @@ export default createStore({
             totalItems: '',
             totalPages: '',
             currentPage: 1,
+        },
+        scan: {
+            activity: '',
+            alt_names: '',
+            common_name: '',
+            created: '',
+            ip_address: '',
+            issuer: '',
+            not_after: '',
+            not_before: '',
+            port: '',
+            raw: '',
+            serial_number: '',
+            signature_algorithm: '',
         },
         primaryMenu: {
             items: [],
@@ -86,6 +114,9 @@ export default createStore({
         },
     },
     mutations: {
+        SET_MESSAGE(state, data) {
+            state.message = data
+        },
         SET_AUTH(state, data) {
             state.auth = data
             localStorage.setItem('pk', data.user.pk)
@@ -129,6 +160,9 @@ export default createStore({
         SET_SCANS(state, data) {
             state.scans = data
         },
+        SET_SCAN(state, data) {
+            state.scan = data
+        },
         SET_PRIMARY_MENU(state, data) {
             state.primaryMenu = data
         },
@@ -149,8 +183,28 @@ export default createStore({
         SET_THEME(state, data) {
             state.theme = data
         },
+        SET_NOTIFICATIONS(state, data) {
+            state.auth.user.notifications = data
+        },
     },
     actions: {
+        updateNotifications({ state, commit }, payload) {
+            console.log('update notifications')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.patch(`/api/notifications/`, payload, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${state.auth.access}`,
+                        }
+                    })
+                    commit('SET_NOTIFICATIONS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
         validate({ state, commit }, payload) {
             console.log('validate')
             return new Promise(async (resolve, reject) => {
@@ -266,7 +320,7 @@ export default createStore({
             return new Promise(async (resolve, reject) => {
                 try {
                     const { data, status } = await axios.get(
-                        `/api/emails/?page=${payload.page}`, {
+                        `/api/domains/${payload.domainId}/emails/?page=${payload.page}`, {
                         headers: {
                             'Authorization': `Bearer ${state.auth.access}`,
                             'Content-Type': 'application/json'
@@ -461,6 +515,25 @@ export default createStore({
                     }
                     )
                     commit('SET_SCANS', data)
+                    resolve(data)
+                } catch (e) {
+                    reject(e)
+                }
+            })
+        },
+        getScan({ commit, state }, payload) {
+            console.log('get scan')
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const { data } = await axios.get(
+                        `/api/scans/${payload.scanId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${state.auth.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    )
+                    commit('SET_SCAN', data)
                     resolve(data)
                 } catch (e) {
                     reject(e)

@@ -82,7 +82,6 @@ class EmailAddress(ExportModelOperationsMixin('email_address'), models.Model):
     domain = models.ForeignKey(Domain, related_name='emails', on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [("user", "email")]
         ordering = ['-created']
 
     def __str__(self):
@@ -112,11 +111,23 @@ class Subscription(ExportModelOperationsMixin('subscription'), models.Model):
     cancel_at_period_end = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username}"
+        return self.user.username
 
     def save(self, *args, **kwargs):
         self.client_reference_id = get_random_string(length=32)
         super(Subscription, self).save(*args, **kwargs)
+
+
+class Notifications(ExportModelOperationsMixin('notifications'), models.Model):
+    user = models.OneToOneField(User, related_name='notifications', on_delete=models.CASCADE)
+    daily = models.BooleanField(default=False)
+    changed = models.BooleanField(default=True)
+    two_weeks = models.BooleanField(default=True)
+    seven_days = models.BooleanField(default=True)
+    one_days = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.user.username
 
 
 class TemplateEmail:

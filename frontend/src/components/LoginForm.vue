@@ -31,8 +31,6 @@
   </div>
 </template>
 <script>
-import { useToast } from 'vue-toastification'
-
 export default {
   data() {
     return {
@@ -45,11 +43,11 @@ export default {
   methods: {
     async login() {
       if (this.form.username === '') {
-        useToast().warning('username required')
+        this.$store.commit("SET_MESSAGE", { title: "Error", text: "Username required", display: true, style: "bg-warning" })
         return
       }
       if (this.form.password === '') {
-        useToast().warning('password required')
+        this.$store.commit("SET_MESSAGE", { title: "Error", text: "Password required", display: true, style: "bg-warning" })
         return
       }
       try {
@@ -61,11 +59,11 @@ export default {
         this.$router.push({ 'name': 'domains' })
       } catch (e) {
         if (e.response && e.response.status !== 200) {
-          useToast().warning(e.response.data.non_field_errors[0])
+          this.$store.commit("SET_MESSAGE", { title: "Error", text: "Unable to login with provided credentials", display: true, style: "bg-warning" })
           return
         }
         else {
-          useToast().error('network error')
+          this.$store.commit("SET_MESSAGE", { title: "Error", text: "Network error", display: true, style: "bg-warning" })
         }
       }
     }

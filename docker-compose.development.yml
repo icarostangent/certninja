@@ -1,36 +1,6 @@
 version: "3.9"
 
 services:
-  # scheduler-scan:
-  #   build:
-  #     context: ./scheduler-scan
-  #   environment:
-  #     DB_USER: ${DJANGO_USER}
-  #     DB_PASSWORD: ${DJANGO_PASSWORD}
-  #     DB_HOST: ${DB_HOST}
-  #     DB_DATABASE: ${DJANGO_DATABASE}
-  #   volumes:
-  #     - ./scheduler-scan:/app
-  #   labels:
-  #     logging: "promtail"
-  #     logging_jobname: "containerlogs"
-  #   restart: unless-stopped
-
-  scheduler-cleaner:
-    build:
-      context: ./scheduler-cleaner
-    environment:
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_DATABASE: ${MYSQL_DATABASE}
-    volumes:
-      - ./scheduler-cleaner:/app
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    restart: unless-stopped
-
   mailer:
     build:
       context: ./mailer
@@ -51,10 +21,6 @@ services:
     build:
       context: ./scanner
     environment:
-      DB_USER: ${DJANGO_USER}
-      DB_PASSWORD: ${DJANGO_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_DATABASE: ${DJANGO_DATABASE}
       TARGET_URL: ${TARGET_URL}
       SCANNER_TOKEN: ${SCANNER_TOKEN}
     volumes:
@@ -64,21 +30,6 @@ services:
       logging_jobname: "containerlogs"
     extra_hosts:
       - ${DOMAIN_NAME}:${PUBLIC_IP}
-    restart: unless-stopped
-
-  cleaner:
-    build:
-      context: ./cleaner
-    environment:
-      DB_USER: ${MYSQL_USER}
-      DB_PASSWORD: ${MYSQL_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_DATABASE: ${MYSQL_DATABASE}
-    volumes:
-      - ./cleaner:/app
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
     restart: unless-stopped
 
   redis:
@@ -93,6 +44,8 @@ services:
     restart: unless-stopped
 
   redis-commander:
+    depends_on:
+      - redis
     image: rediscommander/redis-commander:latest
     hostname: redis-commander
     environment:
@@ -119,6 +72,9 @@ services:
       logging_jobname: "containerlogs"
 
   django:
+    depends_on:
+      - db
+      - redis
     command: python manage.py runserver 0.0.0.0:8888
     build:
       context: ./django
@@ -149,15 +105,15 @@ services:
       - ./static:/app/static
     expose:
       - "8888"
-    depends_on:
-      - db
-      - redis
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
-  django-scheduler:
+  scheduler:
+    depends_on:
+      - db
+      - redis
     command: sh bootstrap-scheduler.sh
     build:
       context: ./django
@@ -187,15 +143,15 @@ services:
       - ./static:/app/static
     expose:
       - "8888"
-    depends_on:
-      - db
-      - redis
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
-  django-deactivator:
+  deactivator:
+    depends_on:
+      - db
+      - redis
     command: sh bootstrap-expire-accounts.sh
     build:
       context: ./django
@@ -225,15 +181,14 @@ services:
       - ./static:/app/static
     expose:
       - "8888"
-    depends_on:
-      - db
-      - redis
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
   wordpress:
+    depends_on:
+      - db
     build:
       context: ./wordpress
     volumes:
@@ -251,15 +206,14 @@ services:
       TARGET_URL: ${TARGET_URL}
     extra_hosts:
       - ${DOMAIN_NAME}:${PUBLIC_IP}
-    depends_on:
-      - db
-      - redis
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
     restart: unless-stopped
 
   phpmyadmin:
+    depends_on:
+      - db
     image: phpmyadmin/phpmyadmin
     ports:
       - "127.0.0.1:3000:80"
@@ -284,6 +238,10 @@ services:
     restart: unless-stopped
 
   nginx:
+    depends_on:
+      - django
+      - wordpress
+      - frontend
     build:
       context: ./nginx
     volumes:
@@ -312,6 +270,8 @@ services:
       ]
 
   certbot:
+    depends_on:
+      - nginx
     image: certbot/certbot:latest
     restart: unless-stopped
     volumes:
@@ -321,7 +281,6 @@ services:
       logging: "promtail"
       logging_jobname: "containerlogs"
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
   # prometheus:
   #   image: prom/prometheus:latest
   #   restart: unless-stopped

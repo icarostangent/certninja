@@ -17,17 +17,24 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class EmailAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EmailAddress
-        fields = ['user', 'email', 'verified', 'created', 'verification_sent', 'reset_sent']
-        read_only_fields = ['id', 'user', 'verified', 'created', 'verification_sent', 'reset_sent']
+        fields = ['user', 'email', 'domain_id']
+        read_only_fields = ['user']
+
+
+class NotificationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Notifications
+        fields = ['daily', 'changed', 'two_weeks', 'seven_days', 'one_days']
 
 
 class UserSerializer(serializers.ModelSerializer):
     subscription = SubscriptionSerializer()
-    emails = EmailAddressSerializer(many=True)
+    notifications = NotificationsSerializer()
+    # emails = EmailAddressSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ['pk', 'username', 'email', 'subscription', 'emails']
+        fields = ['pk', 'username', 'email', 'subscription', 'notifications']
 
 
 class ScanSerializer(serializers.ModelSerializer):
@@ -39,6 +46,9 @@ class ScanSerializer(serializers.ModelSerializer):
 
 
 class DomainSerializer(serializers.ModelSerializer):
+    # ip_address = serializers.CharField(allow_blank=True)
+    # port = serializers.IntegerField(allow_null=True)
+
     class Meta:
         model = models.Domain
         fields = ['id', 'user', 'name', 'ip_address', 'port', 'last_scan', 'last_scan_error', 'created', 'modified', 'scan_status']

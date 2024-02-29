@@ -11,9 +11,10 @@ password_reset_signal = Signal() # args: email, key
 
 
 @receiver(post_save, sender=User)
-def create_subscription(sender, instance, created, **kwargs):
+def create_user_related(sender, instance, created, **kwargs):
     if created == True:
         models.Subscription.objects.create(user=instance)
+        models.Notifications.objects.create(user=instance)
 
 
 @receiver(verify_email_signal)
