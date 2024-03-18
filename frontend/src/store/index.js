@@ -5,8 +5,8 @@ import axios from 'axios'
 export default createStore({
     state: {
         message: {
-            title: 'Success',
-            text: 'Hello World',
+            title: 'Welcome',
+            text: 'This app is in development',
             display: true,
             style: 'bg-success',
             path: null,
@@ -50,7 +50,7 @@ export default createStore({
         },
         portal: '',
         account: {
-            title: localStorage.getItem('activated'),
+            activated: localStorage.getItem('activated'),
         },
         domains: {
             items: [],
@@ -132,7 +132,7 @@ export default createStore({
         },
         SET_ACCOUNT(state, data) {
             state.account = data
-            localStorage.setItem('activated', account.post_title)
+            localStorage.setItem('activated', account.activated)
         },
         DELETE_ACCOUNT(state) {
             state.account = {}

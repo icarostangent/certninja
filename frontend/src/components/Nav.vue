@@ -120,7 +120,7 @@ export default {
   },
   computed: {
     loggedin() {
-      return this.$store.state.auth.access !== "";
+      return this.$store.state.auth.access && this.$store.state.auth.access !== "";
     },
     menu() {
       return this.$store.state.primaryMenu;

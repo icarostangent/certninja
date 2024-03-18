@@ -137,7 +137,7 @@ export default {
     },
     pageChangedEmails(page) {
       this.currentPageEmails = page;
-      this.$store.dispatch("getEMails", { domainId: this.domainId, page: this.currentPageEmails });
+      this.$store.dispatch("getEtails", { domainId: this.domainId, page: this.currentPageEmails });
     },
     deleteItem() {
       if (confirm("are you sure?")) {

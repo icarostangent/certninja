@@ -1,5 +1,5 @@
 <template>
-  <div class="col mx-auto page">
+  <div class="col-md-8 mx-auto page">
     <div>
       <h1>{{ this.page.title.rendered }}</h1>
     </div>

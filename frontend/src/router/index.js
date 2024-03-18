@@ -176,7 +176,7 @@ router.beforeEach(async (to, from, next) => {
 
 router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresActivated)) {
-        if (store.state.account.post_title === 'false') {
+        if (store.state.account.activated === 'false') {
             next({ path: '/account' })
         }
     }

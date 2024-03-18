@@ -1,21 +1,25 @@
 <template>
-  <h1>Common Name:</h1>
-  {{ scan.common_name }}<br />
-  <h3>Alt Names:</h3>
-  <ul class="list-group">
-    <li v-for="item in scan.alt_names.split(', ')" :key="item.id" class="list-group-item">{{ item }}</li>
-  </ul>
-  <h3>Issuer:</h3>
-  {{ scan.issuer }}<br />
-  <h3>Not After:</h3>
-  {{ scan.not_after }}<br />
-  <h3>Not Before:</h3>
-  {{ scan.not_before }}<br />
-  <h3>SerialNumber:</h3>
-  {{ scan.serial_number }}<br />
-  <h3>Signature Algorithm:</h3>
-  {{ scan.signature_algorithm }}<br />
+  <div class="col-md-8 mx-auto">
+    <h1>Common Name:</h1>
+    {{ scan.common_name }}<br />
+    <h3>Alt Names:</h3>
+    <ul class="list-group">
+      <li v-for="item in scan.alt_names.split(', ')" :key="item.id" class="list-group-item">{{ item }}</li>
+    </ul>
+    <h3>Issuer:</h3>
+    {{ scan.issuer }}<br />
+    <h3>Not After:</h3>
+    {{ scan.not_after }}<br />
+    <h3>Not Before:</h3>
+    {{ scan.not_before }}<br />
+    <h3>SerialNumber:</h3>
+    {{ scan.serial_number }}<br />
+    <h3>Signature Algorithm:</h3>
+    {{ scan.signature_algorithm }}<br />
+  </div>
+
 </template>
+
 <script>
 export default {
   name: "ScanDetail",
@@ -35,4 +39,5 @@ export default {
   },
 }
 </script>
+
 <style></style>
