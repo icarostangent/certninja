@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -9,9 +9,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install
-RUN npm install
-RUN npm update
-RUN npm update
+
 # If you are building your code for production
 # RUN npm ci --only=production
 
@@ -19,4 +17,4 @@ RUN npm update
 COPY . .
 
 EXPOSE 8080
-CMD [ "npm", "run", "serve" ]
+CMD [ "npm", "run", "dev" ]

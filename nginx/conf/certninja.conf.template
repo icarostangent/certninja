@@ -1,4 +1,3 @@
-  include mime.types;
   types {
       application/javascript js mjs;
   }
@@ -66,12 +65,12 @@ server {
     add_header Content-Security-Policy-Report-Only: "default-src 'self' js.stripe.com; script-src 'self' js.stripe.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' js.stripe.com; frame-src https://js.stripe.com; data:;";
 
     # django app
-    location /api {
+    location /api/ {
         proxy_pass http://django/api;
     }
 
     # django backend
-    location /admin {
+    location /admin/ {
         proxy_pass http://django/admin;
     }
     
@@ -80,40 +79,40 @@ server {
         alias /static/;
     }
 
-    # vue dev server
-    location /sockjs-node {
+    # vite dev server
+    location /hmr/ {
         proxy_http_version 1.1;
         proxy_set_header Upgrade ${DOLLAR}http_upgrade;
         proxy_set_header Connection "upgrade";
-        proxy_pass http://frontend;
+        proxy_pass http://frontend/hmr/;
     }
 
-    location /wp-admin {
+    location /wp-admin/ {
         proxy_pass http://wordpress/wp-admin;
     }
 
-    location /wp-login {
+    location /wp-login/ {
         proxy_pass http://wordpress/wp-login;
     }
 
-    location /wp-content {
+    location /wp-content/ {
         alias /var/www/html/wp-content;
     }
 
-    location /wp-json {
+    location /wp-json/ {
         proxy_pass http://wordpress/wp-json;
     }
 
-    location /wp-includes {
+    location /wp-includes/ {
         proxy_pass http://wordpress/wp-includes;
     }
 
-    location /wp-cron {
+    location /wp-cron/ {
         proxy_pass http://wordpress/wp-cron;
     }
 
-    location /node_modules {
-        alias /node_modules;
+    location /node_modules/ {
+        alias /node_modules/;
     }
 
     location / {
